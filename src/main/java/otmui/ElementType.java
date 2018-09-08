@@ -1,0 +1,5 @@
+package otmui;
+
+public enum ElementType {
+    LINK,COMMODITY,SUBNETWORK,DEMAND,SPLIT,ACTUATOR,CONTROLLER,SENSOR
+}
