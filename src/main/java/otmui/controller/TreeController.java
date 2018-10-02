@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
+
 package otmui.controller;
 
 import java.net.URL;
@@ -29,77 +36,17 @@ public class TreeController implements Initializable {
     @FXML
     private TreeView scenariotree;
 
+    /////////////////////////////////////////////////
+    // construction
+    /////////////////////////////////////////////////
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         scenariotree.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
-    public void focusGraph(ActionEvent e){
-        myApp.graphpaneController.focusGraphOnSelection();
-    }
-
-    public void mouseClick(MouseEvent mouseEvent){
-
-        // only register left click
-        if (!mouseEvent.getButton().equals(MouseButton.PRIMARY))
-            return;
-
-        int clickcount = mouseEvent.getClickCount();
-
-        // fire event for first click
-        if(clickcount==1)
-            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK1,mouseEvent));
-
-        if(clickcount==2){
-            TreeItem item = (TreeItem) myApp.scenarioTreeController.getTreeView().getSelectionModel().getSelectedItem();
-            if(item==null)
-                return;
-            TreeItem parent = item.getParent();
-            if(parent!=null) {
-                ElementType elementType = Maps.elementName.getFromSecond((String) parent.getValue());
-                if(elementType!=null)
-                    switch (elementType) {
-                        case LINK:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_LINK,mouseEvent));
-                            break;
-                        case COMMODITY:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_COMMODITY,mouseEvent));
-                            break;
-                        case SUBNETWORK:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SUBNETWORK,mouseEvent));
-                            break;
-                        case SPLIT:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SPLIT,mouseEvent));
-                            break;
-                        case DEMAND:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_DEMAND,mouseEvent));
-                            break;
-                        case ACTUATOR:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_ACTUATOR,mouseEvent));
-                            break;
-                        case CONTROLLER:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_CONTROLLER,mouseEvent));
-                            break;
-                        case SENSOR:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SENSOR,mouseEvent));
-                            break;
-
-                        default:
-                            System.err.println("????");
-                    }
-            }
-        }
-
-        mouseEvent.consume();
-
-    }
-
     public void setApp(MainApp myApp){
         this.myApp = myApp;
-    }
-
-    public TreeView getTreeView(){
-        return scenariotree;
     }
 
     public void loadScenario(Scenario scenario){
@@ -161,6 +108,74 @@ public class TreeController implements Initializable {
 
     }
 
+    /////////////////////////////////////////////////
+    // focusing
+    /////////////////////////////////////////////////
+
+    public void focusGraph(ActionEvent e){
+        myApp.graphpaneController.focusGraphOnSelection();
+    }
+
+    /////////////////////////////////////////////////
+    // mouse events
+    /////////////////////////////////////////////////
+
+    public void mouseClick(MouseEvent mouseEvent){
+
+        // only register left click
+        if (!mouseEvent.getButton().equals(MouseButton.PRIMARY))
+            return;
+
+        int clickcount = mouseEvent.getClickCount();
+
+        // fire event for first click
+        if(clickcount==1)
+            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK1,mouseEvent));
+
+        if(clickcount==2){
+            TreeItem item = (TreeItem) myApp.scenarioTreeController.getTreeView().getSelectionModel().getSelectedItem();
+            if(item==null)
+                return;
+            TreeItem parent = item.getParent();
+            if(parent!=null) {
+                ElementType elementType = Maps.elementName.getFromSecond((String) parent.getValue());
+                if(elementType!=null)
+                    switch (elementType) {
+                        case LINK:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_LINK,mouseEvent));
+                            break;
+                        case COMMODITY:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_COMMODITY,mouseEvent));
+                            break;
+                        case SUBNETWORK:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SUBNETWORK,mouseEvent));
+                            break;
+                        case SPLIT:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SPLIT,mouseEvent));
+                            break;
+                        case DEMAND:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_DEMAND,mouseEvent));
+                            break;
+                        case ACTUATOR:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_ACTUATOR,mouseEvent));
+                            break;
+                        case CONTROLLER:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_CONTROLLER,mouseEvent));
+                            break;
+                        case SENSOR:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SENSOR,mouseEvent));
+                            break;
+
+                        default:
+                            System.err.println("????");
+                    }
+            }
+        }
+
+        mouseEvent.consume();
+
+    }
+
     public void highlight(Set<AbstractDrawLink> drawLinks, Set<DrawSensor> drawSensors){
 
         for(AbstractDrawLink obj : drawLinks) {
@@ -179,9 +194,21 @@ public class TreeController implements Initializable {
 
     }
 
+    /////////////////////////////////////////////////
+    // get / set
+    /////////////////////////////////////////////////
+
+    public TreeView getTreeView(){
+        return scenariotree;
+    }
+
     public void clearSelection(){
         scenariotree.getSelectionModel().clearSelection();
     }
+
+    /////////////////////////////////////////////////
+    // private
+    /////////////////////////////////////////////////
 
     private TreeItem searchItem(TreeItem<String> root, String searchvalue){
         for(TreeItem<String> item : root.getChildren()){

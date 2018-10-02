@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
 package otmui.graph.item;
 
 import otmui.graph.color.AbstractColormap;
@@ -12,7 +18,7 @@ import javafx.scene.shape.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractDrawLink extends Group implements InterfaceDrawLink {
+public abstract class AbstractDrawLink extends Group {
 
     protected static Color color_highlight = Color.RED;
 
@@ -22,6 +28,8 @@ public abstract class AbstractDrawLink extends Group implements InterfaceDrawLin
     public AbstractDrawNode startNode;
     public AbstractDrawNode endNode;
     public float max_vehicles;
+
+    abstract AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg, List<Segment> segments, float road2euclid) throws OTMException ;
 
     public AbstractDrawLink(otmui.model.Link link, AbstractDrawNode startNode, AbstractDrawNode endNode, float lane_width, float link_offset, AbstractColormap colormap) throws OTMException {
         this.link = link;

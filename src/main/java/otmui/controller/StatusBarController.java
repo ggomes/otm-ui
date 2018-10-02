@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
+
 package otmui.controller;
 
 import otmui.MainApp;
@@ -22,6 +29,10 @@ public class StatusBarController implements Initializable {
     public StatusBar statusBar;
     private MainApp myApp;
 
+    /////////////////////////////////////////////////
+    // construction
+    /////////////////////////////////////////////////
+
     public StatusBarController(StatusBar statusBar, MainApp myApp){
         this.statusBar = statusBar;
         this.myApp = myApp;
@@ -32,19 +43,23 @@ public class StatusBarController implements Initializable {
 
     }
 
-    public void bind_progress(ReadOnlyDoubleProperty prop){
-        statusBar.progressProperty().bind(prop);
+    public void loadScenario(Scenario scenario){
+        this.statusBar.setText("Scenario loaded.");
     }
+
+    /////////////////////////////////////////////////
+    // text
+    /////////////////////////////////////////////////
 
     public void bind_text(ObservableValue<String> prop){
         statusBar.textProperty().bind(prop);
     }
 
-    public void loadScenario(Scenario scenario){
-        setText("Scenario loaded.");
+    public void unbind_text(){
+        statusBar.textProperty().unbind();
     }
 
-    public void highlight(Set<AbstractDrawLink> selectedLinks, Set<AbstractDrawNode> selectedNodes, Set<DrawSensor> selectedSensors){
+    public void setText(Set<AbstractDrawLink> selectedLinks, Set<AbstractDrawNode> selectedNodes, Set<DrawSensor> selectedSensors){
         String str = "links {" +
                 OTMUtils.comma_format(selectedLinks.stream().map(x->x.id).collect(toList())) +
                 "} , nodes {" +
@@ -52,10 +67,19 @@ public class StatusBarController implements Initializable {
                 "} , sensors {" +
                 OTMUtils.comma_format(selectedSensors.stream().map(x->x.id).collect(toList())) +
                 "}";;
-        setText(str);
-    }
-
-    public void setText(String str){
         this.statusBar.setText(str);
     }
+
+    /////////////////////////////////////////////////
+    // progress bar
+    /////////////////////////////////////////////////
+
+    public void bind_progress(ReadOnlyDoubleProperty prop){
+        statusBar.progressProperty().bind(prop);
+    }
+
+    public void unbind_progress(){
+        statusBar.progressProperty().unbind();
+    }
+
 }

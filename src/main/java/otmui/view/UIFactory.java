@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
 package otmui.view;
 
 import otmui.controller.component.*;
@@ -18,9 +24,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 
-/**
- * Created by gomes on 2/4/2017.
- */
 public class UIFactory {
 
     public static PaneCtrl createLabelText(String label, String text){

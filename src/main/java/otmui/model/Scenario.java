@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
 package otmui.model;
 
 import actuator.AbstractActuator;
@@ -14,7 +20,7 @@ import java.util.*;
 
 public class Scenario {
 
-    private final APIopen beats;
+    private final APIopen otm;
 
     private final Network network;
     private final Map<Long,DemandsForLink> demands_for_links;
@@ -22,11 +28,11 @@ public class Scenario {
     private final Map<Long, Actuator> actuators;
     private final Map<Long, Sensor> sensors;
 
-    public Scenario(APIopen beats) throws OTMException {
+    public Scenario(APIopen otm) throws OTMException {
 
-        this.beats = beats;
+        this.otm = otm;
 
-        runner.Scenario bscenario = this.beats.scenario();
+        runner.Scenario bscenario = this.otm.scenario();
 
         // network .........................
         this.network = new Network(bscenario.network);
@@ -109,7 +115,7 @@ public class Scenario {
     }
 
     public Collection<commodity.Commodity> getCommodities(){
-        return beats.scenario().commodities.values();
+        return otm.scenario().commodities.values();
     }
 
     public Collection<DemandsForLink> getDemandsForLinks(){
@@ -117,7 +123,7 @@ public class Scenario {
     }
 
     public Collection<Subnetwork> getSubnetworks(){
-        return beats.scenario().subnetworks.values();
+        return otm.scenario().subnetworks.values();
     }
 
     public Collection<SplitsForNode> getSplits(){
@@ -125,11 +131,11 @@ public class Scenario {
     }
 
     public Collection<AbstractController> getControllers(){
-        return beats.scenario().controllers.values();
+        return otm.scenario().controllers.values();
     }
 
     public Collection<AbstractActuator> getActuators(){
-        return beats.scenario().actuators.values();
+        return otm.scenario().actuators.values();
     }
 
     public Collection<Sensor> getSensors(){
@@ -155,19 +161,19 @@ public class Scenario {
     }
 
     public commodity.Commodity getCommodityWithId(Long id){
-        return beats.scenario().commodities.get(id);
+        return otm.scenario().commodities.get(id);
     }
 
     public AbstractActuator getActuatorWithId(Long id){
-        return beats.scenario().actuators.get(id);
+        return otm.scenario().actuators.get(id);
     }
 
     public Subnetwork getSubnetworkWithId(Long id){
-        return beats.scenario().subnetworks.get(id);
+        return otm.scenario().subnetworks.get(id);
     }
 
     public AbstractController getControllerWithId(Long id){
-        return beats.scenario().controllers.get(id);
+        return otm.scenario().controllers.get(id);
     }
 
     public Sensor getSensorWithId(Long id){
@@ -184,7 +190,7 @@ public class Scenario {
         return network.nodes.get(nodeId).getOutLinkIds();
     }
 
-    public APIopen get_beats(){
-        return beats;
+    public APIopen get_otm(){
+        return otm;
     }
 }

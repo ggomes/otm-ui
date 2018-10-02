@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
 package otmui.simulation;
 
 import api.APIopen;
@@ -12,7 +18,7 @@ import runner.OTM;
 public class OTMTask extends Task {
 
     private MainApp app;
-    private APIopen beats;
+    private APIopen otm;
     private OTMException exception;
     private float start_time;
     private float duration;
@@ -20,9 +26,9 @@ public class OTMTask extends Task {
     private long sim_delay;
     private AbstractColormap colormap;
 
-    public OTMTask(APIopen beats, GlobalParameters params, MainApp app){
+    public OTMTask(APIopen otm, GlobalParameters params, MainApp app){
         this.app = app;
-        this.beats = beats;
+        this.otm = otm;
         this.start_time = params.start_time.floatValue();
         this.duration = params.duration.floatValue();
         this.sim_dt = params.sim_dt.floatValue();
@@ -34,9 +40,10 @@ public class OTMTask extends Task {
     protected Object call()  {
 
         try {
-            OTM.initialize(beats.scenario(), start_time);
+            OTM.initialize(otm.scenario(), start_time);
             final int steps = (int) (duration / sim_dt);
             for (int i=1; i<=steps; i++) {
+
                 if (isCancelled())
                     break;
 
@@ -44,15 +51,15 @@ public class OTMTask extends Task {
                 Thread.sleep(sim_delay);
 
                 // advance otm, get back information
-                OTM.advance(beats.scenario(), sim_dt);
-                AnimationInfo info = beats.api.get_animation_info();
+                OTM.advance(otm.scenario(), sim_dt);
+                AnimationInfo info = otm.api.get_animation_info();
 
                 // send data to graph
                 app.graphpaneController.draw_link_state(info,colormap);
 
                 // update status bar
                 updateProgress(i, steps);
-                updateMessage(String.format("%.0f",i*sim_dt));
+                updateMessage(String.format("%.0f",info.timestamp));
             }
 
         } catch (OTMException e) {
@@ -61,6 +68,9 @@ public class OTMTask extends Task {
         } catch (InterruptedException e) {
             this.exception = new OTMException(e);
             failed();
+        } finally {
+            app.statusbarController.unbind_progress();
+            app.statusbarController.unbind_text();
         }
         return null;
     }
@@ -70,4 +80,5 @@ public class OTMTask extends Task {
         super.failed();
         System.err.println(exception);
     }
+
 }

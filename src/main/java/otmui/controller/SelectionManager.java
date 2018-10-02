@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
+
 package otmui.controller;
 
 import actuator.AbstractActuator;
-import actuator.InterfaceActuatorTarget;
 import otmui.ElementType;
 import otmui.MainApp;
 import otmui.Maps;
@@ -40,7 +46,9 @@ public class SelectionManager {
         this.selectedSensors = new HashSet<>();
     }
 
-    /** GRAPH ---------------------------------------------- **/
+    /////////////////////////////////////////////////
+    // graph clicks
+    /////////////////////////////////////////////////
 
     // if shift is pressed then add to highlighted items.
     // otherwise clear and add to highlighted items
@@ -127,7 +135,9 @@ public class SelectionManager {
         e.consume();
     }
 
-    /** TREE ---------------------------------------------- **/
+    /////////////////////////////////////////////////
+    // tree clicks
+    /////////////////////////////////////////////////
 
     public void treeFirstClick(TreeSelectEvent e){
         ObservableList<TreeItem> items = myApp.scenarioTreeController.getTreeView().getSelectionModel().getSelectedItems();
@@ -284,9 +294,11 @@ public class SelectionManager {
 //        e.consume();
     }
 
-    /** LIST IN DATA FORM ---------------------------------------------- **/
+    /////////////////////////////////////////////////
+    // data forms
+    /////////////////////////////////////////////////
 
-    /** First click: highlight **/
+    /** First click: setText ---------------- **/
 
     public void formFirstClickLink(Long itemId){
         clearSelection();
@@ -302,7 +314,7 @@ public class SelectionManager {
 
         clearSelection();
 
-        // highlight this node
+        // setText this node
         Node node = myApp.scenario.getNodeWithId(itemId);
         if(node!=null)
             selectedNodes.add(node.drawNode);
@@ -352,18 +364,18 @@ public class SelectionManager {
     }
 
     public void formFirstClickActuator(Long itemId){
-        System.out.println("NOT IMPLEMENTED");
+        System.err.println("NOT IMPLEMENTED");
     }
 
     public void formFirstClickController(Long itemId){
-        System.out.println("NOT IMPLEMENTED");
+        System.err.println("NOT IMPLEMENTED");
     }
 
     public void formFirstClickSensor(Long itemId){
-        System.out.println("NOT IMPLEMENTED");
+        System.err.println("NOT IMPLEMENTED");
     }
 
-    /** Second click: open form **/
+    /** Second click: open form ---------------- **/
 
     public void formSecondClickLink(FormSelectEvent e){
         myApp.datapaneController.showLinkData(myApp.scenario.getLinkWithId(e.itemId));
@@ -410,7 +422,9 @@ public class SelectionManager {
         e.consume();
     }
 
-    /** Privates --------------------------------------- **/
+    /////////////////////////////////////////////////
+    // private
+    /////////////////////////////////////////////////
 
     private void clearSelection(){
         selectedNodes.forEach(x->x.unhighlight());
@@ -426,7 +440,7 @@ public class SelectionManager {
     private void highlightSelection(){
         myApp.graphpaneController.highlight(selectedLinks,selectedNodes,selectedSensors);
         myApp.scenarioTreeController.highlight(selectedLinks,selectedSensors);
-        myApp.statusbarController.highlight(selectedLinks,selectedNodes,selectedSensors);
+        myApp.statusbarController.setText(selectedLinks,selectedNodes,selectedSensors);
     }
 
     private static String getItemName(TreeSelectEvent e){

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
 package otmui.graph.item;
 
 import otmui.graph.color.AbstractColormap;
@@ -16,6 +22,10 @@ public class DrawCell {
     public Polygon polygon;
     public Color mycolor;
 
+    /////////////////////////////////////////////////
+    // construction
+    /////////////////////////////////////////////////
+
     public DrawCell() {
         points = new ArrayList<>();
         polygon = new Polygon();
@@ -24,39 +34,6 @@ public class DrawCell {
 
     public void add_point(Point point){
         points.add(point);
-    }
-
-    public void set_fixed_color(Color color){
-        polygon.setFill(color);
-        mycolor = color;
-    }
-
-    public void set_temporary_color(Color color) {
-        polygon.setFill(color);
-    }
-
-    public void highlight(Color color){
-        polygon.setFill(color);
-    }
-
-    public void unhighlight(){
-        polygon.setFill(mycolor);
-    }
-
-    public Point get_downstream_point(){
-        return points.get(0);
-    }
-
-    public Point get_second_from_down(){
-        return points.get(1);
-    }
-
-    public Point get_second_from_up(){
-        return points.get(points.size()-2);
-    }
-
-    public Point get_upstream_point(){
-        return points.get(points.size()-1);
     }
 
     public void make_polygon(Point pup, Point pdn, float offset, float width, AbstractColormap colormap, Link.RoadType road_type) {
@@ -111,6 +88,51 @@ public class DrawCell {
         // apply color according to road type
         set_fixed_color(colormap.get_color_for_roadtype(road_type));
 
+    }
+
+    /////////////////////////////////////////////////
+    // setText
+    /////////////////////////////////////////////////
+
+    public void highlight(Color color){
+        polygon.setFill(color);
+    }
+
+    public void unhighlight(){
+        polygon.setFill(mycolor);
+    }
+
+    /////////////////////////////////////////////////
+    // color
+    /////////////////////////////////////////////////
+
+    public void set_fixed_color(Color color){
+        polygon.setFill(color);
+        mycolor = color;
+    }
+
+    public void set_temporary_color(Color color) {
+        polygon.setFill(color);
+    }
+
+    /////////////////////////////////////////////////
+    // get
+    /////////////////////////////////////////////////
+
+    public Point get_downstream_point(){
+        return points.get(0);
+    }
+
+    public Point get_second_from_down(){
+        return points.get(1);
+    }
+
+    public Point get_second_from_up(){
+        return points.get(points.size()-2);
+    }
+
+    public Point get_upstream_point(){
+        return points.get(points.size()-1);
     }
 
 }

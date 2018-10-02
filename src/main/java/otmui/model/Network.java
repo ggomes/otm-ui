@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
 package otmui.model;
 
 import otmui.Maps;
@@ -5,9 +11,6 @@ import otmui.Maps;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by gomes on 1/30/2017.
- */
 public class Network {
 
     public Map<Long,Node> nodes;

@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
+
 package otmui.event;
 
 import javafx.event.Event;
@@ -5,9 +12,6 @@ import javafx.event.EventTarget;
 import javafx.event.EventType;
 import javafx.scene.input.MouseEvent;
 
-/**
- * Created by gomes on 2/1/2017.
- */
 public class TreeSelectEvent extends Event {
 
     public MouseEvent event;

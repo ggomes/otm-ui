@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
 package otmui;
 
 import api.API;
@@ -26,7 +32,7 @@ import java.util.Properties;
 
 public class MainApp extends Application {
 
-    public APIopen otm;  // runnable BeATS scenario.
+    public APIopen otm;  // runnable OTM scenario.
 
     public Stage stage;
 
@@ -40,14 +46,28 @@ public class MainApp extends Application {
 
     public GlobalParameters params;
 
+    /////////////////////////////////////////////////
+    // launch
+    /////////////////////////////////////////////////
+
+    /**
+     * The main() method is ignored in correctly deployed JavaFX application.
+     * main() serves only as fallback in case the application can not be
+     * launched through deployment artifacts, e.g., in IDEs with limited FX
+     * support. NetBeans ignores main().
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
 
         this.stage = stage;
 
-        // construct the BeATS api .....................
-        API api = new API();
-        this.otm = new APIopen(api);
+        // construct the OTM api .....................
+        this.otm = new APIopen(new API());
 
         // UI ...........................................
         selectionManager = new SelectionManager(this);
@@ -101,7 +121,7 @@ public class MainApp extends Application {
         // put into a scene and show
         Scene scene = new Scene(layout);
         scene.getStylesheets().add("/styles/Styles.css");
-        stage.setTitle("BeATS Browser");
+        stage.setTitle("OTM Browser");
         stage.setScene(scene);
 
         // create parameters
@@ -132,7 +152,7 @@ public class MainApp extends Application {
         scene.addEventFilter(GraphSelectEvent.CLICK1_SENSOR, e->selectionManager.graphFirstClickSensor(e));
         scene.addEventFilter(GraphSelectEvent.CLICK2_SENSOR, e->selectionManager.graphSecondClickSensor(e));
 
-        // tree, highlight
+        // tree, setText
         scene.addEventFilter(TreeSelectEvent.CLICK1, e->selectionManager.treeFirstClick(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_LINK,e->selectionManager.treeSecondClickLink(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_COMMODITY,e->selectionManager.treeSecondClickCommodity(e));
@@ -169,38 +189,9 @@ public class MainApp extends Application {
         scene.addEventFilter(ParameterChange.DISPLAY,e->Event.fireEvent(scene,new ChangeScenarioEvent(scenario)));
     }
 
-    private void processNewScenario(Scenario scenario)  {
-        if(scenario==null)
-            return;
-        try {
-            this.scenario = scenario;
-            scenarioTreeController.loadScenario(scenario);
-            graphpaneController.loadScenario(scenario);
-            datapaneController.loadScenario(scenario);
-            statusbarController.loadScenario(scenario);
-        } catch (OTMException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void runSimulation(){
-        OTMTask beats_task = new OTMTask(scenario.get_beats(),params,this);
-        statusbarController.bind_progress(beats_task.progressProperty());
-        statusbarController.bind_text(beats_task.messageProperty());
-        new Thread(beats_task).start();
-    }
-
-    /**
-     * The main() method is ignored in correctly deployed JavaFX application.
-     * main() serves only as fallback in case the application can not be
-     * launched through deployment artifacts, e.g., in IDEs with limited FX
-     * support. NetBeans ignores main().
-     *
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
+    /////////////////////////////////////////////////
+    // get
+    /////////////////////////////////////////////////
 
     public static String getGitHash(){
         InputStream inputStream = MainApp.class.getResourceAsStream("/sim.properties");
@@ -220,6 +211,24 @@ public class MainApp extends Application {
             }
         }
         return properties.getProperty("sim.git");
+    }
+
+    /////////////////////////////////////////////////
+    // private
+    /////////////////////////////////////////////////
+
+    private void processNewScenario(Scenario scenario)  {
+        if(scenario==null)
+            return;
+        try {
+            this.scenario = scenario;
+            scenarioTreeController.loadScenario(scenario);
+            graphpaneController.loadScenario(scenario);
+            datapaneController.loadScenario(scenario);
+            statusbarController.loadScenario(scenario);
+        } catch (OTMException e) {
+            e.printStackTrace();
+        }
     }
 
 }

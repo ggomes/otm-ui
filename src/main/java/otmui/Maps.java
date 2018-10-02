@@ -1,10 +1,13 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
 package otmui;
 
 import otmui.utils.BijectiveMap;
 
-/**
- * Created by gomes on 2/6/2017.
- */
 public class Maps {
 
     public static BijectiveMap<ElementType,String> elementName = new BijectiveMap();

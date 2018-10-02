@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
 package otmui.view;
 
 import otmui.model.Scenario;
@@ -7,9 +13,6 @@ import javafx.scene.Node;
 
 import java.util.stream.Collectors;
 
-/**
- * Created by gomes on 2/5/2017.
- */
 public class SubnetworkData extends AbstractData {
 
     public SubnetworkData(Subnetwork subnetwork, Scenario scenario) {

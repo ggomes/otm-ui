@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
+
 package otmui.controller;
 
 import error.OTMException;
@@ -34,6 +41,10 @@ public class GraphPaneController implements Initializable {
     @FXML
     private AnchorPane graphLayout;
 
+    /////////////////////////////////////////////////
+    // construction
+    /////////////////////////////////////////////////
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         graphContainer = new GraphContainer();
@@ -57,17 +68,15 @@ public class GraphPaneController implements Initializable {
         Graph graph = new Graph(scenario,myApp.params);
         graphContainer.set_graph(graph);
 
-        // enable double click of drawNodes, and relocate on the canvas
+        // enable double click of drawNodes, and recenter on the canvas
         for (AbstractDrawNode drawNode : graph.getNodes()) {
             drawNode.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     switch(mouseEvent.getClickCount()) {
                         case 1:
-                            System.out.println("Single click node");
                             Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1_NODE, mouseEvent));
                             break;
                         case 2:
-                            System.out.println("Double click node");
                             Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_NODE, mouseEvent));
                             break;
                     }
@@ -109,6 +118,10 @@ public class GraphPaneController implements Initializable {
 
     }
 
+    /////////////////////////////////////////////////
+    // highlighting
+    /////////////////////////////////////////////////
+
     public void highlightNode(AbstractDrawNode drawNode){
         drawNode.highlight();
     }
@@ -147,7 +160,10 @@ public class GraphPaneController implements Initializable {
         selectSensors.forEach(x-> highlightSensor(x));
     }
 
-    /** Focusing **/
+    /////////////////////////////////////////////////
+    // focusing the graph
+    /////////////////////////////////////////////////
+
     public void focusGraphOnSelection(){
 
         Set<Double> allX = new HashSet<>();
@@ -176,18 +192,22 @@ public class GraphPaneController implements Initializable {
         allX.addAll(drawLinks.stream().map(x->x.getEndPosX()).collect(Collectors.toSet()));
         allY.addAll(drawLinks.stream().map(x->x.getEndPosY()).collect(Collectors.toSet()));
 
-        // compute bounding box
-        Double minX = allX.stream().min(Double::compareTo).get();
-        Double maxX = allX.stream().max(Double::compareTo).get();
-        Double minY = allY.stream().min(Double::compareTo).get();
-        Double maxY = allY.stream().max(Double::compareTo).get();
-
-        System.out.println("minX: " + minX);
-        System.out.println("maxX: " + maxX);
-        System.out.println("minY: " + minY);
-        System.out.println("maxY: " + maxY);
+//        // compute bounding box
+//        Double minX = allX.stream().min(Double::compareTo).get();
+//        Double maxX = allX.stream().max(Double::compareTo).get();
+//        Double minY = allY.stream().min(Double::compareTo).get();
+//        Double maxY = allY.stream().max(Double::compareTo).get();
+//
+//        System.out.println("minX: " + minX);
+//        System.out.println("maxX: " + maxX);
+//        System.out.println("minY: " + minY);
+//        System.out.println("maxY: " + maxY);
 
     }
+
+    /////////////////////////////////////////////////
+    // animation
+    /////////////////////////////////////////////////
 
     public void draw_link_state(AnimationInfo info,AbstractColormap colormap){
 
@@ -199,7 +219,7 @@ public class GraphPaneController implements Initializable {
         for(AbstractDrawLink drawLink : graphContainer.get_graph().links.values()) {
             AbstractLinkInfo linkInfo = info.link_info.get(drawLink.id);
             for (AbstractDrawLanegroup drawLanegroup : drawLink.draw_lanegroups)
-                drawLanegroup.draw_state(linkInfo.lanegroup_info.get(drawLanegroup.id),colormap);
+                drawLanegroup.draw_state(linkInfo.lanegroup_info.get(drawLanegroup.id), colormap);
         }
 
     }

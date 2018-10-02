@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
+
 package otmui.controller;
 
 import otmui.MainApp;
@@ -16,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import xml.JaxbLoader;
 
 import java.io.File;
 import java.net.URL;
@@ -29,12 +37,16 @@ public class MenuController implements Initializable {
     private static Map<String,String> recentFiles = new HashMap<>();
 
     static {
-        recentFiles.put("seven links pq","C:\\Users\\gomes\\code\\ta_solver\\configfiles\\seven_links_pq.xml");
-        recentFiles.put("seven links mn","C:\\Users\\gomes\\code\\ta_solver\\configfiles\\seven_links_mn.xml");
-        recentFiles.put("test net 4"    ,"C:\\Users\\gomes\\code\\otmui\\data\\config\\cfg_net4.xml");
-        recentFiles.put("L1 estim"      ,"C:\\Users\\gomes\\code\\aimsun_extract_freeway\\output\\L0_scenario_v22.xml");
-        recentFiles.put("aimsun full"   ,"C:\\Users\\gomes\\Dropbox\\gabriel\\work\\aimsun2xml_2017_11_07\\beats_scenario_fixed.xml");
-        recentFiles.put("intersection"   ,"C:\\Users\\gomes\\Dropbox\\gabriel\\work\\otm\\beats_share\\intersection.xml");
+        for(String testname : JaxbLoader.get_test_config_names()){
+            recentFiles.put(testname,JaxbLoader.get_test_fullpath(testname));
+        }
+
+//        recentFiles.put("seven links pq","C:\\Users\\gomes\\code\\ta_solver\\configfiles\\seven_links_pq.xml");
+//        recentFiles.put("seven links mn","C:\\Users\\gomes\\code\\ta_solver\\configfiles\\seven_links_mn.xml");
+//        recentFiles.put("test net 4"    ,"C:\\Users\\gomes\\code\\otmui\\data\\config\\cfg_net4.xml");
+//        recentFiles.put("L1 estim"      ,"C:\\Users\\gomes\\code\\aimsun_extract_freeway\\output\\L0_scenario_v22.xml");
+//        recentFiles.put("aimsun full"   ,"C:\\Users\\gomes\\Dropbox\\gabriel\\work\\aimsun2xml_2017_11_07\\beats_scenario_fixed.xml");
+//        recentFiles.put("intersection"   ,"C:\\Users\\gomes\\Dropbox\\gabriel\\work\\otm\\beats_share\\intersection.xml");
     }
 
     @FXML
@@ -42,6 +54,10 @@ public class MenuController implements Initializable {
 
     @FXML
     private Menu openRecent;
+
+    /////////////////////////////////////////////////
+    // construction
+    /////////////////////////////////////////////////
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -55,6 +71,10 @@ public class MenuController implements Initializable {
     public void setApp(MainApp myApp){
         this.myApp = myApp;
     }
+
+    /////////////////////////////////////////////////
+    // FXML
+    /////////////////////////////////////////////////
 
     @FXML
     private void menuOpen(ActionEvent event) {
@@ -77,7 +97,7 @@ public class MenuController implements Initializable {
 
     @FXML
     private void menuAction(ActionEvent event) {
-        System.out.println("\n");
+
     }
 
     @FXML
@@ -86,7 +106,8 @@ public class MenuController implements Initializable {
         if(!recentFiles.containsKey(item))
             return;
         try {
-            loadFile(recentFiles.get(item));
+//            loadFile(recentFiles.get(item));
+            loadTest(item);
         } catch (OTMException ex) {
             UIFactory.createExceptionDialog(ex).showAndWait();
         }
@@ -94,10 +115,10 @@ public class MenuController implements Initializable {
 
     @FXML
     private void menuRun(ActionEvent event) {
-        OTMTask beats_task = new OTMTask(myApp.otm,myApp.params,myApp);
-        myApp.statusbarController.bind_progress(beats_task.progressProperty());
-        myApp.statusbarController.bind_text(beats_task.messageProperty());
-        new Thread(beats_task).start();
+        OTMTask otm_task = new OTMTask(myApp.otm,myApp.params,myApp);
+        myApp.statusbarController.bind_progress(otm_task.progressProperty());
+        myApp.statusbarController.bind_text(otm_task.messageProperty());
+        new Thread(otm_task).start();
     }
 
     @FXML
@@ -132,14 +153,39 @@ public class MenuController implements Initializable {
         alert.showAndWait();
     }
 
+    /////////////////////////////////////////////////
+    // private
+    /////////////////////////////////////////////////
+
     private void loadFile(String filename) throws OTMException {
 
-        // TEMPORARY!!! DONT VALIDATE THE INPUT FILE
+        // TODO TEMPORARY!!! DONT VALIDATE THE INPUT FILE
         boolean validate = false;
 
         // load the scenario from XML
         try {
             myApp.otm.api.load(filename,myApp.params.sim_dt.floatValue(),validate);
+        } catch (Exception e) {
+            throw new OTMException(e);
+        }
+
+        // check
+        if(myApp.otm.scenario()==null)
+            return;
+
+        Scenario scenario = new Scenario(myApp.otm);
+
+        if(scenario!=null)
+            menubar.getScene().getRoot().fireEvent(new ChangeScenarioEvent(scenario));
+    }
+
+    private void loadTest(String testname) throws OTMException {
+
+        boolean validate = false;
+
+        // load the scenario from XML
+        try {
+            myApp.otm.api.load_test(testname+".xml",myApp.params.sim_dt.floatValue(),validate,"ctm");
         } catch (Exception e) {
             throw new OTMException(e);
         }

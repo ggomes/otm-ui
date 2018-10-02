@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2018, Gabriel Gomes
+ * All rights reserved.
+ * This source code is licensed under the standard 3-clause BSD license found
+ * in the LICENSE file in the root directory of this source tree.
+ */
 package otmui.graph.item;
 
 import otmui.graph.color.AbstractColormap;
@@ -20,6 +26,10 @@ public class CTMDrawLanegroup extends AbstractDrawLanegroup {
     public List<DrawCell> draw_cells;
     public float euclid_cell_length_m;
     public float road_cell_length_km;
+
+    /////////////////////////////////////////////////
+    // construction
+    /////////////////////////////////////////////////
 
     public CTMDrawLanegroup(models.ctm.LaneGroup macro_lg, List<Segment> segments, float road2euclid) throws OTMException {
 
@@ -88,6 +98,31 @@ public class CTMDrawLanegroup extends AbstractDrawLanegroup {
     }
 
     @Override
+    public List<Polygon> make_polygons(Link link, float lane_width, float link_offset, AbstractColormap colormap) {
+        float width = link.getLanes() * lane_width;
+        List<Polygon> polygons = new ArrayList<>();
+
+        for (int i = 0; i < draw_cells.size(); i++) {
+
+            // get a points upstream and downstream of this cell
+            Point pdn = i == 0 ? null :
+                    draw_cells.get(i-1).get_second_from_up();
+            Point pup = i == draw_cells.size() - 1 ? null :
+                    draw_cells.get(i+1).get_second_from_down();
+
+            // make the polygon for the cell
+            DrawCell drawcell = draw_cells.get(i);
+            drawcell.make_polygon(pup, pdn, link_offset, width,colormap,link.bLink.road_type);
+            polygons.add(drawcell.polygon);
+        }
+        return polygons;
+    }
+
+    /////////////////////////////////////////////////
+    // highlighting
+    /////////////////////////////////////////////////
+
+    @Override
     public void unhighlight() {
         for(DrawCell cell : draw_cells)
             cell.unhighlight();
@@ -99,31 +134,14 @@ public class CTMDrawLanegroup extends AbstractDrawLanegroup {
             cell.highlight(color);
     }
 
+    /////////////////////////////////////////////////
+    // coloring
+    /////////////////////////////////////////////////
+
     @Override
     public void set_temporary_color(Color color) {
         for(DrawCell cell : draw_cells)
             cell.set_temporary_color(color);
-    }
-
-    @Override
-    public List<Polygon> make_polygons(Link link, float lane_width, float link_offset, AbstractColormap colormap) {
-        float width = link.getLanes() * lane_width;
-        List<Polygon> polygons = new ArrayList<>();
-
-        for (int i = 0; i < draw_cells.size(); i++) {
-
-            // get a points upstream and downstream of this cell
-            Point p_dwn = i == 0 ? null :
-                    draw_cells.get(i-1).get_second_from_up();
-            Point p_up = i == draw_cells.size() - 1 ? null :
-                    draw_cells.get(i+1).get_second_from_down();
-
-            // make the polygon for the cell
-            DrawCell drawcell = draw_cells.get(i);
-            drawcell.make_polygon(p_up, p_dwn, link_offset, width,colormap,link.bLink.road_type);
-            polygons.add(drawcell.polygon);
-        }
-        return polygons;
     }
 
     @Override
@@ -135,7 +153,6 @@ public class CTMDrawLanegroup extends AbstractDrawLanegroup {
     }
 
     protected void draw_state_internal(AbstractLaneGroupInfo laneGroupInfo, AbstractColormap colormap,float max_vehicles){
-
         output.animation.macro.LaneGroupInfo lg_info = (output.animation.macro.LaneGroupInfo) laneGroupInfo;
         for(int i=0;i<lg_info.cell_info.size();i++){
             CellInfo cellinfo = lg_info.cell_info.get(i);
@@ -145,6 +162,7 @@ public class CTMDrawLanegroup extends AbstractDrawLanegroup {
             Color color = new Color(rgb.red,rgb.green,rgb.blue,1.0);
             drawCell.set_temporary_color(color);
         }
+
     }
 
 }
