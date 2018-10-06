@@ -21,7 +21,7 @@ public class PQDrawLink extends AbstractDrawLink  {
 
     @Override
     public AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg, List<Segment> segments, float road2euclid) throws OTMException {
-        return new PQDrawLanegroup((models.pq.LaneGroup) lg,segments,road2euclid);
+        return new PQDrawLanegroup(lg,segments,road2euclid);
     }
 
 

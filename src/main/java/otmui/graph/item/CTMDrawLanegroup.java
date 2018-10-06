@@ -6,6 +6,7 @@
  */
 package otmui.graph.item;
 
+import common.AbstractLaneGroup;
 import otmui.graph.color.AbstractColormap;
 import otmui.graph.color.RGB;
 import otmui.model.Link;
@@ -31,65 +32,67 @@ public class CTMDrawLanegroup extends AbstractDrawLanegroup {
     // construction
     /////////////////////////////////////////////////
 
-    public CTMDrawLanegroup(models.ctm.LaneGroup macro_lg, List<Segment> segments, float road2euclid) throws OTMException {
+    public CTMDrawLanegroup(AbstractLaneGroup macro_lg, List<Segment> segments, float road2euclid) throws OTMException {
 
         super(macro_lg);
 
-        this.max_vehicles_per_cell = macro_lg.max_vehicles / macro_lg.cells.size();
+        throw new OTMException("UNCOMMENT THIS.");
 
-        draw_cells = new ArrayList<>();
-
-        // length of a cell
-        road_cell_length_km = macro_lg.length / macro_lg.cells.size() / 1000f;
-        euclid_cell_length_m = road_cell_length_km * road2euclid * 1000f;
-
-        // initialize segment
-        int seg_ind = 0;
-        Vector curr_direction = segments.get(seg_ind).u;
-        float segment_remaining = segments.get(seg_ind).euclid_length;
-        Point latest_point = segments.get(seg_ind).p0;
-
-        // traverse cells
-        for (int i = 0; i < macro_lg.cells.size(); i++) {
-
-            DrawCell draw_cell = new DrawCell();
-            this.add_drawcell(draw_cell);
-
-            draw_cell.add_point(latest_point);
-
-            // terminate either with cell or segment end
-            float cell_remaining = euclid_cell_length_m;
-            boolean done_with_cell = false;
-            while (!done_with_cell) {
-
-                // go to next segment, same cell
-                if (segment_remaining <= cell_remaining) {
-
-                    float advance = segment_remaining;
-                    cell_remaining -= advance;
-                    latest_point = Vector.sum(latest_point, Vector.mult(curr_direction, advance));
-                    done_with_cell = cell_remaining<0.01;
-
-                    if(!done_with_cell) {
-                        seg_ind += 1;
-                        if (seg_ind >= segments.size())
-                            throw new OTMException("Went beyond last segment.");
-                        curr_direction = segments.get(seg_ind).u;
-                        segment_remaining = segments.get(seg_ind).euclid_length;
-                    }
-
-                } else { // go to next cell, same segment
-
-                    float advance = cell_remaining;
-                    segment_remaining -= advance;
-                    latest_point = Vector.sum(latest_point, Vector.mult(curr_direction, advance));
-
-                    done_with_cell = true;
-                }
-
-                draw_cell.add_point(latest_point);
-            }
-        }
+//        this.max_vehicles_per_cell = macro_lg.max_vehicles / macro_lg.cells.size();
+//
+//        draw_cells = new ArrayList<>();
+//
+//        // length of a cell
+//        road_cell_length_km = macro_lg.length / macro_lg.cells.size() / 1000f;
+//        euclid_cell_length_m = road_cell_length_km * road2euclid * 1000f;
+//
+//        // initialize segment
+//        int seg_ind = 0;
+//        Vector curr_direction = segments.get(seg_ind).u;
+//        float segment_remaining = segments.get(seg_ind).euclid_length;
+//        Point latest_point = segments.get(seg_ind).p0;
+//
+//        // traverse cells
+//        for (int i = 0; i < macro_lg.cells.size(); i++) {
+//
+//            DrawCell draw_cell = new DrawCell();
+//            this.add_drawcell(draw_cell);
+//
+//            draw_cell.add_point(latest_point);
+//
+//            // terminate either with cell or segment end
+//            float cell_remaining = euclid_cell_length_m;
+//            boolean done_with_cell = false;
+//            while (!done_with_cell) {
+//
+//                // go to next segment, same cell
+//                if (segment_remaining <= cell_remaining) {
+//
+//                    float advance = segment_remaining;
+//                    cell_remaining -= advance;
+//                    latest_point = Vector.sum(latest_point, Vector.mult(curr_direction, advance));
+//                    done_with_cell = cell_remaining<0.01;
+//
+//                    if(!done_with_cell) {
+//                        seg_ind += 1;
+//                        if (seg_ind >= segments.size())
+//                            throw new OTMException("Went beyond last segment.");
+//                        curr_direction = segments.get(seg_ind).u;
+//                        segment_remaining = segments.get(seg_ind).euclid_length;
+//                    }
+//
+//                } else { // go to next cell, same segment
+//
+//                    float advance = cell_remaining;
+//                    segment_remaining -= advance;
+//                    latest_point = Vector.sum(latest_point, Vector.mult(curr_direction, advance));
+//
+//                    done_with_cell = true;
+//                }
+//
+//                draw_cell.add_point(latest_point);
+//            }
+//        }
 
     }
 

@@ -7,6 +7,7 @@
 package otmui.model;
 
 import actuator.AbstractActuator;
+import common.AbstractLaneGroupLongitudinal;
 import otmui.graph.item.AbstractDrawLink;
 import otmui.utils.Point;
 import common.AbstractLaneGroup;
@@ -56,28 +57,28 @@ public class Link {
     }
 
     public AddLanes getLeftLanes(){
-        if( bLink.road_geom==null || bLink.road_geom.dn_left==null || bLink.road_geom.dn_left.lanes==0 )
+        if( bLink.road_geom==null || bLink.road_geom.dn_in==null || bLink.road_geom.dn_in.lanes==0 )
             return null;
-        return new AddLanes(bLink.road_geom.dn_left);
+        return new AddLanes(bLink.road_geom.dn_in);
     }
 
     public AddLanes getRightLanes(){
-        if( bLink.road_geom==null || bLink.road_geom.dn_right==null || bLink.road_geom.dn_right.lanes==0 )
+        if( bLink.road_geom==null || bLink.road_geom.dn_out==null || bLink.road_geom.dn_out.lanes==0 )
             return null;
-        return new AddLanes(bLink.road_geom.dn_right);
+        return new AddLanes(bLink.road_geom.dn_out);
     }
 
     public AddLanes getHOVlanes(){
 
-        if( bLink.road_geom.dn_right.lanes==0 )
+        if( bLink.road_geom.dn_out.lanes==0 )
             return null;
-        return new AddLanes(bLink.road_geom.dn_right);
+        return new AddLanes(bLink.road_geom.dn_out);
     }
 
     /** Lanegroups *******************************************/
 
-    public Collection<AbstractLaneGroup> getLanegroups(){
-        return bLink.lanegroups.values();
+    public Collection<AbstractLaneGroupLongitudinal> getLongLanegroups(){
+        return bLink.long_lanegroups.values();
     }
 
     /** Model *******************************************/

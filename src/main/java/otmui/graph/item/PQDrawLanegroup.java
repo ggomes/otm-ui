@@ -6,6 +6,7 @@
  */
 package otmui.graph.item;
 
+import common.AbstractLaneGroup;
 import otmui.graph.color.AbstractColormap;
 import otmui.model.Link;
 import otmui.utils.Point;
@@ -22,7 +23,7 @@ public class PQDrawLanegroup extends AbstractDrawLanegroup  {
 
     public DrawCell cell;
 
-    public PQDrawLanegroup(models.pq.LaneGroup meso_lg, List<Segment> segments, float road2euclid) throws OTMException {
+    public PQDrawLanegroup(AbstractLaneGroup meso_lg, List<Segment> segments, float road2euclid) throws OTMException {
 
         super(meso_lg);
 

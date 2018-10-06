@@ -27,7 +27,7 @@ public abstract class AbstractDrawLanegroup {
     abstract public void draw_state(AbstractLaneGroupInfo laneGroupInfo, AbstractColormap colormap);
 
     public AbstractDrawLanegroup(AbstractLaneGroup lg) {
-        this.lanes = lg.num_lanes();
+        this.lanes = lg.num_lanes;
         this.id = lg.id;
     }
 

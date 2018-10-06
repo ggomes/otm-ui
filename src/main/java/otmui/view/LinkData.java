@@ -6,6 +6,7 @@
  */
 package otmui.view;
 
+import common.AbstractLaneGroupLongitudinal;
 import otmui.event.FormSelectEvent;
 import otmui.model.AddLanes;
 import otmui.model.Link;
@@ -74,7 +75,7 @@ public class LinkData extends AbstractData {
         X.add(UIFactory.createLabelLabel("link type",link.getModelType().toString()).pane);
 
         // lanegroups
-        Collection<AbstractLaneGroup> lanegroups = link.getLanegroups();
+        Collection<AbstractLaneGroupLongitudinal> lanegroups = link.getLongLanegroups();
         List<String> lanegroupIds = lanegroups.stream().map(x->String.format("%d",x.id)).collect(Collectors.toList());
         X.add(UIFactory.createLabelCombobox("lanegroups",lanegroupIds).pane);
 

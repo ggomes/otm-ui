@@ -21,7 +21,7 @@ public class MNDrawLink extends AbstractDrawLink {
 
     @Override
     public AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg, List<Segment> segments, float road2euclid) throws OTMException {
-        return new MNDrawLanegroup((models.ctm.LaneGroup) lg,segments,road2euclid);
+        return new MNDrawLanegroup(lg,segments,road2euclid);
     }
 
 }

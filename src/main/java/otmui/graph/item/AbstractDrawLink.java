@@ -31,6 +31,10 @@ public abstract class AbstractDrawLink extends Group {
 
     abstract AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg, List<Segment> segments, float road2euclid) throws OTMException ;
 
+    /////////////////////////////////////////////////
+    // construction
+    /////////////////////////////////////////////////
+
     public AbstractDrawLink(otmui.model.Link link, AbstractDrawNode startNode, AbstractDrawNode endNode, float lane_width, float link_offset, AbstractColormap colormap) throws OTMException {
         this.link = link;
         this.id = link.getId();
@@ -43,15 +47,7 @@ public abstract class AbstractDrawLink extends Group {
         if(Float.isInfinite(this.max_vehicles))
             this.max_vehicles = (float) (link.bLink.length * link.bLink.full_lanes * (180.0 / 1600.0));
 
-        draw_road(link,startNode,endNode,lane_width,link_offset,colormap);
-
-    }
-
-    /** *****************
-     * Draw road
-     ******************** */
-
-    public final void draw_road(Link link, AbstractDrawNode startNode, AbstractDrawNode endNode, float lane_width, float link_offset, AbstractColormap colormap) throws OTMException {
+        // Draw the road ....................................................
 
         // traverse the points from downstream to upstream. Create Segments
         List<Point> points = link.getShape();
@@ -65,19 +61,21 @@ public abstract class AbstractDrawLink extends Group {
         float road2euclid = euclid_segment_length / road_segment_length;
 
         // populate draw_lanegroups
-        for (AbstractLaneGroup lg : link.bLink.lanegroups.values())
-            draw_lanegroups.add(create_draw_lanegroup(lg,segments,road2euclid));
+        throw new OTMException("UNCOMMENT THIS");
+//        for (AbstractLaneGroup lg : link.bLink.lanegroups.values())
+//            draw_lanegroups.add(create_draw_lanegroup(lg,segments,road2euclid));
+//
+//        // make the polygons
+//        for (AbstractDrawLanegroup draw_lanegroup : draw_lanegroups) {
+//            List<Polygon> polygons = draw_lanegroup.make_polygons(link, lane_width, link_offset, colormap);
+//            getChildren().addAll(polygons);
+//        }
 
-        // make the polygons
-        for (AbstractDrawLanegroup draw_lanegroup : draw_lanegroups) {
-            List<Polygon> polygons = draw_lanegroup.make_polygons(link, lane_width, link_offset, colormap);
-            getChildren().addAll(polygons);
-        }
     }
 
-    /** *****************
-     * Change color
-    ******************** */
+    /////////////////////////////////////////////////
+    // highlight
+    /////////////////////////////////////////////////
 
     public void highlight() {
         draw_lanegroups.forEach(x -> x.highlight(color_highlight));
@@ -87,9 +85,9 @@ public abstract class AbstractDrawLink extends Group {
         draw_lanegroups.forEach(x -> x.unhighlight());
     }
 
-    /** *****************
-     * Getters
-     ******************** */
+    /////////////////////////////////////////////////
+    // get
+    /////////////////////////////////////////////////
 
     public Double getStartPosX(){
         return startNode.xpos;

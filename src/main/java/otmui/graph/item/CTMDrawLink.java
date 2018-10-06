@@ -21,7 +21,7 @@ public class CTMDrawLink extends AbstractDrawLink {
 
     @Override
     public AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg, List<Segment> segments, float road2euclid) throws OTMException {
-        return new CTMDrawLanegroup((models.ctm.LaneGroup) lg,segments,road2euclid);
+        return new CTMDrawLanegroup(lg,segments,road2euclid);
     }
 
 }
