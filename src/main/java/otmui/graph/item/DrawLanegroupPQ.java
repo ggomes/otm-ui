@@ -19,11 +19,11 @@ import output.animation.AbstractLaneGroupInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PQDrawLanegroup extends AbstractDrawLanegroup  {
+public class DrawLanegroupPQ extends AbstractDrawLanegroup  {
 
     public DrawCell cell;
 
-    public PQDrawLanegroup(AbstractLaneGroup meso_lg, List<Segment> segments, float road2euclid) throws OTMException {
+    public DrawLanegroupPQ(AbstractLaneGroup meso_lg, List<Segment> segments, float road2euclid) throws OTMException {
 
         super(meso_lg);
 

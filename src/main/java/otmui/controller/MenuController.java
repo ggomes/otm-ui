@@ -161,10 +161,11 @@ public class MenuController implements Initializable {
 
         // TODO TEMPORARY!!! DONT VALIDATE THE INPUT FILE
         boolean validate = false;
+        String global_model = "ctm";
 
         // load the scenario from XML
         try {
-            myApp.otm.api.load(filename,myApp.params.sim_dt.floatValue(),validate);
+            myApp.otm.api.load(filename,myApp.params.sim_dt.floatValue(),validate,global_model);
         } catch (Exception e) {
             throw new OTMException(e);
         }

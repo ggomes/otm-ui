@@ -11,7 +11,6 @@ import otmui.graph.color.AbstractColormap;
 import otmui.graph.color.RGB;
 import otmui.model.Link;
 import otmui.utils.Point;
-import otmui.utils.Vector;
 import error.OTMException;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -21,7 +20,7 @@ import output.animation.macro.CellInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CTMDrawLanegroup extends AbstractDrawLanegroup {
+public class DrawLanegroupCTM extends AbstractDrawLanegroup {
 
     public float max_vehicles_per_cell;
     public List<DrawCell> draw_cells;
@@ -32,7 +31,7 @@ public class CTMDrawLanegroup extends AbstractDrawLanegroup {
     // construction
     /////////////////////////////////////////////////
 
-    public CTMDrawLanegroup(AbstractLaneGroup macro_lg, List<Segment> segments, float road2euclid) throws OTMException {
+    public DrawLanegroupCTM(AbstractLaneGroup macro_lg, List<Segment> segments, float road2euclid) throws OTMException {
 
         super(macro_lg);
 

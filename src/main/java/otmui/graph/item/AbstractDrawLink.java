@@ -60,8 +60,8 @@ public abstract class AbstractDrawLink extends Group {
         float road_segment_length = link.bLink.length;
         float road2euclid = euclid_segment_length / road_segment_length;
 
-        // populate draw_lanegroups
-        throw new OTMException("UNCOMMENT THIS");
+        throw new OTMException("UNCOMMENT THSI");
+//        // populate draw_lanegroups
 //        for (AbstractLaneGroup lg : link.bLink.lanegroups.values())
 //            draw_lanegroups.add(create_draw_lanegroup(lg,segments,road2euclid));
 //
