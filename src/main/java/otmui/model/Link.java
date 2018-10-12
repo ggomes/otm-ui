@@ -7,10 +7,9 @@
 package otmui.model;
 
 import actuator.AbstractActuator;
-import common.AbstractLaneGroupLongitudinal;
+import common.AbstractLaneGroup;
 import otmui.graph.item.AbstractDrawLink;
 import otmui.utils.Point;
-import common.AbstractLaneGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,8 +76,8 @@ public class Link {
 
     /** Lanegroups *******************************************/
 
-    public Collection<AbstractLaneGroupLongitudinal> getLongLanegroups(){
-        return bLink.long_lanegroups.values();
+    public Collection<AbstractLaneGroup> getDwnLaneGroups(){
+        return bLink.lanegroups_flwdn.values();
     }
 
     /** Model *******************************************/

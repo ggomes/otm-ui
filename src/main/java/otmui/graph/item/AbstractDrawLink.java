@@ -16,7 +16,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class AbstractDrawLink extends Group {
 
@@ -60,16 +62,22 @@ public abstract class AbstractDrawLink extends Group {
         float road_segment_length = link.bLink.length;
         float road2euclid = euclid_segment_length / road_segment_length;
 
-        throw new OTMException("UNCOMMENT THSI");
-//        // populate draw_lanegroups
-//        for (AbstractLaneGroup lg : link.bLink.lanegroups.values())
-//            draw_lanegroups.add(create_draw_lanegroup(lg,segments,road2euclid));
-//
-//        // make the polygons
-//        for (AbstractDrawLanegroup draw_lanegroup : draw_lanegroups) {
-//            List<Polygon> polygons = draw_lanegroup.make_polygons(link, lane_width, link_offset, colormap);
-//            getChildren().addAll(polygons);
-//        }
+        // populate draw_lanegroups
+        Set<AbstractLaneGroup> all_lgs = new HashSet<>();
+        all_lgs.addAll(link.bLink.lanegroups_flwdn.values());
+        if(link.bLink.lanegroup_flwside_in!=null)
+            all_lgs.add(link.bLink.lanegroup_flwside_in);
+        if(link.bLink.lanegroup_flwside_out!=null)
+            all_lgs.add(link.bLink.lanegroup_flwside_out);
+
+        for (AbstractLaneGroup lg : all_lgs)
+            draw_lanegroups.add(create_draw_lanegroup(lg,segments,road2euclid));
+
+        // make the polygons
+        for (AbstractDrawLanegroup draw_lanegroup : draw_lanegroups) {
+            List<Polygon> polygons = draw_lanegroup.make_polygons(link, lane_width, link_offset, colormap);
+            getChildren().addAll(polygons);
+        }
 
     }
 

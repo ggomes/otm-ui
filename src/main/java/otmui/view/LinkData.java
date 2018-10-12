@@ -6,17 +6,17 @@
  */
 package otmui.view;
 
-import common.AbstractLaneGroupLongitudinal;
+import common.AbstractLaneGroup;
 import otmui.event.FormSelectEvent;
 import otmui.model.AddLanes;
 import otmui.model.Link;
-import common.AbstractLaneGroup;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.Node;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LinkData extends AbstractData {
@@ -75,7 +75,7 @@ public class LinkData extends AbstractData {
         X.add(UIFactory.createLabelLabel("link type",link.getModelType().toString()).pane);
 
         // lanegroups
-        Collection<AbstractLaneGroupLongitudinal> lanegroups = link.getLongLanegroups();
+        Collection<AbstractLaneGroup> lanegroups = link.getDwnLaneGroups();
         List<String> lanegroupIds = lanegroups.stream().map(x->String.format("%d",x.id)).collect(Collectors.toList());
         X.add(UIFactory.createLabelCombobox("lanegroups",lanegroupIds).pane);
 
@@ -105,4 +105,5 @@ public class LinkData extends AbstractData {
         Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK1_NODE,id));
         Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_NODE,id));
     }
+
 }
