@@ -165,7 +165,8 @@ public class MenuController implements Initializable {
 
         // load the scenario from XML
         try {
-            myApp.otm.api.load(filename,myApp.params.sim_dt.floatValue(),validate,global_model);
+            myApp.otm.api.load(filename,myApp.params.sim_dt.floatValue(),validate);
+//            myApp.otm.api.load(filename,myApp.params.sim_dt.floatValue(),validate,global_model);
         } catch (Exception e) {
             throw new OTMException(e);
         }

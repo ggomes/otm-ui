@@ -10,7 +10,9 @@ import otmui.graph.color.AbstractColormap;
 import otmui.model.Link;
 import common.AbstractLaneGroup;
 import error.OTMException;
+import otmui.utils.Arrow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DrawLinkPQ extends AbstractDrawLink  {
@@ -20,9 +22,13 @@ public class DrawLinkPQ extends AbstractDrawLink  {
     }
 
     @Override
-    public AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg, List<Segment> segments, float road2euclid) throws OTMException {
-        return new DrawLanegroupPQ(lg,segments,road2euclid);
+    public AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg, List<Arrow> midline, double lateral_offset, double long_offset, double lane_width,double road2euclid,AbstractColormap colormap) throws OTMException {
+        return new DrawLanegroupPQ(lg,lateral_offset,road2euclid);
     }
 
+    @Override
+    List<Double> get_additional_midline_points(double road2euclid) {
+        return new ArrayList<>();
+    }
 
 }

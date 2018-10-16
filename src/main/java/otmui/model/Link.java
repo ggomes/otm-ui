@@ -9,7 +9,7 @@ package otmui.model;
 import actuator.AbstractActuator;
 import common.AbstractLaneGroup;
 import otmui.graph.item.AbstractDrawLink;
-import otmui.utils.Point;
+import otmui.utils.Vector;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,10 +48,10 @@ public class Link {
         return bLink.length;
     }
 
-    public List<Point> getShape(){
-        ArrayList<Point> x = new ArrayList<>();
+    public List<Vector> getShape(){
+        ArrayList<Vector> x = new ArrayList<>();
         for(common.Point p : bLink.shape)
-            x.add(new Point(p.x,p.y));
+            x.add(new Vector(p.x,p.y));
         return x;
     }
 

@@ -6,7 +6,6 @@
  */
 package otmui.graph.item;
 
-import otmui.utils.Point;
 import otmui.utils.Vector;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -36,24 +35,24 @@ public class DrawSensor extends Group {
 
         float sensor_length = 2f;
 
-        Point p = sensor.geom.position;
-        Vector u = sensor.geom.orientation;
+        Vector p = sensor.geom.start;
+        Vector u = sensor.geom.direction;
 
         int start_lane = sensor.bsensor.start_lane;
         int end_lane = sensor.bsensor.end_lane;
 
         Vector n = Vector.cross_z(u);
 
-        Point inner = Vector.sum(p , Vector.mult( n, (-1f)* (link_offset + (start_lane-1)*lane_width) ) );
-        Point outer = Vector.sum( inner , Vector.mult(n , (-1f)* (end_lane-start_lane+1)*lane_width ) );
+        Vector inner = Vector.sum(p , Vector.mult( n, (-1f)* (link_offset + (start_lane-1)*lane_width) ) );
+        Vector outer = Vector.sum( inner , Vector.mult(n , (-1f)* (end_lane-start_lane+1)*lane_width ) );
 
         Vector mlu = Vector.mult(u , -sensor_length/2) ;
         Vector plu = Vector.mult(u, sensor_length/2 );
 
-        Point uinn = Vector.sum(inner , mlu);
-        Point dinn = Vector.sum(inner , plu);
-        Point uout = Vector.sum(outer , mlu);
-        Point dout = Vector.sum(outer , plu);
+        Vector uinn = Vector.sum(inner , mlu);
+        Vector dinn = Vector.sum(inner , plu);
+        Vector uout = Vector.sum(outer , mlu);
+        Vector dout = Vector.sum(outer , plu);
 
         Polygon polygon = new Polygon();
         polygon.getPoints().addAll(new Double[]{
@@ -77,11 +76,11 @@ public class DrawSensor extends Group {
     }
 
     public double getXPos(){
-        return (double) sensor.geom.position.x;
+        return (double) sensor.geom.start.x;
     }
 
     public double getYPos(){
-        return (double) sensor.geom.position.y;
+        return (double) sensor.geom.start.y;
     }
 
     /** *****************

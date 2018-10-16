@@ -6,22 +6,23 @@
  */
 package otmui.graph.item;
 
+import geometry.Side;
 import otmui.graph.color.AbstractColormap;
-import otmui.model.Link;
-import otmui.utils.Point;
 import common.AbstractLaneGroup;
 import error.OTMException;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import otmui.utils.Arrow;
+import otmui.utils.Vector;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public abstract class AbstractDrawLink extends Group {
 
+    public static float epsilon = 0.5f; // meters
     protected static Color color_highlight = Color.RED;
 
     public otmui.model.Link link;
@@ -31,7 +32,7 @@ public abstract class AbstractDrawLink extends Group {
     public AbstractDrawNode endNode;
     public float max_vehicles;
 
-    abstract AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg, List<Segment> segments, float road2euclid) throws OTMException ;
+    abstract List<Double> get_additional_midline_points(double road2euclid);
 
     /////////////////////////////////////////////////
     // construction
@@ -52,34 +53,101 @@ public abstract class AbstractDrawLink extends Group {
         // Draw the road ....................................................
 
         // traverse the points from downstream to upstream. Create Segments
-        List<Point> points = link.getShape();
-        List<Segment> segments = new ArrayList<>();
-        for (int i = points.size() - 1; i > 0; i--)
-            segments.add(new Segment(points.get(i), points.get(i - 1)));
+        if(link.getShape().size()<2)
+            throw new OTMException("Not enough points for link " + link.getId());
 
-        // road2euclid
-        float euclid_segment_length = segments.stream().map(x -> x.euclid_length).reduce(0f, (i, j) -> i + j);
-        float road_segment_length = link.bLink.length;
-        float road2euclid = euclid_segment_length / road_segment_length;
-
-        // populate draw_lanegroups
-        Set<AbstractLaneGroup> all_lgs = new HashSet<>();
-        all_lgs.addAll(link.bLink.lanegroups_flwdn.values());
-        if(link.bLink.lanegroup_flwside_in!=null)
-            all_lgs.add(link.bLink.lanegroup_flwside_in);
-        if(link.bLink.lanegroup_flwside_out!=null)
-            all_lgs.add(link.bLink.lanegroup_flwside_out);
-
-        for (AbstractLaneGroup lg : all_lgs)
-            draw_lanegroups.add(create_draw_lanegroup(lg,segments,road2euclid));
-
-        // make the polygons
-        for (AbstractDrawLanegroup draw_lanegroup : draw_lanegroups) {
-            List<Polygon> polygons = draw_lanegroup.make_polygons(link, lane_width, link_offset, colormap);
-            getChildren().addAll(polygons);
+        // midline with transversal arrows
+        List<Arrow> midline = new ArrayList<>();
+        double position = 0;
+        for (int i=0;i<link.getShape().size();i++) {
+            if(i>0)
+                position += Vector.length(Vector.diff(link.getShape().get(i) , link.getShape().get(i-1) ));
+            midline.add(new Arrow(position,link.getShape().get(i), null));
         }
 
+        // midline perpendicular directions
+        Vector u = new Vector(midline.get(0).start,midline.get(1).start);
+        midline.get(0).direction = Vector.normalize(Vector.cross_z(u));
+
+        for(int i=1;i<midline.size()-1;i++) {
+            Vector u_this = Vector.normalize(Vector.diff(midline.get(i + 1).start, midline.get(i).start));
+            Vector u_prev = Vector.normalize(Vector.diff(midline.get(i).start, midline.get(i-1).start));
+            midline.get(i).direction = Vector.normalize( Vector.diff(u_this,u_prev));
+        }
+
+        u = new Vector(midline.get(midline.size()-2).start,midline.get(midline.size()-1).start);
+        midline.get(midline.size()-1).direction = Vector.normalize(Vector.cross_z(u));
+
+        // get additional midline points for this model
+        List<Double> add_points = get_additional_midline_points(1d);  // TODO FIX THIS
+
+        // add additional points
+        List<Arrow> add_midline = new ArrayList<>();
+        for(Double p : add_points) {
+            Arrow prev=null;
+            Arrow next=null;
+            for(int i=1;i<midline.size();i++){
+                if(midline.get(i).position>p){
+                    prev = midline.get(i-1);
+                    next = midline.get(i);
+                    break;
+                }
+            }
+
+            if(prev!=null && next!=null){
+                double xi = (p-prev.position)/(next.position-prev.position);
+                Vector start = Vector.linear_combination(prev.start,next.start,(float)xi);
+                Vector direction = Vector.linear_combination(prev.direction,next.direction,(float)xi);
+                add_midline.add(new Arrow(p, start, direction));
+            } else {
+                throw new OTMException("ppoiwr-8 rjbenrb -8");
+            }
+        }
+
+        if(!add_midline.isEmpty())
+            midline.addAll(add_midline);
+
+        // sort midline
+        Collections.sort(midline);
+
+        // distance to next
+        for(int i=0;i<midline.size()-1;i++)
+            midline.get(i).distance_to_next = midline.get(i+1).position - midline.get(i).position;
+
+        // TODO: remove points that are too close together (within epsilon)
+
+        // road2euclid
+        double euclid_segment_length = midline.get(midline.size()-1).position-midline.get(0).position;
+        double road_segment_length = link.bLink.length;
+        double road2euclid = euclid_segment_length / road_segment_length;
+
+        // populate draw_lanegroups
+        for (AbstractLaneGroup lg : link.bLink.lanegroups_flwdn.values()) {
+
+            // offsets of the upstream inner corner
+            double lateral_offset = lane_width*(lg.start_lane_dn-1);
+            double long_offset = lg.side== Side.full ? 0 : link.bLink.length-lg.length;
+
+            AbstractDrawLanegroup draw_lg = create_draw_lanegroup(lg,midline,lateral_offset,long_offset,lane_width, road2euclid,colormap);
+            draw_lanegroups.add(draw_lg);
+            getChildren().addAll(draw_lg.get_polygons());
+        }
+
+//        if(link.bLink.lanegroup_flwside_in!=null)
+//            draw_lanegroups.add(create_draw_lanegroup(link.bLink.lanegroup_flwside_in,segments,road2euclid));
+//
+//        if(link.bLink.lanegroup_flwside_out!=null)
+//            draw_lanegroups.add(create_draw_lanegroup(link.bLink.lanegroup_flwside_out,segments,road2euclid));
+
+//        // make the polygons
+//        for (AbstractDrawLanegroup draw_lanegroup : draw_lanegroups) {
+//            List<Polygon> polygons = draw_lanegroup.make_polygons(link, lane_width, link_offset, colormap);
+//            getChildren().addAll(polygons);
+//        }
+
     }
+
+    abstract AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg,List<Arrow> midline,double lateral_offset,double long_offset, double lane_width,double road2euclid,AbstractColormap colormap) throws OTMException ;
 
     /////////////////////////////////////////////////
     // highlight

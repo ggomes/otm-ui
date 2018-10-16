@@ -6,12 +6,19 @@
  */
 package otmui.utils;
 
+import common.Point;
+
 public class Vector {
 
     public boolean isnull;
     public float x,y;
 
-    public Vector(Point from, Point to){
+    public Vector(Point A){
+        this.x = A.x;
+        this.y = A.y;
+    }
+
+    public Vector(Vector from, Vector to){
         isnull = from==null || to==null;
         if(!isnull) {
             this.x = to.x - from.x;
@@ -28,14 +35,18 @@ public class Vector {
         return Math.toDegrees(Math.atan2(y,x));
     }
 
-    public static float norm(Vector a){
+    //////////////////////////////////////////////
+    // public static
+    //////////////////////////////////////////////
+
+    public static float length(Vector a){
         return (float) Math.sqrt(a.x*a.x + a.y*a.y);
     }
 
     public static Vector normalize(Vector a){
         if(a==null || a.isnull)
             return null;
-        float m = norm(a);
+        float m = length(a);
         return new Vector(a.x/m , a.y/m );
     }
 
@@ -47,12 +58,21 @@ public class Vector {
         return new Vector(a.x+b.x,a.y+b.y);
     }
 
-    public static Point sum(Point p, Vector a){
-        return new Point(p.x + a.x,p.y + a.y );
+    public static Vector diff(Vector a,Vector b){
+        if(a==null || a.isnull)
+            return b;
+        if(b==null || b.isnull)
+            return a;
+        return new Vector(a.x-b.x,a.y-b.y);
     }
 
     public static Vector mult(Vector a,float m){
         return new Vector(a.x*m,a.y*m);
+    }
+
+    public static Vector linear_combination(Vector a,Vector b,float alpha){
+//        a + (b-a)*alpha
+        return Vector.sum(a,Vector.mult(Vector.diff(b,a),alpha));
     }
 
     public static Vector cross_z(Vector a){
