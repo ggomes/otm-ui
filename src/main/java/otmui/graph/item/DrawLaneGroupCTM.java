@@ -37,10 +37,13 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup  {
         euclid_cell_length_m = road_cell_length_km * road2euclid * 1000f;
         double width = alg.num_lanes *lane_width;
 
+        int start_ind = find_closest_arrow_index_to(midline,long_offset);
+
         // traverse cells
         for (int i = 0; i < lg.cells.size(); i++) {
-            draw_cells.add(new DrawCell(midline,long_offset,lateral_offset,euclid_cell_length_m,width,colormap));
-            long_offset += euclid_cell_length_m;
+            DrawCell draw_cell = new DrawCell(midline,start_ind,lateral_offset,euclid_cell_length_m,width,colormap);
+            draw_cells.add(draw_cell);
+            start_ind += draw_cell.arrows.size()-1;
         }
 
     }

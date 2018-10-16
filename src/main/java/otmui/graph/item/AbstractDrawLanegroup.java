@@ -10,11 +10,16 @@ import common.AbstractLaneGroup;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import otmui.graph.color.AbstractColormap;
+import otmui.utils.Arrow;
 import output.animation.AbstractLaneGroupInfo;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.util.Comparator.comparingDouble;
+import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractDrawLanegroup {
 
@@ -38,4 +43,10 @@ public abstract class AbstractDrawLanegroup {
         return draw_cells.stream().map(x->x.polygon).collect(Collectors.toSet());
     }
 
+    public static int find_closest_arrow_index_to(List<Arrow> midline, double p){
+        List<Double> a = midline.stream().map(x->Math.abs(x.position-p)).collect(toList());
+        return IntStream.range(0,a.size()).boxed()
+                .min(comparingDouble(a::get))
+                .get();
+    }
 }

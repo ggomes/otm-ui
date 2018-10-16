@@ -6,6 +6,7 @@
  */
 package otmui.graph.item;
 
+import geometry.Side;
 import otmui.graph.color.AbstractColormap;
 import otmui.model.Link;
 import common.AbstractLaneGroup;
@@ -30,7 +31,10 @@ public class DrawLinkCTM extends AbstractDrawLink {
     List<Double> get_additional_midline_points(double road2euclid) {
 
         // get a full lanegroup
-        models.ctm.LaneGroup lg = (models.ctm.LaneGroup) this.link.bLink.lanegroups_flwdn.values().iterator().next();
+        models.ctm.LaneGroup lg = (models.ctm.LaneGroup) this.link.bLink.lanegroups_flwdn.values()
+                .stream()
+                .filter(x->x.side== Side.full)
+                .findFirst().get();
 
         // length of a cell
         double road_cell_length_km = lg.length / lg.cells.size() / 1000f;

@@ -20,20 +20,28 @@ public class DrawCell {
     public Polygon polygon;
     public Color mycolor;
 
-    public DrawCell(List<Arrow> midline, double long_offset, double lateral_offset, double length, double width, AbstractColormap colormap){
+    public DrawCell(List<Arrow> midline, int ind, double lateral_offset, double length, double width, AbstractColormap colormap){
         arrows = new ArrayList<>();
         double remaining = length;
-        int ind = find_closest_arrow_index_to(midline,long_offset);
         while(ind<midline.size() && remaining>-AbstractDrawLink.epsilon) {
             Arrow a = midline.get(ind++);
             arrows.add(a);
             remaining -= a.distance_to_next;
         }
-
         make_polygon(arrows,(float) lateral_offset,(float) width,colormap,Link.RoadType.freeway);
-
-        System.out.println(arrows);
     }
+
+//    public DrawCell(List<Arrow> midline, double long_offset, double lateral_offset, double length, double width, AbstractColormap colormap){
+//        arrows = new ArrayList<>();
+//        double remaining = length;
+//        int ind = find_closest_arrow_index_to(midline,long_offset);
+//        while(ind<midline.size() && remaining>-AbstractDrawLink.epsilon) {
+//            Arrow a = midline.get(ind++);
+//            arrows.add(a);
+//            remaining -= a.distance_to_next;
+//        }
+//        make_polygon(arrows,(float) lateral_offset,(float) width,colormap,Link.RoadType.freeway);
+//    }
 
     /////////////////////////////////////////////////
     // color
@@ -64,6 +72,11 @@ public class DrawCell {
     /////////////////////////////////////////////////
     // get
     /////////////////////////////////////////////////
+
+    public double get_downstream_offset(){
+        return arrows.get(arrows.size()-1).position;
+    }
+
 //
 //    public Vector get_downstream_point(){
 //        return arrows.get(0).start;
@@ -82,12 +95,6 @@ public class DrawCell {
 //    }
 //
 
-    public static int find_closest_arrow_index_to(List<Arrow> midline,double p){
-        List<Double> a = midline.stream().map(x->Math.abs(x.position-p)).collect(toList());
-        return IntStream.range(0,a.size()).boxed()
-                .min(comparingDouble(a::get))
-                .get();
-    }
 
     private void make_polygon(List<Arrow> arrows, float lateral_offset, float width, AbstractColormap colormap, Link.RoadType road_type) {
 
