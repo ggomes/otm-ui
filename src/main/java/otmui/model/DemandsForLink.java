@@ -27,7 +27,7 @@ public class DemandsForLink {
     public void add_profile(DemandProfile dp) throws OTMException {
 
         // check
-        if(dp.get_origin().getId()!=link_id)
+        if(!dp.get_origin().getId().equals(link_id))
             throw new OTMException("dp.get_origin().get_link_id()!=link_id");
 
         KeyCommodityDemandTypeId key = new KeyCommodityDemandTypeId(

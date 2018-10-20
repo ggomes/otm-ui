@@ -10,7 +10,6 @@ import error.OTMException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import otmui.model.Scenario;
 import xml.JaxbLoader;
 
 import java.util.ArrayList;

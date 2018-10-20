@@ -21,10 +21,10 @@ public class SensorData extends AbstractData  {
         X.add(UIFactory.createLabelText("id", String.format("%d",sensor.get_id())).pane);
 
         // link id ....................
-        X.add(UIFactory.createLabelText("link id", String.format("%d",sensor.bsensor.link.getId())).pane);
+        X.add(UIFactory.createLabelText("link id", String.format("%d",sensor.bsensor.get_link().getId())).pane);
 
         // position ....................
-        X.add(UIFactory.createLabelText("position [m]", String.format("%.1f",sensor.bsensor.position)).pane);
+        X.add(UIFactory.createLabelText("position [m]", String.format("%.1f",sensor.bsensor.get_position())).pane);
 
         // lanes
         X.add(UIFactory.createLabelText("lanes", String.format("%d - %d",sensor.bsensor.start_lane,sensor.bsensor.end_lane)).pane);

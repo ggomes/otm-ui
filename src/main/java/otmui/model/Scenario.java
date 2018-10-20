@@ -86,10 +86,10 @@ public class Scenario {
         sensors = new HashMap<>();
         for(sensor.AbstractSensor x : bscenario.sensors.values()) {
 
-            if(!(x instanceof sensor.SensorLoopDetector))
+            if(!(x instanceof sensor.FixedSensor))
                 continue;
 
-            Sensor sensor = new Sensor((sensor.SensorLoopDetector)x);
+            Sensor sensor = new Sensor((sensor.FixedSensor)x);
             sensors.put(new Long(x.id),sensor);
             Maps.name2sensorid.put(String.format("sensor %d",x.id),x.id);
         }

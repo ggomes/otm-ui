@@ -13,19 +13,14 @@ import error.OTMException;
 
 public class Sensor {
 
-    public sensor.SensorLoopDetector bsensor;
+    public sensor.FixedSensor bsensor;
     public DrawSensor drawSensor;
     public Arrow geom;
 
-    public Sensor(sensor.SensorLoopDetector bsensor) throws OTMException{
+    public Sensor(sensor.FixedSensor bsensor) throws OTMException{
         this.bsensor = bsensor;
-        this.geom = traverse_distance(bsensor.link,bsensor.position);
+        this.geom = traverse_distance(bsensor.get_link(),bsensor.get_position());
     }
-
-    public Long get_id(){
-        return bsensor.id;
-    }
-
 
     /** Starting from upstream node, traverse the link a distance x and return the resulting point.
      * Return null if x<0 or x> length.
@@ -66,6 +61,10 @@ public class Sensor {
         }
 
         return P;
+    }
+
+    public Long get_id(){
+        return bsensor.id;
     }
 
 }
