@@ -43,6 +43,10 @@ public class DataPaneController implements Initializable {
     public void loadScenario(Scenario scenario){
     }
 
+    public void reset(){
+
+    }
+
     /////////////////////////////////////////////////
     // show
     /////////////////////////////////////////////////

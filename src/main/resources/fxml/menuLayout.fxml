@@ -27,26 +27,20 @@
             <MenuItem mnemonicParsing="false" onAction="#menuAction" text="Action" />
           </items>
         </Menu>
-            <Menu mnemonicParsing="false" text="Simulation">
-               <items>
-                  <MenuItem mnemonicParsing="false" onAction="#menuRun" text="Run">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#menuPlots" text="Plots">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-               </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="View">
-               <items>
-                  <MenuItem mnemonicParsing="false" onAction="#menuParameters" text="Parameters" />
-                  <MenuItem mnemonicParsing="false" onAction="#menuVersion" text="Version" />
-               </items>
-            </Menu>
+        <Menu mnemonicParsing="false" text="Simulation">
+           <items>
+              <MenuItem fx:id="menuRun" mnemonicParsing="false" onAction="#menuRun" text="Run" />
+              <MenuItem fx:id="menuPause" mnemonicParsing="false" onAction="#menuPause" text="Pause" />
+              <MenuItem fx:id="menuRewind" mnemonicParsing="false" onAction="#menuRewind" text="Rewind" />
+           </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="View">
+           <items>
+              <MenuItem fx:id="menuParameters" mnemonicParsing="false" onAction="#menuParameters" text="Parameters" />
+              <MenuItem mnemonicParsing="false" onAction="#menuVersion" text="Version" />
+              <MenuItem fx:id="menuPlots" mnemonicParsing="false" onAction="#menuPlots" text="Plots" />
+           </items>
+        </Menu>
       </menus>
     </MenuBar>
   </children>

@@ -59,7 +59,7 @@ public class TestConfigs {
 //        Scenario scenario = new Scenario(myApp.otm);
 //
 //        if(scenario!=null)
-//            menubar.getScene().getRoot().fireEvent(new ChangeScenarioEvent(scenario));
+//            menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(scenario));
 
     }
 

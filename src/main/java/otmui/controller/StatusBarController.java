@@ -47,6 +47,11 @@ public class StatusBarController implements Initializable {
         this.statusBar.setText("Scenario loaded.");
     }
 
+    public void reset(){
+        statusBar.setText("");
+        statusBar.progressProperty().setValue(0d);
+    }
+
     /////////////////////////////////////////////////
     // text
     /////////////////////////////////////////////////

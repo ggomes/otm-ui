@@ -8,7 +8,8 @@
 package otmui.controller;
 
 import otmui.MainApp;
-import otmui.event.ChangeScenarioEvent;
+import otmui.event.NewScenarioEvent;
+import otmui.event.ResetScenarioEvent;
 import otmui.model.*;
 import otmui.simulation.OTMTask;
 import otmui.view.ParametersWindow;
@@ -47,6 +48,21 @@ public class MenuController implements Initializable {
     @FXML
     private Menu openTest;
 
+    @FXML
+    private MenuItem menuRun;
+
+    @FXML
+    private MenuItem menuPause;
+
+    @FXML
+    private MenuItem menuRewind;
+
+    @FXML
+    private MenuItem menuParameters;
+
+    @FXML
+    private MenuItem menuPlots;
+
     /////////////////////////////////////////////////
     // construction
     /////////////////////////////////////////////////
@@ -58,6 +74,11 @@ public class MenuController implements Initializable {
             x.setOnAction(e->menuOpenTest(e));
             openTest.getItems().add(x);
         }
+        disableRun();
+        disablePause();
+        disableRewind();
+        disablePlots();
+        disableParameters();
     }
 
     public void setApp(MainApp myApp){
@@ -65,7 +86,7 @@ public class MenuController implements Initializable {
     }
 
     /////////////////////////////////////////////////
-    // FXML
+    // menu File
     /////////////////////////////////////////////////
 
     @FXML
@@ -83,6 +104,18 @@ public class MenuController implements Initializable {
     }
 
     @FXML
+    private void menuOpenTest(ActionEvent event) {
+        String item = ((MenuItem) event.getSource()).getText();
+        if(!testFiles.containsKey(item))
+            return;
+        try {
+            loadTest(item);
+        } catch (OTMException ex) {
+            UIFactory.createExceptionDialog(ex).showAndWait();
+        }
+    }
+
+    @FXML
     private void menuExit(ActionEvent event) {
         Platform.exit();
     }
@@ -92,26 +125,33 @@ public class MenuController implements Initializable {
 
     }
 
-    @FXML
-    private void menuOpenTest(ActionEvent event) {
-        String item = ((MenuItem) event.getSource()).getText();
-        if(!testFiles.containsKey(item))
-            return;
-        try {
-//            loadFile(testFiles.get(item));
-            loadTest(item);
-        } catch (OTMException ex) {
-            UIFactory.createExceptionDialog(ex).showAndWait();
-        }
-    }
+    /////////////////////////////////////////////////
+    // menu Simulation
+    /////////////////////////////////////////////////
 
     @FXML
     private void menuRun(ActionEvent event) {
-        OTMTask otm_task = new OTMTask(myApp.otm,myApp.params,myApp);
+        OTMTask otm_task = new OTMTask(myApp.otm,myApp.params,myApp.menuController,myApp.graphpaneController,myApp.statusbarController);
         myApp.statusbarController.bind_progress(otm_task.progressProperty());
         myApp.statusbarController.bind_text(otm_task.messageProperty());
         new Thread(otm_task).start();
     }
+
+    @FXML
+    private void menuPause(ActionEvent event) {
+        System.err.println("Pause not implemented!");
+    }
+
+    @FXML
+    private void menuRewind(ActionEvent event) {
+        menubar.getScene().getRoot().fireEvent(new ResetScenarioEvent());
+        myApp.menuController.disableRewind();
+        myApp.menuController.enableRun();
+    }
+
+    /////////////////////////////////////////////////
+    // menu View
+    /////////////////////////////////////////////////
 
     @FXML
     private void menuPlots(ActionEvent event) {
@@ -146,6 +186,21 @@ public class MenuController implements Initializable {
     }
 
     /////////////////////////////////////////////////
+    // get / set
+    /////////////////////////////////////////////////
+
+    public void enableRun(){ menuRun.setDisable(false); }
+    public void disableRun(){ menuRun.setDisable(true); }
+    public void enablePause(){ menuPause.setDisable(false); }
+    public void disablePause(){ menuPause.setDisable(true); }
+    public void enableRewind(){ menuRewind.setDisable(false); }
+    public void disableRewind(){ menuRewind.setDisable(true); }
+    public void enableParameters(){ menuParameters.setDisable(false); }
+    public void disableParameters(){ menuParameters.setDisable(true); }
+    public void enablePlots(){ menuPlots.setDisable(false); }
+    public void disablePlots(){ menuPlots.setDisable(true); }
+
+    /////////////////////////////////////////////////
     // private
     /////////////////////////////////////////////////
 
@@ -167,8 +222,12 @@ public class MenuController implements Initializable {
 
         Scenario scenario = new Scenario(myApp.otm);
 
-        if(scenario!=null)
-            menubar.getScene().getRoot().fireEvent(new ChangeScenarioEvent(scenario));
+        if(scenario!=null) {
+            enablePlots();
+            enableParameters();
+            enableRun();
+            menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(scenario));
+        }
     }
 
     private void loadTest(String testname) throws OTMException {
@@ -188,8 +247,12 @@ public class MenuController implements Initializable {
 
         Scenario scenario = new Scenario(myApp.otm);
 
-        if(scenario!=null)
-            menubar.getScene().getRoot().fireEvent(new ChangeScenarioEvent(scenario));
+        if(scenario!=null) {
+            enablePlots();
+            enableParameters();
+            enableRun();
+            menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(scenario));
+        }
     }
 
 }

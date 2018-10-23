@@ -117,6 +117,10 @@ public class GraphPaneController implements Initializable {
 
     }
 
+    public void reset(){
+        reset_link_color();
+    }
+
     /////////////////////////////////////////////////
     // highlighting
     /////////////////////////////////////////////////

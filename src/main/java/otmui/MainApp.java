@@ -8,13 +8,12 @@ package otmui;
 
 import api.API;
 import api.APIopen;
+import javafx.event.Event;
 import otmui.controller.*;
 import otmui.event.*;
 import otmui.model.Scenario;
-import otmui.simulation.OTMTask;
 import error.OTMException;
 import javafx.application.Application;
-import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.geometry.Rectangle2D;
@@ -40,6 +39,7 @@ public class MainApp extends Application {
     public SelectionManager selectionManager;
     public MenuController menuController;
     public StatusBarController statusbarController;
+
     public TreeController scenarioTreeController;
     public GraphPaneController graphpaneController;
     public DataPaneController datapaneController;
@@ -141,7 +141,8 @@ public class MainApp extends Application {
         // Event filters and handlers .........................................
 
         // loading new scenario
-        scene.addEventFilter(ChangeScenarioEvent.LOADED,e->processNewScenario(e.scenario) );
+        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->processNewScenario(e.scenario) );
+        scene.addEventFilter(ResetScenarioEvent.SCENARIO_RESET, e->reset() );
 
         // graph, link or node click
         scene.addEventFilter(GraphSelectEvent.CLICK1_NODE, e->selectionManager.graphFirstClickNode(e));
@@ -185,7 +186,7 @@ public class MainApp extends Application {
 
         // parameter changes
         scene.addEventFilter(ParameterChange.SIMULATION,e->System.out.println("Simulation parameter changed"));
-        scene.addEventFilter(ParameterChange.DISPLAY,e->Event.fireEvent(scene,new ChangeScenarioEvent(scenario)));
+        scene.addEventFilter(ParameterChange.DISPLAY,e-> Event.fireEvent(scene,new NewScenarioEvent(scenario)));
     }
 
     /////////////////////////////////////////////////
@@ -228,6 +229,20 @@ public class MainApp extends Application {
         } catch (OTMException e) {
             e.printStackTrace();
         }
+    }
+
+    private void reset(){
+        if(scenario==null)
+            return;
+//        try {
+//            scenario.reset();
+            scenarioTreeController.reset();
+            graphpaneController.reset();
+            datapaneController.reset();
+            statusbarController.reset();
+//        } catch (OTMException e) {
+//            e.printStackTrace();
+//        }
     }
 
 }
