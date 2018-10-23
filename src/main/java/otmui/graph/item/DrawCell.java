@@ -9,16 +9,12 @@ import otmui.utils.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
-
-import static java.util.Comparator.comparingDouble;
-import static java.util.stream.Collectors.toList;
 
 public class DrawCell {
 
     public List<Arrow> arrows;
     public Polygon polygon;
-    public Color mycolor;
+    public final Color mycolor;
 
     public DrawCell(List<Arrow> midline, int ind, double lateral_offset, double length, double width, AbstractColormap colormap){
         arrows = new ArrayList<>();
@@ -28,29 +24,15 @@ public class DrawCell {
             arrows.add(a);
             remaining -= a.distance_to_next;
         }
+
+        mycolor = colormap.get_color_for_roadtype(Link.RoadType.freeway);
+
         make_polygon(arrows,(float) lateral_offset,(float) width,colormap,Link.RoadType.freeway);
     }
-
-//    public DrawCell(List<Arrow> midline, double long_offset, double lateral_offset, double length, double width, AbstractColormap colormap){
-//        arrows = new ArrayList<>();
-//        double remaining = length;
-//        int ind = find_closest_arrow_index_to(midline,long_offset);
-//        while(ind<midline.size() && remaining>-AbstractDrawLink.epsilon) {
-//            Arrow a = midline.get(ind++);
-//            arrows.add(a);
-//            remaining -= a.distance_to_next;
-//        }
-//        make_polygon(arrows,(float) lateral_offset,(float) width,colormap,Link.RoadType.freeway);
-//    }
 
     /////////////////////////////////////////////////
     // color
     /////////////////////////////////////////////////
-
-    public void set_fixed_color(Color color){
-        polygon.setFill(color);
-        mycolor = color;
-    }
 
     public void set_temporary_color(Color color) {
         polygon.setFill(color);
@@ -68,7 +50,6 @@ public class DrawCell {
         polygon.setFill(mycolor);
     }
 
-
     /////////////////////////////////////////////////
     // get
     /////////////////////////////////////////////////
@@ -76,25 +57,6 @@ public class DrawCell {
     public double get_downstream_offset(){
         return arrows.get(arrows.size()-1).position;
     }
-
-//
-//    public Vector get_downstream_point(){
-//        return arrows.get(0).start;
-//    }
-//
-//    public Vector get_second_from_down(){
-//        return arrows.get(1).start;
-//    }
-//
-//    public Vector get_second_from_up(){
-//        return arrows.get(arrows.size()-2).start;
-//    }
-//
-//    public Vector get_upstream_point(){
-//        return arrows.get(arrows.size()-1).start;
-//    }
-//
-
 
     private void make_polygon(List<Arrow> arrows, float lateral_offset, float width, AbstractColormap colormap, Link.RoadType road_type) {
 
@@ -117,8 +79,7 @@ public class DrawCell {
             polygon.getPoints().addAll(new Double[]{(double) p.x, (double) -p.y});
         }
 
-        // apply color according to road type
-        set_fixed_color(colormap.get_color_for_roadtype(road_type));
+        polygon.setFill(mycolor);
 
     }
 

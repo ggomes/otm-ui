@@ -18,7 +18,7 @@
                 <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
               </accelerator>
             </MenuItem>
-                  <Menu fx:id="openRecent" mnemonicParsing="false" text="Open Recent" />
+                  <Menu fx:id="openTest" mnemonicParsing="false" text="Open Test" />
             <MenuItem mnemonicParsing="false" onAction="#menuExit" text="Exit">
               <accelerator>
                 <KeyCodeCombination alt="UP" code="X" control="DOWN" meta="UP" shift="UP" shortcut="UP" />

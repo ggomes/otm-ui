@@ -38,7 +38,6 @@ public class OTMTask extends Task {
 
     @Override
     protected Object call()  {
-
         try {
             OTM.initialize(otm.scenario(), start_time);
             final int steps = (int) (duration / sim_dt);
@@ -71,6 +70,7 @@ public class OTMTask extends Task {
         } finally {
             app.statusbarController.unbind_progress();
             app.statusbarController.unbind_text();
+            app.graphpaneController.reset_link_color();
         }
         return null;
     }

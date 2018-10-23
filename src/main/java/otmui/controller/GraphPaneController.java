@@ -14,21 +14,20 @@ import otmui.event.TreeSelectEvent;
 import otmui.graph.GraphContainer;
 import otmui.graph.Graph;
 import otmui.graph.color.AbstractColormap;
-import otmui.graph.item.AbstractDrawLanegroup;
-import otmui.graph.item.AbstractDrawNode;
-import otmui.graph.item.AbstractDrawLink;
-import otmui.graph.item.DrawSensor;
+import otmui.graph.item.*;
 import otmui.model.Scenario;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import output.animation.AbstractLaneGroupInfo;
 import output.animation.AbstractLinkInfo;
 import output.animation.AnimationInfo;
 
 import java.net.URL;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -209,6 +208,12 @@ public class GraphPaneController implements Initializable {
     // animation
     /////////////////////////////////////////////////
 
+    public void reset_link_color(){
+        for(AbstractDrawLink drawLink : graphContainer.get_graph().links.values())
+            for (AbstractDrawLanegroup drawLanegroup : drawLink.draw_lanegroups)
+                drawLanegroup.unhighlight();
+    }
+
     public void draw_link_state(AnimationInfo info,AbstractColormap colormap){
 
         if(graphContainer==null)
@@ -218,8 +223,9 @@ public class GraphPaneController implements Initializable {
 
         for(AbstractDrawLink drawLink : graphContainer.get_graph().links.values()) {
             AbstractLinkInfo linkInfo = info.link_info.get(drawLink.id);
-            for (AbstractDrawLanegroup drawLanegroup : drawLink.draw_lanegroups)
+            for (AbstractDrawLanegroup drawLanegroup : drawLink.draw_lanegroups) {
                 drawLanegroup.draw_state(linkInfo.lanegroup_info.get(drawLanegroup.id), colormap);
+            }
         }
 
     }

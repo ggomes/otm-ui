@@ -34,26 +34,18 @@ import java.util.ResourceBundle;
 public class MenuController implements Initializable {
 
     private MainApp myApp;
-    private static Map<String,String> recentFiles = new HashMap<>();
+    private static Map<String,String> testFiles = new HashMap<>();
 
     static {
-        for(String testname : JaxbLoader.get_test_config_names()){
-            recentFiles.put(testname,JaxbLoader.get_test_fullpath(testname));
-        }
-
-//        recentFiles.put("seven links pq","C:\\Users\\gomes\\code\\ta_solver\\configfiles\\seven_links_pq.xml");
-//        recentFiles.put("seven links mn","C:\\Users\\gomes\\code\\ta_solver\\configfiles\\seven_links_mn.xml");
-//        recentFiles.put("test net 4"    ,"C:\\Users\\gomes\\code\\otmui\\data\\config\\cfg_net4.xml");
-//        recentFiles.put("L1 estim"      ,"C:\\Users\\gomes\\code\\aimsun_extract_freeway\\output\\L0_scenario_v22.xml");
-//        recentFiles.put("aimsun full"   ,"C:\\Users\\gomes\\Dropbox\\gabriel\\work\\aimsun2xml_2017_11_07\\beats_scenario_fixed.xml");
-//        recentFiles.put("intersection"   ,"C:\\Users\\gomes\\Dropbox\\gabriel\\work\\otm\\beats_share\\intersection.xml");
+        for(String testname : JaxbLoader.get_test_config_names())
+            testFiles.put(testname,JaxbLoader.get_test_fullpath(testname));
     }
 
     @FXML
     private MenuBar menubar;
 
     @FXML
-    private Menu openRecent;
+    private Menu openTest;
 
     /////////////////////////////////////////////////
     // construction
@@ -61,10 +53,10 @@ public class MenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        for(Map.Entry<String,String> r : recentFiles.entrySet()){
+        for(Map.Entry<String,String> r : testFiles.entrySet()){
             MenuItem x = new MenuItem(r.getKey());
-            x.setOnAction(e->menuOpenRecent(e));
-            openRecent.getItems().add(x);
+            x.setOnAction(e->menuOpenTest(e));
+            openTest.getItems().add(x);
         }
     }
 
@@ -101,12 +93,12 @@ public class MenuController implements Initializable {
     }
 
     @FXML
-    private void menuOpenRecent(ActionEvent event) {
+    private void menuOpenTest(ActionEvent event) {
         String item = ((MenuItem) event.getSource()).getText();
-        if(!recentFiles.containsKey(item))
+        if(!testFiles.containsKey(item))
             return;
         try {
-//            loadFile(recentFiles.get(item));
+//            loadFile(testFiles.get(item));
             loadTest(item);
         } catch (OTMException ex) {
             UIFactory.createExceptionDialog(ex).showAndWait();
@@ -159,14 +151,12 @@ public class MenuController implements Initializable {
 
     private void loadFile(String filename) throws OTMException {
 
-        // TODO TEMPORARY!!! DONT VALIDATE THE INPUT FILE
         boolean validate = false;
         String global_model = "ctm";
 
         // load the scenario from XML
         try {
-            myApp.otm.api.load(filename,myApp.params.sim_dt.floatValue(),validate,"ctm");
-//            myApp.otm.api.load(filename,myApp.params.sim_dt.floatValue(),validate,global_model);
+            myApp.otm.api.load(filename,myApp.params.sim_dt.floatValue(),validate,global_model);
         } catch (Exception e) {
             throw new OTMException(e);
         }

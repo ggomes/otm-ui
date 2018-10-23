@@ -120,7 +120,7 @@ public class MainApp extends Application {
         // put into a scene and show
         Scene scene = new Scene(layout);
         scene.getStylesheets().add("/styles/Styles.css");
-        stage.setTitle("OTM Browser");
+        stage.setTitle("Open Traffic Modeller");
         stage.setScene(scene);
 
         // create parameters
@@ -138,7 +138,7 @@ public class MainApp extends Application {
 
         stage.show();
 
-        // Event filters and handlers .......................
+        // Event filters and handlers .........................................
 
         // loading new scenario
         scene.addEventFilter(ChangeScenarioEvent.LOADED,e->processNewScenario(e.scenario) );

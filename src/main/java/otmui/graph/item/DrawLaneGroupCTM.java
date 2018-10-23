@@ -54,14 +54,12 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup  {
 
     @Override
     public void unhighlight() {
-        for(DrawCell cell : draw_cells)
-            cell.unhighlight();
+        draw_cells.forEach(x->x.unhighlight());
     }
 
     @Override
     public void highlight(Color color) {
-        for(DrawCell cell : draw_cells)
-            cell.highlight(color);
+        draw_cells.forEach(x->x.highlight(color));
     }
 
     /////////////////////////////////////////////////
@@ -70,8 +68,7 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup  {
 
     @Override
     public void set_temporary_color(Color color) {
-        for(DrawCell cell : draw_cells)
-            cell.set_temporary_color(color);
+        draw_cells.forEach(x->x.set_temporary_color(color));
     }
 
     @Override
@@ -92,7 +89,6 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup  {
             Color color = new Color(rgb.red,rgb.green,rgb.blue,1.0);
             drawCell.set_temporary_color(color);
         }
-
     }
 
 }

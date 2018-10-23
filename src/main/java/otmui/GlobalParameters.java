@@ -22,12 +22,12 @@ public class GlobalParameters {
     // simulation run parameters
     public SimpleFloatProperty start_time           = new SimpleFloatProperty(null,"start_time",0f);            // seconds after midnight
     public SimpleFloatProperty sim_dt               = new SimpleFloatProperty(null,"sim_dt",2f);                // seconds after midnight
-    public SimpleFloatProperty duration             = new SimpleFloatProperty(null,"duration",2500f);           // seconds
-    public SimpleFloatProperty sim_delay            = new SimpleFloatProperty(null,"sim_delay",1f);             // milliseconds
+    public SimpleFloatProperty duration             = new SimpleFloatProperty(null,"duration",4000f);           // seconds
+    public SimpleFloatProperty sim_delay            = new SimpleFloatProperty(null,"sim_delay",15f);             // milliseconds
 
     // display parameters
     public SimpleFloatProperty link_offset          = new SimpleFloatProperty(null,"link_offset",0f);           // [m] painted width of a lane
-    public SimpleFloatProperty lane_width_meters    = new SimpleFloatProperty(null,"lane_width",10f);            // [m] painted width of a lane
+    public SimpleFloatProperty lane_width_meters    = new SimpleFloatProperty(null,"lane_width",20f);            // [m] painted width of a lane
     public SimpleFloatProperty node_radius          = new SimpleFloatProperty(null,"node_radius",0f);           // [m] painted radius for circular nodes
     public SimpleObjectProperty color_scheme        = new SimpleObjectProperty(null,"color_scheme",ColorScheme.Black);
 
