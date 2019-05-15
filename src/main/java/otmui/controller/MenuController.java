@@ -207,11 +207,10 @@ public class MenuController implements Initializable {
     private void loadFile(String filename) throws OTMException {
 
         boolean validate = false;
-        String global_model = "ctm";
 
         // load the scenario from XML
         try {
-            myApp.otm.api.load(filename,myApp.params.sim_dt.floatValue(),validate,global_model);
+            myApp.otm.api.load(filename,validate);
         } catch (Exception e) {
             throw new OTMException(e);
         }
@@ -236,7 +235,7 @@ public class MenuController implements Initializable {
 
         // load the scenario from XML
         try {
-            myApp.otm.api.load_test(testname+".xml",myApp.params.sim_dt.floatValue(),validate,"ctm");
+            myApp.otm.api.load_test(testname+".xml",validate);
         } catch (Exception e) {
             throw new OTMException(e);
         }

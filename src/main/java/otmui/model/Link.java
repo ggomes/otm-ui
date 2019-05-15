@@ -7,7 +7,7 @@
 package otmui.model;
 
 import actuator.AbstractActuator;
-import common.AbstractLaneGroup;
+import models.AbstractLaneGroup;
 import otmui.graph.item.AbstractDrawLink;
 import otmui.utils.Vector;
 
@@ -82,12 +82,8 @@ public class Link {
 
     /** Model *******************************************/
 
-    public common.AbstractLinkModel getModel(){
+    public models.AbstractModel getModel(){
         return bLink.model;
-    }
-
-    public common.Link.ModelType getModelType(){
-        return bLink.model_type;
     }
 
     public boolean isSink(){

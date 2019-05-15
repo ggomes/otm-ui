@@ -211,7 +211,7 @@ public class SelectionManager {
                     case CONTROLLER:
                         id = Maps.name2controllerid.getFromFirst((String)item.getValue());
                         AbstractController controller = myApp.scenario.getControllerWithId(id);
-                        for(actuator.AbstractActuator bact : controller.actuators) {
+                        for(actuator.AbstractActuator bact : controller.actuators.values()) {
                             AbstractActuator act = myApp.scenario.getActuatorWithId(bact.id);
                             if (act == null)
                                 continue;

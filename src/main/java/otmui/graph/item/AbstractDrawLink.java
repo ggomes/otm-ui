@@ -8,7 +8,7 @@ package otmui.graph.item;
 
 import geometry.Side;
 import otmui.graph.color.AbstractColormap;
-import common.AbstractLaneGroup;
+import models.AbstractLaneGroup;
 import error.OTMException;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -30,7 +30,7 @@ public abstract class AbstractDrawLink extends Group {
     public List<AbstractDrawLanegroup> draw_lanegroups;
     public AbstractDrawNode startNode;
     public AbstractDrawNode endNode;
-    public float max_vehicles;
+    public double max_vehicles;
 
     abstract List<Double> get_additional_midline_points(double road2euclid);
 
@@ -47,7 +47,7 @@ public abstract class AbstractDrawLink extends Group {
         this.draw_lanegroups = new ArrayList<>();
 
         // case for mn, where get_max_vehicles returns infinity
-        if(Float.isInfinite(this.max_vehicles))
+        if(Double.isInfinite(this.max_vehicles))
             this.max_vehicles = (float) (link.bLink.length * link.bLink.full_lanes * (180.0 / 1600.0));
 
         // Draw the road ....................................................
@@ -126,7 +126,7 @@ public abstract class AbstractDrawLink extends Group {
 
             // offsets of the upstream inner corner
             double lateral_offset = lane_width*(lg.start_lane_dn-1);
-            double long_offset = lg.side== Side.full ? 0 : link.bLink.length-lg.length;
+            double long_offset = lg.side== Side.stay ? 0 : link.bLink.length-lg.length;
 
             AbstractDrawLanegroup draw_lg = create_draw_lanegroup(lg,midline,lateral_offset,long_offset,lane_width, road2euclid,colormap);
             draw_lanegroups.add(draw_lg);

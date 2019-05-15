@@ -8,7 +8,7 @@ package otmui.graph.item;
 
 import otmui.graph.color.AbstractColormap;
 import otmui.model.Link;
-import common.AbstractLaneGroup;
+import models.AbstractLaneGroup;
 import error.OTMException;
 import otmui.utils.Arrow;
 

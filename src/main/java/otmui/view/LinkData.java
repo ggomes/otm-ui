@@ -6,7 +6,7 @@
  */
 package otmui.view;
 
-import common.AbstractLaneGroup;
+import models.AbstractLaneGroup;
 import otmui.event.FormSelectEvent;
 import otmui.model.AddLanes;
 import otmui.model.Link;
@@ -16,7 +16,6 @@ import javafx.scene.Node;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LinkData extends AbstractData {
@@ -72,7 +71,7 @@ public class LinkData extends AbstractData {
         // DO THIS!!!
 
         // link model type
-        X.add(UIFactory.createLabelLabel("link type",link.getModelType().toString()).pane);
+        X.add(UIFactory.createLabelLabel("link type",link.getModel().name).pane);
 
         // lanegroups
         Collection<AbstractLaneGroup> lanegroups = link.getDwnLaneGroups();

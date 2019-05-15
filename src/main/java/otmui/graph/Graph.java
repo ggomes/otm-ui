@@ -113,7 +113,7 @@ public class Graph {
     private static AbstractDrawLink makeDrawLink(otmui.model.Link link, float lane_width, float link_offset, AbstractColormap colormap,Map<Long,AbstractDrawNode> nodes) throws OTMException {
 
         AbstractDrawLink drawLink;
-        switch(link.bLink.model.getClass().getName()){
+        switch(link.bLink.model.name){
 
             case "models.pq.LinkModel":
                 drawLink = new DrawLinkPQ(link,
@@ -124,7 +124,7 @@ public class Graph {
                         colormap);
                 break;
 
-            case "models.ctm.LinkModel":
+            case "myctm":
                 drawLink = new DrawLinkCTM(link,
                         nodes.get(link.getStartNodeId()),
                         nodes.get(link.getEndNodeId()),

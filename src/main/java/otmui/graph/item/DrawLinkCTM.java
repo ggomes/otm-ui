@@ -9,7 +9,7 @@ package otmui.graph.item;
 import geometry.Side;
 import otmui.graph.color.AbstractColormap;
 import otmui.model.Link;
-import common.AbstractLaneGroup;
+import models.AbstractLaneGroup;
 import error.OTMException;
 import otmui.utils.Arrow;
 
@@ -33,7 +33,7 @@ public class DrawLinkCTM extends AbstractDrawLink {
         // get a full lanegroup
         models.ctm.LaneGroup lg = (models.ctm.LaneGroup) this.link.bLink.lanegroups_flwdn.values()
                 .stream()
-                .filter(x->x.side== Side.full)
+                .filter(x->x.side== Side.stay)
                 .findFirst().get();
 
         // length of a cell

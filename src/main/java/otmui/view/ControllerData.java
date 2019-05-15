@@ -35,7 +35,7 @@ public class ControllerData extends AbstractData {
         // Set<AbstractActuator> actuators;
         X.add(UIFactory.createLabelList(
                 "actuators",
-                controller.actuators.stream().map(x->String.format("%d",x.id)).collect(Collectors.toSet())
+                controller.actuators.values().stream().map(x->String.format("%d",x.id)).collect(Collectors.toSet())
         ).pane);
 
     }

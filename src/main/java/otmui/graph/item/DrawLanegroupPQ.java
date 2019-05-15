@@ -6,7 +6,7 @@
  */
 package otmui.graph.item;
 
-import common.AbstractLaneGroup;
+import models.AbstractLaneGroup;
 import otmui.graph.color.AbstractColormap;
 import error.OTMException;
 import javafx.scene.paint.Color;

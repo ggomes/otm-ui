@@ -134,7 +134,7 @@ public class UIFactory {
         return vbox;
     }
 
-    public static VBox createLanegroupPanel(common.AbstractLaneGroup lanegroup){
+    public static VBox createLanegroupPanel(models.AbstractLaneGroup lanegroup){
         VBox vbox = new VBox();
         vbox.getChildren().add(createLabelLabel("id",String.format("%d",lanegroup.id)).pane);
         return vbox;

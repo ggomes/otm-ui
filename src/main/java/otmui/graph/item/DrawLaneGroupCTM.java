@@ -1,8 +1,8 @@
 package otmui.graph.item;
 
-import common.AbstractLaneGroup;
 import error.OTMException;
 import javafx.scene.paint.Color;
+import models.AbstractLaneGroup;
 import otmui.graph.color.AbstractColormap;
 import otmui.graph.color.RGB;
 import otmui.utils.Arrow;
