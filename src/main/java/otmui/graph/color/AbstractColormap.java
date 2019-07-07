@@ -59,30 +59,18 @@ public abstract class  AbstractColormap {
                     case none:
                         color = Color.BLACK;
                         break;
-                    case onramp:
+                    case ramp:
                         color = Color.BLUE;
                         break;
-                    case offramp:
+                    case mainline:
                         color = Color.DARKMAGENTA;
                         break;
-                    case freeway:
-                        color = Color.BROWN;
-                        break;
-                    case arterial:
-                        color = Color.CHARTREUSE;
-                        break;
-                    case hov:
-                        color = Color.CYAN;
-                        break;
-                    case interconnect:
-                        color = Color.DARKGREEN;
-                        break;
-                    case source:
-                        color = Color.DEEPPINK;
-                        break;
-                    case sink:
-                        color = Color.GREENYELLOW;
-                        break;
+//                        color = Color.BROWN;
+//                        color = Color.CHARTREUSE;
+//                        color = Color.CYAN;
+//                        color = Color.DARKGREEN;
+//                        color = Color.DEEPPINK;
+//                        color = Color.GREENYELLOW;
                     default:
                         color = Color.BLACK;
                         break;
