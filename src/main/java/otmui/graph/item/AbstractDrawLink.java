@@ -51,32 +51,39 @@ public abstract class AbstractDrawLink extends Group {
             this.max_vehicles = (float) (link.bLink.length * link.bLink.full_lanes * (180.0 / 1600.0));
 
         // Draw the road ....................................................
+        List<Vector> shape = link.getShape();
 
         // traverse the points from downstream to upstream. Create Segments
-        if(link.getShape().size()<2)
+        if(shape.size()<2)
             throw new OTMException("Not enough points for link " + link.getId());
 
         // midline with transversal arrows
         List<Arrow> midline = new ArrayList<>();
         double position = 0;
-        for (int i=0;i<link.getShape().size();i++) {
+        for (int i=0;i<shape.size();i++) {
             if(i>0)
-                position += Vector.length(Vector.diff(link.getShape().get(i) , link.getShape().get(i-1) ));
-            midline.add(new Arrow(position,link.getShape().get(i), null));
+                position += Vector.length(Vector.diff(shape.get(i) , shape.get(i-1) ));
+            midline.add(new Arrow(position,shape.get(i), null));
         }
 
         // midline perpendicular directions
         Vector u = new Vector(midline.get(0).start,midline.get(1).start);
         midline.get(0).direction = Vector.normalize(Vector.cross_z(u));
-
         for(int i=1;i<midline.size()-1;i++) {
             Vector u_this = Vector.normalize(Vector.diff(midline.get(i + 1).start, midline.get(i).start));
             Vector u_prev = Vector.normalize(Vector.diff(midline.get(i).start, midline.get(i-1).start));
-            midline.get(i).direction = Vector.normalize( Vector.diff(u_this,u_prev));
+
+            midline.get(i).direction = Vector.normalize(Vector.diff(u_this,u_prev));
+
+            // needed to avoid switching around 0, which makes a strange shape
+            if (Vector.dot(midline.get(i).direction,midline.get(i-1).direction)<0)
+                midline.get(i).direction = Vector.mult(midline.get(i).direction,-1f);
+
         }
 
         u = new Vector(midline.get(midline.size()-2).start,midline.get(midline.size()-1).start);
         midline.get(midline.size()-1).direction = Vector.normalize(Vector.cross_z(u));
+
 
         // get additional midline points for this model
         List<Double> add_points = get_additional_midline_points(1d);  // TODO FIX THIS
