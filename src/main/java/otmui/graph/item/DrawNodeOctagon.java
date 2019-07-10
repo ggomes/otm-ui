@@ -2,9 +2,9 @@ package otmui.graph.item;
 
 import javafx.scene.shape.Circle;
 
-public class DrawNodeCircle extends AbstractDrawNode {
+public class DrawNodeOctagon extends AbstractDrawNode  {
 
-    public DrawNodeCircle(Long id, Float xpos, Float ypos,float node_size) {
+    public DrawNodeOctagon(Long id, Float xpos, Float ypos,float node_size) {
         super( id,xpos,ypos);
 
         this.xpos -= node_size;

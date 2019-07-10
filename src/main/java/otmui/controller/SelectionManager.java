@@ -1,10 +1,3 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
-
 package otmui.controller;
 
 import actuator.AbstractActuator;
@@ -38,12 +31,14 @@ public class SelectionManager {
     public Set<AbstractDrawNode> selectedNodes;
     public Set<AbstractDrawLink> selectedLinks;
     public Set<DrawSensor> selectedSensors;
+    public Set<AbstractDrawNode> selectedActuators;
 
     public SelectionManager(MainApp myApp) {
         this.myApp = myApp;
         this.selectedNodes = new HashSet<>();
         this.selectedLinks = new HashSet<>();
         this.selectedSensors = new HashSet<>();
+        this.selectedActuators = new HashSet<>();
     }
 
     /////////////////////////////////////////////////
@@ -111,6 +106,26 @@ public class SelectionManager {
         e.consume();
     }
 
+    // if shift is pressed then add to highlighted items.
+    // otherwise clear and add to highlighted items
+    public void graphFirstClickActuator(GraphSelectEvent e){
+        AbstractDrawNode drawActuator = (AbstractDrawNode) e.getSelected();
+        boolean alreadySelected = selectedActuators.contains(drawActuator);
+        boolean shiftPressed = e.event.isShiftDown();
+
+        if(!shiftPressed)
+            clearSelection();
+
+        if(alreadySelected)
+            selectedActuators.remove(drawActuator);
+        else
+            selectedActuators.add(drawActuator);
+
+        highlightSelection();
+
+        e.consume();
+    }
+
     public void graphSecondClickNode(GraphSelectEvent e){
         // open data pane for node
         AbstractDrawNode drawNode = (AbstractDrawNode) e.getSelected();
@@ -135,6 +150,14 @@ public class SelectionManager {
         e.consume();
     }
 
+    public void graphSecondClickActuator(GraphSelectEvent e){
+        // open data pane for node
+        AbstractDrawNode drawActuator = (AbstractDrawNode) e.getSelected();
+        AbstractActuator actuator = myApp.scenario.getActuatorWithId(drawActuator.id);
+        myApp.datapaneController.showActuatorData(actuator);
+        e.consume();
+    }
+
     /////////////////////////////////////////////////
     // tree clicks
     /////////////////////////////////////////////////
@@ -144,6 +167,7 @@ public class SelectionManager {
         Set<AbstractDrawLink> drawLinks = new HashSet<>();
         Set<AbstractDrawNode> drawNodes = new HashSet<>();
         Set<DrawSensor> drawSensors = new HashSet<>();
+        Set<AbstractDrawNode> drawActuators = new HashSet<>();
 
         // get all drawLinks and drawNodes that have been selected
         Long id;
@@ -239,6 +263,7 @@ public class SelectionManager {
         selectedLinks = drawLinks;
         selectedNodes = drawNodes;
         selectedSensors = drawSensors;
+        selectedActuators = drawActuators;
 
         // send selection to the graph
         highlightSelection();
@@ -433,14 +458,16 @@ public class SelectionManager {
         selectedLinks.clear();
         selectedSensors.forEach(x->x.unhighlight());
         selectedSensors.clear();
+        selectedActuators.forEach(x->x.unhighlight());
+        selectedActuators.clear();
 
         myApp.scenarioTreeController.clearSelection();
     }
 
     private void highlightSelection(){
-        myApp.graphpaneController.highlight(selectedLinks,selectedNodes,selectedSensors);
-        myApp.scenarioTreeController.highlight(selectedLinks,selectedSensors);
-        myApp.statusbarController.setText(selectedLinks,selectedNodes,selectedSensors);
+        myApp.graphpaneController.highlight(selectedLinks,selectedNodes,selectedSensors,selectedActuators);
+        myApp.scenarioTreeController.highlight(selectedLinks,selectedSensors,selectedActuators);
+        myApp.statusbarController.setText(selectedLinks,selectedNodes,selectedSensors,selectedActuators);
     }
 
     private static String getItemName(TreeSelectEvent e){

@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
 package otmui.view;
 
 import otmui.GlobalParameters;
@@ -103,6 +97,7 @@ public class ParametersWindow extends VBox {
         list.add(new CustomPropertyItem("DrawLinks#Max density [veh/km/lane]",params.max_density_vpkpl));
 
         list.add(new CustomPropertyItem("DrawNodes#Show nodes",params.view_nodes));
+        list.add(new CustomPropertyItem("DrawActuators#Show actuators",params.view_actuators));
 
         propertySheet = new org.controlsfx.control.PropertySheet(list);
         propertySheet.setPropertyEditorFactory(new Callback<PropertySheet.Item, PropertyEditor<?>>() {

@@ -1,19 +1,12 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
 package otmui.graph.item;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
-import otmui.GlobalParameters;
 
 public abstract class AbstractDrawNode extends Group {
 
-    public enum DrawNodeShape { RECTANGLE, CIRCLE }
+    public enum DrawNodeShape { RECTANGLE, CIRCLE, OCTAGON }
 
     protected static Color color1 = Color.DODGERBLUE;
     protected static Color color2 = Color.RED;
@@ -55,10 +48,6 @@ public abstract class AbstractDrawNode extends Group {
 
     public void unhighlight() {
         shape.setFill(color1);
-    }
-
-    public void paint(GlobalParameters params) {
-        this.setVisible(params.view_nodes.getValue());
     }
 
 }

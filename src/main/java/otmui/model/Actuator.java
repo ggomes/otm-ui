@@ -1,17 +1,50 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
 package otmui.model;
+
+import error.OTMException;
+import otmui.graph.item.AbstractDrawNode;
 
 public class Actuator {
 
     private actuator.AbstractActuator bactuator;
+    public AbstractDrawNode drawActuator;
 
-    public Actuator(actuator.AbstractActuator bactuator){
+    private Float xcoord;
+    private Float ycoord;
+
+    public Actuator(actuator.AbstractActuator bactuator,otmui.model.Network network) throws OTMException {
         this.bactuator = bactuator;
+
+        switch(bactuator.target.getScenarioElementType()){
+            case node:
+                Node node = network.nodes.get(bactuator.target.getId());
+                xcoord = node.getXcoord();
+                ycoord = node.getYcoord();
+                break;
+            default:
+                throw new OTMException("Unknown actuator type");
+        }
+
+//        switch(bactuator.getClass().getSimpleName()){
+//            case "ActuatorSignal":
+//
+//                break;
+//            default:
+//                throw new OTMException("Unknown actuator type");
+//        }
     }
+
+    public Long getId(){
+        return bactuator.getId();
+    }
+
+    public Float getXcoord() {
+        return xcoord;
+    }
+
+    public Float getYcoord() {
+        return ycoord;
+    }
+
+
 
 }

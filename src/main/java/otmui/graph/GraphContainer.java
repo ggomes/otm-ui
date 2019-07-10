@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
 package otmui.graph;
 
 import javafx.scene.Group;
@@ -44,6 +38,7 @@ public class GraphContainer {
         pane.getChildren().addAll(graph.getLinks());
         pane.getChildren().addAll(graph.getNodes());
         pane.getChildren().addAll(graph.getSensors());
+        pane.getChildren().addAll(graph.getActuators());
         scrollPane.zoomToFit(graph);
     }
 

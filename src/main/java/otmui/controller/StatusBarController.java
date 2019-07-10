@@ -1,10 +1,3 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
-
 package otmui.controller;
 
 import otmui.MainApp;
@@ -64,14 +57,16 @@ public class StatusBarController implements Initializable {
         statusBar.textProperty().unbind();
     }
 
-    public void setText(Set<AbstractDrawLink> selectedLinks, Set<AbstractDrawNode> selectedNodes, Set<DrawSensor> selectedSensors){
+    public void setText(Set<AbstractDrawLink> selectedLinks, Set<AbstractDrawNode> selectedNodes, Set<DrawSensor> selectedSensors, Set<AbstractDrawNode> selectedActuators){
         String str = "links {" +
                 OTMUtils.comma_format(selectedLinks.stream().map(x->x.id).collect(toList())) +
                 "} , nodes {" +
                 OTMUtils.comma_format(selectedNodes.stream().map(x->x.id).collect(toList())) +
                 "} , sensors {" +
                 OTMUtils.comma_format(selectedSensors.stream().map(x->x.id).collect(toList())) +
-                "}";;
+                "}, actuators {" +
+                OTMUtils.comma_format(selectedActuators.stream().map(x->x.id).collect(toList())) +
+                "}";
         this.statusBar.setText(str);
     }
 

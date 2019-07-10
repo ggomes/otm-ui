@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
 package otmui;
 
 import javafx.beans.property.SimpleBooleanProperty;
@@ -28,9 +22,10 @@ public class GlobalParameters {
     // display parameters
     public SimpleFloatProperty link_offset          = new SimpleFloatProperty(null,"link_offset",0f);           // [m] painted width of a lane
     public SimpleFloatProperty lane_width_meters    = new SimpleFloatProperty(null,"lane_width_meters",3f);            // [m] painted width of a lane
-    public SimpleFloatProperty node_size          = new SimpleFloatProperty(null,"node_size",4f);           // [m] painted radius for circular nodes
-    public SimpleObjectProperty color_map = new SimpleObjectProperty(null,"color_map",ColorScheme.Black);
+    public SimpleFloatProperty node_size            = new SimpleFloatProperty(null,"node_size",4f);           // [m] painted radius for circular nodes
+    public SimpleObjectProperty color_map           = new SimpleObjectProperty(null,"color_map",ColorScheme.Black);
     public SimpleBooleanProperty view_nodes         = new SimpleBooleanProperty(null,"view_nodes",true);
+    public SimpleBooleanProperty view_actuators     = new SimpleBooleanProperty(null,"view_actuators",true);
     public SimpleFloatProperty max_density_vpkpl    = new SimpleFloatProperty(null,"max_density_vpkpl",100f);   // [vpkpl] used for displaying MN states
 
     public GlobalParameters(Scene scene){
@@ -44,6 +39,7 @@ public class GlobalParameters {
         color_map.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKS)));
         max_density_vpkpl.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKS)));
         view_nodes.addListener(         e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODES)));
+        view_actuators.addListener(     e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWACTUATORS)));
     }
 
     public AbstractColormap get_colormap(){

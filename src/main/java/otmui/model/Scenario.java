@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
 package otmui.model;
 
 import actuator.AbstractActuator;
@@ -97,7 +91,7 @@ public class Scenario {
         // actuators .........................
         actuators = new HashMap<>();
         for(actuator.AbstractActuator x : bscenario.actuators.values()) {
-            Actuator actuator = new Actuator(x);
+            Actuator actuator = new Actuator(x,network);
             actuators.put(new Long(x.id),actuator);
             Maps.name2actuatorid.put(String.format("actuator %d",x.getId()),x.getId());
         }
@@ -134,8 +128,8 @@ public class Scenario {
         return otm.scenario().controllers.values();
     }
 
-    public Collection<AbstractActuator> getActuators(){
-        return otm.scenario().actuators.values();
+    public Collection<Actuator> getActuators(){
+        return actuators.values();
     }
 
     public Collection<Sensor> getSensors(){

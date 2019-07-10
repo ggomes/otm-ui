@@ -1,17 +1,9 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
-
 package otmui.controller;
 
 import error.OTMException;
 import otmui.GlobalParameters;
 import otmui.MainApp;
 import otmui.event.GraphSelectEvent;
-import otmui.event.TreeSelectEvent;
 import otmui.graph.GraphContainer;
 import otmui.graph.Graph;
 import otmui.graph.color.AbstractColormap;
@@ -22,13 +14,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
-import output.animation.AbstractLaneGroupInfo;
 import output.animation.AbstractLinkInfo;
 import output.animation.AnimationInfo;
 
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,8 +44,6 @@ public class GraphPaneController implements Initializable {
         AnchorPane.setTopAnchor(graphContainer.scrollPane,0d);
         AnchorPane.setLeftAnchor(graphContainer.scrollPane,0d);
         AnchorPane.setRightAnchor(graphContainer.scrollPane,0d);
-
-        this.graphLayout.addEventHandler(TreeSelectEvent.CLICK1, e->System.out.println("SDSDFSDF"));
     }
 
     public void setApp(MainApp myApp){
@@ -94,6 +82,22 @@ public class GraphPaneController implements Initializable {
                             break;
                         case 2:
                             Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_LINK, mouseEvent));
+                            break;
+                    }
+                }
+            });
+        }
+
+        // enable double click of drawActuator
+        for (AbstractDrawNode drawActuator : graph.getActuators()) {
+            drawActuator.setOnMouseClicked(mouseEvent -> {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    switch(mouseEvent.getClickCount()){
+                        case 1:
+                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1_ACTUATOR, mouseEvent));
+                            break;
+                        case 2:
+                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_ACTUATOR, mouseEvent));
                             break;
                     }
                 }
@@ -163,6 +167,20 @@ public class GraphPaneController implements Initializable {
         }
     }
 
+    public void paintActuators() {
+
+        Graph graph = graphContainer.get_graph();
+
+        // set node visible
+        boolean new_view_actuators = myApp.params.view_actuators.getValue();
+        if(new_view_actuators!=graph.view_actuators) {
+            graph.getActuators().forEach(x -> x.set_visible(new_view_actuators));
+            graph.view_actuators = new_view_actuators;
+        }
+
+    }
+
+
     /////////////////////////////////////////////////
     // highlighting
     /////////////////////////////////////////////////
@@ -191,18 +209,28 @@ public class GraphPaneController implements Initializable {
         drawSensor.unhighlight();
     }
 
+    public void highlightActuator(AbstractDrawNode drawActuator){
+        drawActuator.highlight();
+    }
+
+    public void unhighlightActuator(AbstractDrawNode drawActuator){
+        drawActuator.unhighlight();
+    }
+
     public void unhighlightAll(){
         Graph graph = graphContainer.get_graph();
         graph.getLinks().forEach(x-> unhighlightLink(x));
         graph.getNodes().forEach(x-> unhighlightNode(x));
         graph.getSensors().forEach(x-> unhighlightSensor(x));
+        graph.getActuators().forEach(x-> unhighlightActuator(x));
     }
 
-    public void highlight(Set<AbstractDrawLink> selectLinks, Set<AbstractDrawNode> selectNodes, Set<DrawSensor> selectSensors){
+    public void highlight(Set<AbstractDrawLink> selectLinks, Set<AbstractDrawNode> selectNodes, Set<DrawSensor> selectSensors,Set<AbstractDrawNode> selectActuators){
         unhighlightAll();
         selectLinks.forEach(x-> highlightLink(x));
         selectNodes.forEach(x-> highlightNode(x));
         selectSensors.forEach(x-> highlightSensor(x));
+        selectActuators.forEach(x-> highlightActuator(x));
     }
 
     /////////////////////////////////////////////////
@@ -217,8 +245,9 @@ public class GraphPaneController implements Initializable {
         Set<AbstractDrawNode> drawNodes = myApp.selectionManager.selectedNodes;
         Set<AbstractDrawLink> drawLinks = myApp.selectionManager.selectedLinks;
         Set<DrawSensor> drawSensors = myApp.selectionManager.selectedSensors;
+        Set<AbstractDrawNode> drawActuators = myApp.selectionManager.selectedActuators;
 
-        if(drawLinks.isEmpty() && drawNodes.isEmpty() && drawSensors.isEmpty())
+        if(drawLinks.isEmpty() && drawNodes.isEmpty() && drawSensors.isEmpty() && drawActuators.isEmpty())
             return;
 
         // collect node positions
@@ -229,6 +258,10 @@ public class GraphPaneController implements Initializable {
         allX.addAll(drawSensors.stream().map(x->x.getXPos()).collect(Collectors.toSet()));
         allY.addAll(drawSensors.stream().map(x->x.getYPos()).collect(Collectors.toSet()));
 
+        // collect actuator positions
+        allX.addAll(drawActuators.stream().map(x->x.getXPos()).collect(Collectors.toSet()));
+        allY.addAll(drawActuators.stream().map(x->x.getYPos()).collect(Collectors.toSet()));
+
         // collect link start positions
         allX.addAll(drawLinks.stream().map(x->x.getStartPosX()).collect(Collectors.toSet()));
         allY.addAll(drawLinks.stream().map(x->x.getStartPosY()).collect(Collectors.toSet()));
@@ -237,16 +270,6 @@ public class GraphPaneController implements Initializable {
         allX.addAll(drawLinks.stream().map(x->x.getEndPosX()).collect(Collectors.toSet()));
         allY.addAll(drawLinks.stream().map(x->x.getEndPosY()).collect(Collectors.toSet()));
 
-//        // compute bounding box
-//        Double minX = allX.stream().min(Double::compareTo).get();
-//        Double maxX = allX.stream().max(Double::compareTo).get();
-//        Double minY = allY.stream().min(Double::compareTo).get();
-//        Double maxY = allY.stream().max(Double::compareTo).get();
-//
-//        System.out.println("minX: " + minX);
-//        System.out.println("maxX: " + maxX);
-//        System.out.println("minY: " + minY);
-//        System.out.println("maxY: " + maxY);
 
     }
 

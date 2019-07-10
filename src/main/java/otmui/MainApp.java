@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
 package otmui;
 
 import api.API;
@@ -144,13 +138,15 @@ public class MainApp extends Application {
         scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->processNewScenario(e.scenario) );
         scene.addEventFilter(ResetScenarioEvent.SCENARIO_RESET, e->reset() );
 
-        // graph, link or node click
+        // graph click
         scene.addEventFilter(GraphSelectEvent.CLICK1_NODE, e->selectionManager.graphFirstClickNode(e));
         scene.addEventFilter(GraphSelectEvent.CLICK2_NODE, e->selectionManager.graphSecondClickNode(e));
         scene.addEventFilter(GraphSelectEvent.CLICK1_LINK, e->selectionManager.graphFirstClickLink(e));
         scene.addEventFilter(GraphSelectEvent.CLICK2_LINK, e->selectionManager.graphSecondClickLink(e));
         scene.addEventFilter(GraphSelectEvent.CLICK1_SENSOR, e->selectionManager.graphFirstClickSensor(e));
         scene.addEventFilter(GraphSelectEvent.CLICK2_SENSOR, e->selectionManager.graphSecondClickSensor(e));
+        scene.addEventFilter(GraphSelectEvent.CLICK1_ACTUATOR, e->selectionManager.graphFirstClickActuator(e));
+        scene.addEventFilter(GraphSelectEvent.CLICK2_ACTUATOR, e->selectionManager.graphSecondClickActuator(e));
 
         // tree, setText
         scene.addEventFilter(TreeSelectEvent.CLICK1, e->selectionManager.treeFirstClick(e));
@@ -186,8 +182,9 @@ public class MainApp extends Application {
 
         // parameter changes
         scene.addEventFilter(ParameterChange.SIMULATION,e->System.out.println("Simulation parameter changed"));
-        scene.addEventFilter(ParameterChange.DRAWLINKS,e->drawGraphLinks(e));
-        scene.addEventFilter(ParameterChange.DRAWNODES,e->drawGraphNodes(e));
+        scene.addEventFilter(ParameterChange.DRAWLINKS,e->graphpaneController.paintLinks());
+        scene.addEventFilter(ParameterChange.DRAWNODES,e->graphpaneController.paintNodes());
+        scene.addEventFilter(ParameterChange.DRAWACTUATORS,e->graphpaneController.paintActuators());
     }
 
     /////////////////////////////////////////////////
@@ -217,19 +214,6 @@ public class MainApp extends Application {
     /////////////////////////////////////////////////
     // private
     /////////////////////////////////////////////////
-
-    private void drawGraphLinks(Event event){
-        if(this.scenario==null)
-            return;
-        System.out.println("drawGraphLinks");
-        graphpaneController.paintLinks();
-    }
-
-    private void drawGraphNodes(Event event){
-        if(this.scenario==null)
-            return;
-        graphpaneController.paintNodes();
-    }
 
     private void processNewScenario(Scenario scenario)  {
         if(scenario==null)

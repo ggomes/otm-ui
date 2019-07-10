@@ -1,22 +1,15 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
-
 package otmui.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import actuator.AbstractActuator;
 import otmui.ElementType;
 import otmui.MainApp;
 import otmui.Maps;
 import otmui.event.TreeSelectEvent;
 import otmui.graph.item.AbstractDrawLink;
+import otmui.graph.item.AbstractDrawNode;
 import otmui.graph.item.DrawSensor;
 import otmui.model.*;
 import commodity.Subnetwork;
@@ -88,7 +81,7 @@ public class TreeController implements Initializable {
         // actuators
         TreeItem<String> act = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.ACTUATOR));
         rootItem.getChildren().add(act);
-        for (AbstractActuator a : scenario.getActuators())
+        for (Actuator a : scenario.getActuators())
             act.getChildren().add(new TreeItem<>(Maps.name2actuatorid.getFromSecond(a.getId())));
 
         // controllers
@@ -180,7 +173,7 @@ public class TreeController implements Initializable {
 
     }
 
-    public void highlight(Set<AbstractDrawLink> drawLinks, Set<DrawSensor> drawSensors){
+    public void highlight(Set<AbstractDrawLink> drawLinks, Set<DrawSensor> drawSensors, Set<AbstractDrawNode> drawActuators){
 
         for(AbstractDrawLink obj : drawLinks) {
             TreeItem linkList = searchItem(scenariotree.getRoot(), "links");
@@ -191,6 +184,13 @@ public class TreeController implements Initializable {
 
         for(DrawSensor obj : drawSensors) {
             TreeItem sensorList = searchItem(scenariotree.getRoot(), "sensors");
+            TreeItem item = searchItem(sensorList, Maps.name2sensorid.getFromSecond(obj.id));
+            if (item != null)
+                scenariotree.getSelectionModel().select(scenariotree.getRow(item));
+        }
+
+        for(AbstractDrawNode obj : drawActuators) {
+            TreeItem sensorList = searchItem(scenariotree.getRoot(), "actuators");
             TreeItem item = searchItem(sensorList, Maps.name2sensorid.getFromSecond(obj.id));
             if (item != null)
                 scenariotree.getSelectionModel().select(scenariotree.getRow(item));

@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
 package otmui.graph;
 
 import javafx.event.EventHandler;
@@ -12,9 +6,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
 
-/**
- * Created by gomes on 2/14/2017.
- */
 public class ZoomableScrollPane2 extends ScrollPane {
 
     public double scaleValue = 1.0;

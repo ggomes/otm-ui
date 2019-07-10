@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2018, Gabriel Gomes
- * All rights reserved.
- * This source code is licensed under the standard 3-clause BSD license found
- * in the LICENSE file in the root directory of this source tree.
- */
 package otmui.graph;
 
 import otmui.GlobalParameters;
@@ -20,6 +14,7 @@ public class Graph {
 
     public float node_size;
     public boolean view_nodes;
+    public boolean view_actuators;
     public float lane_width_meters;
     public float link_offset;
     public GlobalParameters.ColorScheme color_map;
@@ -27,6 +22,7 @@ public class Graph {
     public Map<Long,AbstractDrawNode> nodes; // <id,item>
     public Map<Long,AbstractDrawLink> links; // <id,item>
     public Map<Long,DrawSensor> sensors; // <id,item>
+    public Map<Long,AbstractDrawNode> actuators; // <id,item>
 
     /////////////////////////////////////////////////
     // construction
@@ -37,6 +33,7 @@ public class Graph {
 
         this.node_size = params.node_size.floatValue();
         this.view_nodes = params.view_nodes.getValue();
+        this.view_actuators = params.view_actuators.getValue();
         this.lane_width_meters = params.lane_width_meters.getValue();;
         this.link_offset = params.link_offset.getValue();;
         this.color_map = (GlobalParameters.ColorScheme) params.color_map.getValue();;
@@ -46,7 +43,7 @@ public class Graph {
 
         // create nodes
         for (Node node : scenario.getNodes()) {
-            AbstractDrawNode drawNode = makeDrawNode(node,node_size);
+            AbstractDrawNode drawNode = makeDrawNode(node,1f);
             node.drawNode = drawNode;
             nodes.put( drawNode.id, drawNode);
         }
@@ -58,6 +55,13 @@ public class Graph {
             AbstractDrawLink drawLink = makeDrawLink(link, lane_width_meters, link_offset, colormap, nodes);
             link.drawLink = drawLink;
             links.put(drawLink.id, drawLink);
+        }
+
+        // create actuators
+        for (otmui.model.Actuator actuator : scenario.getActuators()) {
+            AbstractDrawNode drawActuator = makeDrawActuator(actuator,20f);
+            actuator.drawActuator = drawActuator;
+            actuators.put(drawActuator.id,drawActuator);
         }
 
         // create sensors
@@ -75,6 +79,10 @@ public class Graph {
 
     public Collection<AbstractDrawNode> getNodes(){
         return nodes.values();
+    }
+
+    public Collection<AbstractDrawNode> getActuators(){
+        return actuators.values();
     }
 
     public Collection<AbstractDrawLink> getLinks(){
@@ -114,12 +122,9 @@ public class Graph {
     /////////////////////////////////////////////////
 
     private static AbstractDrawNode makeDrawNode(otmui.model.Node node, float radius) {
-        AbstractDrawNode drawNode;
-        if (node==null)
-            drawNode = new DrawNodeCircle(-1L,0f,0f,radius);
-        else
-            drawNode = new DrawNodeCircle(node.getId(),node.getXcoord(),-node.getYcoord(),radius);
-        return drawNode;
+        return node==null ?
+                new DrawNodeCircle(-1L,0f,0f,radius) :
+                new DrawNodeCircle(node.getId(),node.getXcoord(),-node.getYcoord(),radius);
     }
 
     private static AbstractDrawLink makeDrawLink(otmui.model.Link link, float lane_width, float link_offset, AbstractColormap colormap,Map<Long,AbstractDrawNode> nodes) throws OTMException {
@@ -153,18 +158,20 @@ public class Graph {
         return drawLink;
     }
 
+    private static AbstractDrawNode makeDrawActuator(otmui.model.Actuator actuator, float size) {
+        return actuator==null ?
+                new DrawNodeOctagon(-1L,0f,0f,size) :
+                new DrawNodeOctagon(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size);
+    }
+
     private static DrawSensor makeDrawSensor(otmui.model.Sensor sensor, float lane_width, float link_offset) {
-        DrawSensor drawSensor;
-        if (sensor==null)
-            drawSensor = new DrawSensor();
-        else
-            drawSensor = new DrawSensor(sensor, lane_width, link_offset);
-        return drawSensor;
+        return sensor==null ? new DrawSensor() : new DrawSensor(sensor, lane_width, link_offset);
     }
 
     private void clear() {
         nodes = new HashMap<>(); // <id,item>
         links = new HashMap<>(); // <id,item>
+        actuators = new HashMap<>(); // <id,item>
         sensors = new HashMap<>(); // <id,item>
     }
 
