@@ -18,6 +18,12 @@ import java.util.*;
 
 public class Graph {
 
+    public float node_size;
+    public boolean view_nodes;
+    public float lane_width_meters;
+    public float link_offset;
+    public GlobalParameters.ColorScheme color_map;
+
     public Map<Long,AbstractDrawNode> nodes; // <id,item>
     public Map<Long,AbstractDrawLink> links; // <id,item>
     public Map<Long,DrawSensor> sensors; // <id,item>
@@ -29,12 +35,18 @@ public class Graph {
     public Graph(Scenario scenario, GlobalParameters params) throws OTMException {
         clear();
 
+        this.node_size = params.node_size.floatValue();
+        this.view_nodes = params.view_nodes.getValue();
+        this.lane_width_meters = params.lane_width_meters.getValue();;
+        this.link_offset = params.link_offset.getValue();;
+        this.color_map = (GlobalParameters.ColorScheme) params.color_map.getValue();;
+
         // create the colormap
         AbstractColormap colormap = params.get_colormap();
 
         // create nodes
         for (Node node : scenario.getNodes()) {
-            AbstractDrawNode drawNode = makeDrawNode(node, params.node_radius.floatValue());
+            AbstractDrawNode drawNode = makeDrawNode(node,node_size);
             node.drawNode = drawNode;
             nodes.put( drawNode.id, drawNode);
         }

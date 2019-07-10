@@ -3,6 +3,7 @@ package otmui.graph.item;
 import common.Link;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import otmui.GlobalParameters;
 import otmui.graph.color.AbstractColormap;
 import otmui.utils.Arrow;
 import otmui.utils.Vector;
@@ -27,7 +28,7 @@ public class DrawCell {
 
         mycolor = colormap.get_color_for_roadtype(Link.RoadType.mainline);
 
-        make_polygon(arrows,(float) lateral_offset,(float) width,colormap,Link.RoadType.mainline);
+        this.polygon = make_polygon(arrows,(float) lateral_offset,(float) width,colormap,Link.RoadType.mainline);
     }
 
     /////////////////////////////////////////////////
@@ -51,14 +52,10 @@ public class DrawCell {
     }
 
     /////////////////////////////////////////////////
-    // get
+    // set
     /////////////////////////////////////////////////
 
-    public double get_downstream_offset(){
-        return arrows.get(arrows.size()-1).position;
-    }
-
-    private void make_polygon(List<Arrow> arrows, float lateral_offset, float width, AbstractColormap colormap, Link.RoadType road_type) {
+    public void paint(float lateral_offset, float width, GlobalParameters.ColorScheme colorscheme){
 
         List<Vector> inner = new ArrayList<>();
         List<Vector> outer = new ArrayList<>();
@@ -68,8 +65,8 @@ public class DrawCell {
             outer.add(Vector.sum(a.start,Vector.mult(a.direction,lateral_offset+width)));
         }
 
-        polygon = new Polygon();
         polygon.setStrokeWidth(0d);
+        polygon.getPoints().clear();
 
         for (Vector p : inner)
             polygon.getPoints().addAll(new Double[]{(double) p.x, (double) -p.y});
@@ -82,6 +79,41 @@ public class DrawCell {
         polygon.setFill(mycolor);
 
     }
+
+    /////////////////////////////////////////////////
+    // get
+    /////////////////////////////////////////////////
+
+    public double get_downstream_offset(){
+        return arrows.get(arrows.size()-1).position;
+    }
+
+    private Polygon make_polygon(List<Arrow> arrows, float lateral_offset, float width, AbstractColormap colormap, Link.RoadType road_type) {
+
+        List<Vector> inner = new ArrayList<>();
+        List<Vector> outer = new ArrayList<>();
+
+        for (Arrow a : arrows) {
+            inner.add(Vector.sum(a.start,Vector.mult(a.direction,lateral_offset)));
+            outer.add(Vector.sum(a.start,Vector.mult(a.direction,lateral_offset+width)));
+        }
+
+        Polygon polygon = new Polygon();
+        polygon.setStrokeWidth(0d);
+
+        for (Vector p : inner)
+            polygon.getPoints().addAll(new Double[]{(double) p.x, (double) -p.y});
+
+        for (int i = outer.size() - 1; i >= 0; i--) {
+            Vector p = outer.get(i);
+            polygon.getPoints().addAll(new Double[]{(double) p.x, (double) -p.y});
+        }
+
+        polygon.setFill(mycolor);
+
+        return polygon;
+    }
+
 
 
 

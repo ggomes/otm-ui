@@ -16,7 +16,7 @@ public class DrawLanegroupPQ extends AbstractDrawLanegroup  {
 
     public DrawCell cell;
 
-    public DrawLanegroupPQ(AbstractLaneGroup meso_lg, double lateral_offset,double road2euclid) throws OTMException {
+    public DrawLanegroupPQ(AbstractLaneGroup meso_lg, float lateral_offset,double road2euclid) throws OTMException {
         super(meso_lg,lateral_offset);
 //        cell = create_drawcell(meso_lg.length * road2euclid, segments);
     }

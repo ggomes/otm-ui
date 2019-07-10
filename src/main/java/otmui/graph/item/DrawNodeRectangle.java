@@ -11,12 +11,18 @@ import javafx.scene.shape.Rectangle;
 
 public class DrawNodeRectangle extends AbstractDrawNode {
 
-    public DrawNodeRectangle(Long id, Float xpos, Float ypos) {
+    public DrawNodeRectangle(Long id, Float xpos, Float ypos, float size) {
         super( id,xpos,ypos);
-        Rectangle view = new Rectangle( 50,50);
+        Rectangle view = new Rectangle( size,size);
         view.setStroke(Color.DODGERBLUE);
         view.setFill(Color.DODGERBLUE);
         setView( view);
+    }
+
+    @Override
+    public void set_size(float mysize) {
+        ((Rectangle)shape).setHeight(mysize);
+        ((Rectangle)shape).setWidth(mysize);
     }
 
 }

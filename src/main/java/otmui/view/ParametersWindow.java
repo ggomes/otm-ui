@@ -96,11 +96,13 @@ public class ParametersWindow extends VBox {
         list.add(new CustomPropertyItem("Simulation#Duration [seconds]",params.duration));
         list.add(new CustomPropertyItem("Simulation#Delay [ms]",params.sim_delay));
 
-        list.add(new CustomPropertyItem("Display#Lane width [m]",params.lane_width_meters));
-        list.add(new CustomPropertyItem("Display#Lane offset [m]",params.link_offset));
-        list.add(new CustomPropertyItem("Display#Node radius [m]",params.node_radius));
-        list.add(new CustomPropertyItem("Display#Color scheme",params.color_scheme));
-        list.add(new CustomPropertyItem("Display#Max MN density [veh/km/lane]",params.max_density_vpkpl));
+        list.add(new CustomPropertyItem("DrawLinks#Lane width [m]",params.lane_width_meters));
+        list.add(new CustomPropertyItem("DrawLinks#Lane offset [m]",params.link_offset));
+        list.add(new CustomPropertyItem("DrawNodes#Node size [m]",params.node_size));
+        list.add(new CustomPropertyItem("DrawLinks#Color scheme",params.color_map));
+        list.add(new CustomPropertyItem("DrawLinks#Max density [veh/km/lane]",params.max_density_vpkpl));
+
+        list.add(new CustomPropertyItem("DrawNodes#Show nodes",params.view_nodes));
 
         propertySheet = new org.controlsfx.control.PropertySheet(list);
         propertySheet.setPropertyEditorFactory(new Callback<PropertySheet.Item, PropertyEditor<?>>() {

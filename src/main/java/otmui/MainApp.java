@@ -186,7 +186,8 @@ public class MainApp extends Application {
 
         // parameter changes
         scene.addEventFilter(ParameterChange.SIMULATION,e->System.out.println("Simulation parameter changed"));
-        scene.addEventFilter(ParameterChange.DISPLAY,e-> Event.fireEvent(scene,new NewScenarioEvent(scenario)));
+        scene.addEventFilter(ParameterChange.DRAWLINKS,e->drawGraphLinks(e));
+        scene.addEventFilter(ParameterChange.DRAWNODES,e->drawGraphNodes(e));
     }
 
     /////////////////////////////////////////////////
@@ -216,6 +217,19 @@ public class MainApp extends Application {
     /////////////////////////////////////////////////
     // private
     /////////////////////////////////////////////////
+
+    private void drawGraphLinks(Event event){
+        if(this.scenario==null)
+            return;
+        System.out.println("drawGraphLinks");
+        graphpaneController.paintLinks();
+    }
+
+    private void drawGraphNodes(Event event){
+        if(this.scenario==null)
+            return;
+        graphpaneController.paintNodes();
+    }
 
     private void processNewScenario(Scenario scenario)  {
         if(scenario==null)

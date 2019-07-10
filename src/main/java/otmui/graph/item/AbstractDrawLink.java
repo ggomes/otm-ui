@@ -7,12 +7,12 @@
 package otmui.graph.item;
 
 import geometry.Side;
+import otmui.GlobalParameters;
 import otmui.graph.color.AbstractColormap;
 import models.AbstractLaneGroup;
 import error.OTMException;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import otmui.utils.Arrow;
 import otmui.utils.Vector;
 
@@ -132,8 +132,8 @@ public abstract class AbstractDrawLink extends Group {
         for (AbstractLaneGroup lg : link.bLink.lanegroups_flwdn.values()) {
 
             // offsets of the upstream inner corner
-            double lateral_offset = lane_width*(lg.start_lane_dn-1);
-            double long_offset = lg.side== Side.stay ? 0 : link.bLink.length-lg.length;
+            float lateral_offset = lane_width*(lg.start_lane_dn-1);
+            float long_offset = lg.side== Side.stay ? 0 : link.bLink.length-lg.length;
 
             AbstractDrawLanegroup draw_lg = create_draw_lanegroup(lg,midline,lateral_offset,long_offset,lane_width, road2euclid,colormap);
             draw_lanegroups.add(draw_lg);
@@ -148,17 +148,21 @@ public abstract class AbstractDrawLink extends Group {
 
 //        // make the polygons
 //        for (AbstractDrawLanegroup draw_lanegroup : draw_lanegroups) {
-//            List<Polygon> polygons = draw_lanegroup.make_polygons(link, lane_width, link_offset, colormap);
+//            List<Polygon> polygons = draw_lanegroup.make_polygons(link, lane_width_meters, link_offset, colormap);
 //            getChildren().addAll(polygons);
 //        }
 
     }
 
-    abstract AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg,List<Arrow> midline,double lateral_offset,double long_offset, double lane_width,double road2euclid,AbstractColormap colormap) throws OTMException ;
+    abstract AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg,List<Arrow> midline,float lateral_offset,float long_offset, double lane_width,double road2euclid,AbstractColormap colormap) throws OTMException ;
 
     /////////////////////////////////////////////////
-    // highlight
+    // paint
     /////////////////////////////////////////////////
+
+    public void paint(float link_offset, float lane_width, GlobalParameters.ColorScheme colormap){
+        draw_lanegroups.forEach(x -> x.paint(link_offset,lane_width,colormap));
+    }
 
     public void highlight() {
         draw_lanegroups.forEach(x -> x.highlight(color_highlight));

@@ -104,8 +104,8 @@ public class PlotRequestWindow extends VBox {
 //
 //        list.add(new CustomPropertyItem("Display#Lane width [m]",params.lane_width_meters));
 //        list.add(new CustomPropertyItem("Display#Lane offset [m]",params.link_offset));
-//        list.add(new CustomPropertyItem("Display#Node radius [m]",params.node_radius));
-//        list.add(new CustomPropertyItem("Display#Color scheme",params.color_scheme));
+//        list.add(new CustomPropertyItem("Display#Node radius [m]",params.node_size));
+//        list.add(new CustomPropertyItem("Display#Color scheme",params.color_map));
 //        list.add(new CustomPropertyItem("Display#Max MN density [veh/km/lane]",params.max_density_vpkpl));
 //
 //        propertySheet = new org.controlsfx.control.PropertySheet(list);

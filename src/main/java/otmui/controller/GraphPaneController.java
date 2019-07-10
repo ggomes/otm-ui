@@ -8,6 +8,7 @@
 package otmui.controller;
 
 import error.OTMException;
+import otmui.GlobalParameters;
 import otmui.MainApp;
 import otmui.event.GraphSelectEvent;
 import otmui.event.TreeSelectEvent;
@@ -119,6 +120,47 @@ public class GraphPaneController implements Initializable {
 
     public void reset(){
         reset_link_color();
+    }
+
+    /////////////////////////////////////////////////
+    // drawing
+    /////////////////////////////////////////////////
+
+    public void paintLinks() {
+
+        Graph graph = graphContainer.get_graph();
+
+        float new_width = myApp.params.lane_width_meters.floatValue();
+        float new_offset = myApp.params.link_offset.floatValue();
+        GlobalParameters.ColorScheme new_color_map = (GlobalParameters.ColorScheme) myApp.params.color_map.getValue();
+        if (Math.abs(new_width-graph.lane_width_meters)>0.1f
+                || Math.abs(new_offset-graph.link_offset)>0.1f
+                || new_color_map.equals(graph.color_map) ) {
+            graph.getLinks().forEach(x -> x.paint(new_offset,new_width,new_color_map));
+            graph.lane_width_meters = new_width;
+            graph.link_offset = new_offset;
+            graph.color_map = new_color_map;
+        }
+
+    }
+
+    public void paintNodes() {
+
+        Graph graph = graphContainer.get_graph();
+
+        // set node size
+        float new_size = myApp.params.node_size.floatValue();
+        if (Math.abs(new_size-graph.node_size)>0.1f) {
+            graph.getNodes().forEach(x -> x.set_size(new_size));
+            graph.node_size = new_size;
+        }
+
+        // set node visible
+        boolean new_view_nodes = myApp.params.view_nodes.getValue();
+        if(new_view_nodes!=graph.view_nodes) {
+            graph.getNodes().forEach(x -> x.set_visible(new_view_nodes));
+            graph.view_nodes = new_view_nodes;
+        }
     }
 
     /////////////////////////////////////////////////

@@ -6,9 +6,9 @@
  */
 package otmui;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import otmui.event.ParameterChange;
 import otmui.graph.color.AbstractColormap;
-import otmui.graph.color.HSVColormap;
 import otmui.graph.color.MatlabColormap;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -27,11 +27,10 @@ public class GlobalParameters {
 
     // display parameters
     public SimpleFloatProperty link_offset          = new SimpleFloatProperty(null,"link_offset",0f);           // [m] painted width of a lane
-    public SimpleFloatProperty lane_width_meters    = new SimpleFloatProperty(null,"lane_width",20f);            // [m] painted width of a lane
-    public SimpleFloatProperty node_radius          = new SimpleFloatProperty(null,"node_radius",0f);           // [m] painted radius for circular nodes
-    public SimpleObjectProperty color_scheme        = new SimpleObjectProperty(null,"color_scheme",ColorScheme.Black);
-
-    // MN model parameters
+    public SimpleFloatProperty lane_width_meters    = new SimpleFloatProperty(null,"lane_width_meters",3f);            // [m] painted width of a lane
+    public SimpleFloatProperty node_size          = new SimpleFloatProperty(null,"node_size",4f);           // [m] painted radius for circular nodes
+    public SimpleObjectProperty color_map = new SimpleObjectProperty(null,"color_map",ColorScheme.Black);
+    public SimpleBooleanProperty view_nodes         = new SimpleBooleanProperty(null,"view_nodes",true);
     public SimpleFloatProperty max_density_vpkpl    = new SimpleFloatProperty(null,"max_density_vpkpl",100f);   // [vpkpl] used for displaying MN states
 
     public GlobalParameters(Scene scene){
@@ -39,20 +38,21 @@ public class GlobalParameters {
         sim_dt.addListener(             e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
         duration.addListener(           e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
         sim_delay.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
-        link_offset.addListener(        e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DISPLAY)));
-        lane_width_meters.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DISPLAY)));
-        node_radius.addListener(        e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DISPLAY)));
-        color_scheme.addListener(       e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DISPLAY)));
-        max_density_vpkpl.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DISPLAY)));
+        link_offset.addListener(        e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKS)));
+        lane_width_meters.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKS)));
+        node_size.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODES)));
+        color_map.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKS)));
+        max_density_vpkpl.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKS)));
+        view_nodes.addListener(         e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODES)));
     }
 
     public AbstractColormap get_colormap(){
         return new MatlabColormap(
                 this.max_density_vpkpl.floatValue() ,
-                (GlobalParameters.ColorScheme) this.color_scheme.getValue());
+                (GlobalParameters.ColorScheme) this.color_map.getValue());
 //        return new HSVColormap(
 //                this.max_density_vpkpl.floatValue() ,
-//                (GlobalParameters.ColorScheme) this.color_scheme.getValue());
+//                (GlobalParameters.ColorScheme) this.color_map.getValue());
     }
 
     @Override
@@ -64,9 +64,8 @@ public class GlobalParameters {
         str += "sim_delay = " + sim_delay.floatValue() + "\n";
         str += "link_offset = " + link_offset.floatValue() + "\n";
         str += "lane_width_meters = " + lane_width_meters.floatValue() + "\n";
-        str += "node_radius = " + node_radius.floatValue() + "\n";
-        str += "color_scheme = " + color_scheme.toString() + "\n";
-        str += "color_scheme = " + color_scheme.toString() + "\n";
+        str += "node_size = " + node_size.floatValue() + "\n";
+        str += "color_map = " + color_map.toString() + "\n";
         str += "max_density_vpkpl = " + max_density_vpkpl.toString() + "\n";
         return str;
     }

@@ -22,7 +22,7 @@ public class DrawLinkPQ extends AbstractDrawLink  {
     }
 
     @Override
-    public AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg, List<Arrow> midline, double lateral_offset, double long_offset, double lane_width,double road2euclid,AbstractColormap colormap) throws OTMException {
+    public AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width,double road2euclid,AbstractColormap colormap) throws OTMException {
         return new DrawLanegroupPQ(lg,lateral_offset,road2euclid);
     }
 

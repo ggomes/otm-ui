@@ -22,7 +22,7 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup  {
     // construction
     /////////////////////////////////////////////////
 
-    public DrawLaneGroupCTM(AbstractLaneGroup alg, List<Arrow> midline, double lateral_offset, double long_offset, double lane_width, double road2euclid, AbstractColormap colormap) throws OTMException {
+    public DrawLaneGroupCTM(AbstractLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, AbstractColormap colormap) throws OTMException {
 
         super(alg,lateral_offset);
 

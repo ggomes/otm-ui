@@ -9,6 +9,7 @@ package otmui.graph.item;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
+import otmui.GlobalParameters;
 
 public abstract class AbstractDrawNode extends Group {
 
@@ -26,6 +27,12 @@ public abstract class AbstractDrawNode extends Group {
         this.id = _id==null ? 0 : _id;
         this.xpos = _xpos==null ? 0d : new Double(_xpos );
         this.ypos = _ypos==null ? 0d : new Double(_ypos );
+    }
+
+    public abstract void set_size(float mysize);
+
+    public void set_visible(boolean visible){
+        this.shape.setVisible(visible);
     }
 
     public void setView(Shape shape) {
@@ -48,6 +55,10 @@ public abstract class AbstractDrawNode extends Group {
 
     public void unhighlight() {
         shape.setFill(color1);
+    }
+
+    public void paint(GlobalParameters params) {
+        this.setVisible(params.view_nodes.getValue());
     }
 
 }
