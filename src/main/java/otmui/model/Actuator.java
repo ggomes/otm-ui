@@ -5,14 +5,20 @@ import otmui.graph.item.AbstractDrawNode;
 
 public class Actuator {
 
+    public enum Type {signal,stop,other}
+
     private actuator.AbstractActuator bactuator;
     public AbstractDrawNode drawActuator;
+    public Actuator.Type type;
 
     private Float xcoord;
     private Float ycoord;
 
     public Actuator(actuator.AbstractActuator bactuator,otmui.model.Network network) throws OTMException {
         this.bactuator = bactuator;
+
+        System.out.println(bactuator);
+        System.out.println(bactuator.target);
 
         switch(bactuator.target.getScenarioElementType()){
             case node:
@@ -24,13 +30,16 @@ public class Actuator {
                 throw new OTMException("Unknown actuator type");
         }
 
-//        switch(bactuator.getClass().getSimpleName()){
-//            case "ActuatorSignal":
-//
-//                break;
-//            default:
-//                throw new OTMException("Unknown actuator type");
-//        }
+        switch(bactuator.getType()){
+            case signal:
+                this.type = Type.signal;
+                break;
+            case stop:
+                this.type = Type.stop;
+                break;
+            default:
+                this.type = Type.other;
+        }
     }
 
     public Long getId(){

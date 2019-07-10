@@ -1,5 +1,6 @@
 package otmui.graph;
 
+import javafx.scene.paint.Color;
 import otmui.GlobalParameters;
 import otmui.graph.color.AbstractColormap;
 import otmui.graph.item.*;
@@ -43,7 +44,7 @@ public class Graph {
 
         // create nodes
         for (Node node : scenario.getNodes()) {
-            AbstractDrawNode drawNode = makeDrawNode(node,1f);
+            AbstractDrawNode drawNode = makeDrawNode(node,node_size);
             node.drawNode = drawNode;
             nodes.put( drawNode.id, drawNode);
         }
@@ -59,7 +60,7 @@ public class Graph {
 
         // create actuators
         for (otmui.model.Actuator actuator : scenario.getActuators()) {
-            AbstractDrawNode drawActuator = makeDrawActuator(actuator,20f);
+            AbstractDrawNode drawActuator = makeDrawActuator(actuator,node_size);
             actuator.drawActuator = drawActuator;
             actuators.put(drawActuator.id,drawActuator);
         }
@@ -123,8 +124,8 @@ public class Graph {
 
     private static AbstractDrawNode makeDrawNode(otmui.model.Node node, float radius) {
         return node==null ?
-                new DrawNodeCircle(-1L,0f,0f,radius) :
-                new DrawNodeCircle(node.getId(),node.getXcoord(),-node.getYcoord(),radius);
+                new DrawNodeCircle(-1L,0f,0f,radius, Color.BLACK, 0f) :
+                new DrawNodeCircle(node.getId(),node.getXcoord(),-node.getYcoord(),radius, Color.DODGERBLUE, 0f);
     }
 
     private static AbstractDrawLink makeDrawLink(otmui.model.Link link, float lane_width, float link_offset, AbstractColormap colormap,Map<Long,AbstractDrawNode> nodes) throws OTMException {
@@ -159,9 +160,21 @@ public class Graph {
     }
 
     private static AbstractDrawNode makeDrawActuator(otmui.model.Actuator actuator, float size) {
-        return actuator==null ?
-                new DrawNodeOctagon(-1L,0f,0f,size) :
-                new DrawNodeOctagon(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size);
+
+        if (actuator==null)
+            return new DrawNodeOctagon(-1L,0f,0f,size, Color.BLACK, 0f);
+
+        switch (actuator.type) {
+            case signal:
+                return new DrawNodeCircle(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, Color.GREEN, 4f);
+            case stop:
+                return new DrawNodeOctagon(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, Color.RED, 0f );
+            case other:
+                return new DrawNodeOctagon(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, Color.GREEN, 1f);
+        }
+
+        return null;
+
     }
 
     private static DrawSensor makeDrawSensor(otmui.model.Sensor sensor, float lane_width, float link_offset) {
