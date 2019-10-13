@@ -21,11 +21,11 @@ public class GlobalParameters {
 
     // display parameters
     public SimpleFloatProperty link_offset          = new SimpleFloatProperty(null,"link_offset",0f);           // [m] painted width of a lane
-    public SimpleFloatProperty lane_width_meters    = new SimpleFloatProperty(null,"lane_width_meters",3f);            // [m] painted width of a lane
+    public SimpleFloatProperty lane_width_meters    = new SimpleFloatProperty(null,"lane_width_meters",10f);            // [m] painted width of a lane
     public SimpleFloatProperty node_size            = new SimpleFloatProperty(null,"node_size",4f);           // [m] painted radius for circular nodes
     public SimpleObjectProperty color_map           = new SimpleObjectProperty(null,"color_map",ColorScheme.Black);
-    public SimpleBooleanProperty view_nodes         = new SimpleBooleanProperty(null,"view_nodes",true);
-    public SimpleBooleanProperty view_actuators     = new SimpleBooleanProperty(null,"view_actuators",true);
+    public SimpleBooleanProperty view_nodes         = new SimpleBooleanProperty(null,"view_nodes",false);
+    public SimpleBooleanProperty view_actuators     = new SimpleBooleanProperty(null,"view_actuators",false);
     public SimpleFloatProperty max_density_vpkpl    = new SimpleFloatProperty(null,"max_density_vpkpl",100f);   // [vpkpl] used for displaying MN states
 
     public GlobalParameters(Scene scene){

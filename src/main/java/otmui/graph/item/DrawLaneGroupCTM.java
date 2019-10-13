@@ -30,8 +30,6 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup  {
 
         this.max_vehicles_per_cell = lg.max_vehicles / lg.cells.size();
 
-        draw_cells = new ArrayList<>();
-
         // length of a cell
         road_cell_length_km = lg.length / lg.cells.size() / 1000f;
         euclid_cell_length_m = road_cell_length_km * road2euclid * 1000f;

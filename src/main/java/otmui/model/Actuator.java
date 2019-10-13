@@ -17,9 +17,6 @@ public class Actuator {
     public Actuator(actuator.AbstractActuator bactuator,otmui.model.Network network) throws OTMException {
         this.bactuator = bactuator;
 
-        System.out.println(bactuator);
-        System.out.println(bactuator.target);
-
         switch(bactuator.target.getScenarioElementType()){
             case node:
                 Node node = network.nodes.get(bactuator.target.getId());

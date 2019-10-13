@@ -23,11 +23,10 @@ public class ActuatorData extends AbstractData {
         // type .................
         X.add(UIFactory.createLabelText(
                 "type",
-                actuator.getId().toString()
+                actuator.getType().toString()
         ).pane);
 
         // target .................
-//        InterfaceActuatorTarget target = ;
         X.add(UIFactory.createLabelButton(
                 "target",
                 actuator.target.getClass().getSimpleName() + " " + actuator.target.getId(),

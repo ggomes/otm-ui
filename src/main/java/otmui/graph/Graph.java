@@ -133,6 +133,7 @@ public class Graph {
         AbstractDrawLink drawLink;
         switch(link.bLink.model.getClass().getSimpleName()){
 
+            case "Model_None":
             case "Model_PQ":
             case "Model_Micro":
                 drawLink = new DrawLinkPQ(link,

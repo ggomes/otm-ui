@@ -8,6 +8,7 @@ import otmui.graph.color.AbstractColormap;
 import otmui.utils.Arrow;
 import output.animation.AbstractLaneGroupInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public abstract class AbstractDrawLanegroup {
     public Long id;
     public int lanes;
     public float lateral_offset;
-    public List<DrawCell> draw_cells;
+    public List<DrawCell> draw_cells = new ArrayList<>();
 
     abstract public void unhighlight();
     abstract public void highlight(Color color);
