@@ -10,6 +10,14 @@
     <packaging>jar</packaging>
     <name>otm-ui</name>
 
+    <properties>
+        <mainClass>otm-ui.MainApp</mainClass>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
+    </properties>
+
     <scm>
         <connection>scm:git:git@github.com:ggomes/otm-ui.git</connection>
         <developerConnection>scm:git:git@github.com:ggomes/otm-ui.git</developerConnection>
@@ -22,11 +30,6 @@
             <url>${myMavenRepoOTMReadUrl}</url>
         </repository>
     </repositories>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClass>otm-ui.MainApp</mainClass>
-    </properties>
 
     <build>
 
@@ -77,7 +80,6 @@
                 <executions>
                     <execution>
                         <id>unpack-dependencies</id>
-
                         <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
@@ -115,13 +117,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.8.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <compilerArguments>
-                        <bootclasspath>${sun.boot.class.path}${path.separator}${java.home}/lib/jfxrt.jar</bootclasspath>
-                    </compilerArguments>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <release>${maven.compiler.release}</release>
+<!--                    <compilerArguments>-->
+<!--                        <bootclasspath>${sun.boot.class.path}${path.separator}${java.home}/lib/jfxrt.jar</bootclasspath>-->
+<!--                    </compilerArguments>-->
                 </configuration>
             </plugin>
 
@@ -188,6 +191,34 @@
             <artifactId>junit</artifactId>
             <version>4.10</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- JavaFX BASE -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>11</version>
+        </dependency>
+
+        <!-- JavaFX GRAPHICS -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>11</version>
+        </dependency>
+
+        <!-- JavaFX CONTROLS -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>11</version>
+        </dependency>
+
+        <!-- JavaFX FXML -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>11</version>
         </dependency>
 
         <!--https://mvnrepository.com/artifact/org.controlsfx/controlsfx-->

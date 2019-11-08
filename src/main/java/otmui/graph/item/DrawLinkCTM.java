@@ -27,7 +27,7 @@ public class DrawLinkCTM extends AbstractDrawLink {
         // get a full lanegroup
         models.ctm.LaneGroup lg = (models.ctm.LaneGroup) this.link.bLink.lanegroups_flwdn.values()
                 .stream()
-                .filter(x->x.side== Side.stay)
+                .filter(x->x.side== Side.middle)
                 .findFirst().get();
 
         // length of a cell

@@ -53,10 +53,11 @@ public abstract class  AbstractColormap {
                     case none:
                         color = Color.BLACK;
                         break;
-                    case ramp:
+                    case onramp:
+                    case offramp:
                         color = Color.BLUE;
                         break;
-                    case mainline:
+                    case freeway:
                         color = Color.DARKMAGENTA;
                         break;
 //                        color = Color.BROWN;

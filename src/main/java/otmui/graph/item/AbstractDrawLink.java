@@ -127,7 +127,7 @@ public abstract class AbstractDrawLink extends Group {
 
             // offsets of the upstream inner corner
             float lateral_offset = lane_width*(lg.start_lane_dn-1);
-            float long_offset = lg.side== Side.stay ? 0 : link.bLink.length-lg.length;
+            float long_offset = lg.side== Side.middle ? 0 : link.bLink.length-lg.length;
 
             AbstractDrawLanegroup draw_lg = create_draw_lanegroup(lg,midline,lateral_offset,long_offset,lane_width, road2euclid,colormap);
             draw_lanegroups.add(draw_lg);

@@ -26,9 +26,9 @@ public class DrawCell {
             remaining -= a.distance_to_next;
         }
 
-        mycolor = colormap.get_color_for_roadtype(Link.RoadType.mainline);
+        mycolor = colormap.get_color_for_roadtype(Link.RoadType.freeway);
 
-        this.polygon = make_polygon(arrows,(float) lateral_offset,(float) width,colormap,Link.RoadType.mainline);
+        this.polygon = make_polygon(arrows,(float) lateral_offset,(float) width,colormap,Link.RoadType.freeway);
     }
 
     /////////////////////////////////////////////////

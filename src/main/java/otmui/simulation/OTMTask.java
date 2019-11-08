@@ -1,6 +1,6 @@
 package otmui.simulation;
 
-import api.APIopen;
+import api.OTMdev;
 import javafx.application.Platform;
 import otmui.GlobalParameters;
 import otmui.controller.GraphPaneController;
@@ -14,7 +14,7 @@ import runner.OTM;
 
 public class OTMTask extends Task {
 
-    private APIopen otm;
+    private OTMdev otm;
     private OTMException exception;
     private float start_time;
     private float duration;
@@ -25,7 +25,7 @@ public class OTMTask extends Task {
     private GraphPaneController graphPaneController;
     private StatusBarController statusBarController;
 
-    public OTMTask(APIopen otm, GlobalParameters params, MenuController menuController,GraphPaneController graphPaneController, StatusBarController statusBarController){
+    public OTMTask(OTMdev otm, GlobalParameters params, MenuController menuController,GraphPaneController graphPaneController, StatusBarController statusBarController){
         this.otm = otm;
         this.start_time = params.start_time.floatValue();
         this.duration = params.duration.floatValue();
@@ -47,7 +47,7 @@ public class OTMTask extends Task {
             menuController.disableParameters();
             menuController.disablePlots();
 
-            OTM.initialize(otm.scenario(), start_time);
+            otm.otm.initialize(start_time);
             final int steps = (int) (duration / sim_dt);
             for (int i=1; i<=steps; i++) {
 
@@ -58,17 +58,19 @@ public class OTMTask extends Task {
                 Thread.sleep(sim_delay);
 
                 // advance otm, get back information
-                OTM.advance(otm.scenario(), sim_dt);
+                otm.otm.advance(sim_dt);
                 final int ii = i;
-                final AnimationInfo info = otm.api.get_animation_info();
 
-                Platform.runLater(new Runnable() {
-                    @Override public void run() {
-                        graphPaneController.draw_link_state(info,colormap);
-                        updateProgress(ii, steps);
-                        updateMessage(String.format("%.0f",info.timestamp));
-                    }
-                });
+                // TODO : PUT THIS BACK
+//                final AnimationInfo info = otm.otm.get_animation_info();
+//
+//                Platform.runLater(new Runnable() {
+//                    @Override public void run() {
+//                        graphPaneController.draw_link_state(info,colormap);
+//                        updateProgress(ii, steps);
+//                        updateMessage(String.format("%.0f",info.timestamp));
+//                    }
+//                });
 
             }
 

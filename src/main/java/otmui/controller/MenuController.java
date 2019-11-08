@@ -173,7 +173,7 @@ public class MenuController implements Initializable {
         alert.setHeaderText(null);
         String str =
                 "UI : " + MainApp.getGitHash() + "\n" +
-                "Simulator : " + myApp.otm.api.get_version();
+                "Simulator : " + myApp.otm.otm.get_version();
         alert.setContentText(str);
         alert.showAndWait();
     }
@@ -203,13 +203,13 @@ public class MenuController implements Initializable {
 
         // load the scenario from XML
         try {
-            myApp.otm.api.load(filename,validate);
+            myApp.otm.otm.load(filename,validate,false);
         } catch (Exception e) {
             throw new OTMException(e);
         }
 
         // check
-        if(myApp.otm.scenario()==null)
+        if(myApp.otm.scenario==null)
             return;
 
         Scenario scenario = new Scenario(myApp.otm);
@@ -226,15 +226,16 @@ public class MenuController implements Initializable {
 
         boolean validate = false;
 
-        // load the scenario from XML
-        try {
-            myApp.otm.api.load_test(testname+".xml",validate);
-        } catch (Exception e) {
-            throw new OTMException(e);
-        }
+        // TODO PUT THIS BACK
+//        // load the scenario from XML
+//        try {
+//            myApp.otm.otm.load_test(testname+".xml",validate);
+//        } catch (Exception e) {
+//            throw new OTMException(e);
+//        }
 
         // check
-        if(myApp.otm.scenario()==null)
+        if(myApp.otm.scenario==null)
             return;
 
         Scenario scenario = new Scenario(myApp.otm);

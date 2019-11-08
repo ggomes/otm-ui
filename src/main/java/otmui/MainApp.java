@@ -1,7 +1,7 @@
 package otmui;
 
-import api.API;
-import api.APIopen;
+import api.OTM;
+import api.OTMdev;
 import javafx.event.Event;
 import otmui.controller.*;
 import otmui.event.*;
@@ -25,7 +25,7 @@ import java.util.Properties;
 
 public class MainApp extends Application {
 
-    public APIopen otm;  // runnable OTM scenario.
+    public OTMdev otm;  // runnable OTM scenario.
 
     public Stage stage;
 
@@ -60,7 +60,7 @@ public class MainApp extends Application {
         this.stage = stage;
 
         // construct the OTM api .....................
-        this.otm = new APIopen(new API());
+        this.otm = new OTMdev(new OTM());
 
         // UI ...........................................
         selectionManager = new SelectionManager(this);

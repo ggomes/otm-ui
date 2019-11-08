@@ -1,7 +1,7 @@
 package otmui.model;
 
 import actuator.AbstractActuator;
-import api.APIopen;
+import api.OTMdev;
 import otmui.Maps;
 import commodity.Subnetwork;
 import control.AbstractController;
@@ -14,7 +14,7 @@ import java.util.*;
 
 public class Scenario {
 
-    private final APIopen otm;
+    private final OTMdev otm;
 
     private final Network network;
     private final Map<Long,DemandsForLink> demands_for_links;
@@ -22,11 +22,11 @@ public class Scenario {
     private final Map<Long, Actuator> actuators;
     private final Map<Long, Sensor> sensors;
 
-    public Scenario(APIopen otm) throws OTMException {
+    public Scenario(OTMdev otm) throws OTMException {
 
         this.otm = otm;
 
-        runner.Scenario bscenario = this.otm.scenario();
+        runner.Scenario bscenario = this.otm.scenario;
 
         // network .........................
         this.network = new Network(bscenario.network);
@@ -109,7 +109,7 @@ public class Scenario {
     }
 
     public Collection<commodity.Commodity> getCommodities(){
-        return otm.scenario().commodities.values();
+        return otm.scenario.commodities.values();
     }
 
     public Collection<DemandsForLink> getDemandsForLinks(){
@@ -117,7 +117,7 @@ public class Scenario {
     }
 
     public Collection<Subnetwork> getSubnetworks(){
-        return otm.scenario().subnetworks.values();
+        return otm.scenario.subnetworks.values();
     }
 
     public Collection<SplitsForNode> getSplits(){
@@ -125,7 +125,7 @@ public class Scenario {
     }
 
     public Collection<AbstractController> getControllers(){
-        return otm.scenario().controllers.values();
+        return otm.scenario.controllers.values();
     }
 
     public Collection<Actuator> getActuators(){
@@ -155,19 +155,19 @@ public class Scenario {
     }
 
     public commodity.Commodity getCommodityWithId(Long id){
-        return otm.scenario().commodities.get(id);
+        return otm.scenario.commodities.get(id);
     }
 
     public AbstractActuator getActuatorWithId(Long id){
-        return otm.scenario().actuators.get(id);
+        return otm.scenario.actuators.get(id);
     }
 
     public Subnetwork getSubnetworkWithId(Long id){
-        return otm.scenario().subnetworks.get(id);
+        return otm.scenario.subnetworks.get(id);
     }
 
     public AbstractController getControllerWithId(Long id){
-        return otm.scenario().controllers.get(id);
+        return otm.scenario.controllers.get(id);
     }
 
     public Sensor getSensorWithId(Long id){
@@ -184,7 +184,7 @@ public class Scenario {
         return network.nodes.get(nodeId).getOutLinkIds();
     }
 
-    public APIopen get_otm(){
+    public OTMdev get_otm(){
         return otm;
     }
 }
