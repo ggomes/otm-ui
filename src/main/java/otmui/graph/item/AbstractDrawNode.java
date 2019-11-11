@@ -18,8 +18,8 @@ public abstract class AbstractDrawNode extends Group {
 
     public AbstractDrawNode(Long _id, Float _xpos, Float _ypos) {
         this.id = _id==null ? 0 : _id;
-        this.xpos = _xpos==null ? 0d : new Double(_xpos );
-        this.ypos = _ypos==null ? 0d : new Double(_ypos );
+        this.xpos = _xpos==null ? 0d : _xpos.doubleValue();
+        this.ypos = _ypos==null ? 0d : _ypos.doubleValue();
     }
 
     public abstract void set_size(float mysize);

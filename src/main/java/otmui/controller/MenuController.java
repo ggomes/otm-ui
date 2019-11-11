@@ -1,5 +1,6 @@
 package otmui.controller;
 
+import api.OTMdev;
 import otmui.MainApp;
 import otmui.event.NewScenarioEvent;
 import otmui.event.ResetScenarioEvent;
@@ -224,15 +225,13 @@ public class MenuController implements Initializable {
 
     private void loadTest(String testname) throws OTMException {
 
-        boolean validate = false;
-
-        // TODO PUT THIS BACK
-//        // load the scenario from XML
-//        try {
-//            myApp.otm.otm.load_test(testname+".xml",validate);
-//        } catch (Exception e) {
-//            throw new OTMException(e);
-//        }
+        // load the scenario from XML
+        try {
+            myApp.otm.otm.load_test(testname);
+            myApp.otm = new OTMdev(myApp.otm.otm);
+        } catch (Exception e) {
+            throw new OTMException(e);
+        }
 
         // check
         if(myApp.otm.scenario==null)
