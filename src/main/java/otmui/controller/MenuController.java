@@ -148,6 +148,16 @@ public class MenuController implements Initializable {
     /////////////////////////////////////////////////
 
     @FXML
+    private void menuZoomIn(ActionEvent event) {
+        myApp.graphpaneController.graphContainer.scrollPane.zoomIn();
+    }
+
+    @FXML
+    private void menuZoomOut(ActionEvent event) {
+        myApp.graphpaneController.graphContainer.scrollPane.zoomOut();
+    }
+
+    @FXML
     private void menuPlots(ActionEvent event) {
         Stage dialog = new Stage();
         dialog.setTitle("Plot requests");
