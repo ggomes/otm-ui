@@ -173,6 +173,7 @@ public class MenuController implements Initializable {
         dialog.setTitle("Global Parameters");
         ParametersWindow paramWindow = new ParametersWindow(myApp.params);
         Scene dialogScene = new Scene(paramWindow, 500, 400);
+//        Scene dialogScene = new Scene(paramWindow);
         dialog.setScene(dialogScene);
         dialog.show();
     }
@@ -215,6 +216,7 @@ public class MenuController implements Initializable {
         // load the scenario from XML
         try {
             myApp.otm.otm.load(filename,validate,false);
+            myApp.otm = new OTMdev(myApp.otm.otm);
         } catch (Exception e) {
             throw new OTMException(e);
         }

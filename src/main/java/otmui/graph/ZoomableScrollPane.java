@@ -71,7 +71,7 @@ public class ZoomableScrollPane extends ScrollPane {
             if (scrollEvent.isControlDown()) {
                 if(scrollEvent.getDeltaY() < 0)
                     zoomOut();
-                else
+                else if(scrollEvent.getDeltaY() > 0)
                     zoomIn();
                 scrollEvent.consume();
             }
