@@ -29,7 +29,7 @@ public class Scenario {
         runner.Scenario bscenario = this.otm.scenario;
 
         // network .........................
-        this.network = new Network(bscenario.network);
+        this.network = new Network(bscenario.network,bscenario.network.node_positions_in_meters);
 
         // name map: commodities .........................
         for(commodity.Commodity x : bscenario.commodities.values())
@@ -84,7 +84,7 @@ public class Scenario {
                 continue;
 
             Sensor sensor = new Sensor((sensor.FixedSensor)x);
-            sensors.put(new Long(x.id),sensor);
+            sensors.put(x.id,sensor);
             Maps.name2sensorid.put(String.format("sensor %d",x.id),x.id);
         }
 
@@ -92,7 +92,7 @@ public class Scenario {
         actuators = new HashMap<>();
         for(actuator.AbstractActuator x : bscenario.actuators.values()) {
             Actuator actuator = new Actuator(x,network);
-            actuators.put(new Long(x.id),actuator);
+            actuators.put(x.id,actuator);
             Maps.name2actuatorid.put(String.format("actuator %d",x.getId()),x.getId());
         }
 

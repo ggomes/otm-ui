@@ -128,7 +128,7 @@ public class MainApp extends Application {
         stage.setWidth(0.8*W);
         stage.setX(0.1*W);
         stage.setY(0.1*H);
-        stage.setMaximized(true);
+//        stage.setMaximized(true);
 
         stage.show();
 

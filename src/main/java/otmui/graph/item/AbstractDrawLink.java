@@ -78,7 +78,6 @@ public abstract class AbstractDrawLink extends Group {
         u = new Vector(midline.get(midline.size()-2).start,midline.get(midline.size()-1).start);
         midline.get(midline.size()-1).direction = Vector.normalize(Vector.cross_z(u));
 
-
         // get additional midline points for this model
         List<Double> add_points = get_additional_midline_points(1d);  // TODO FIX THIS
 

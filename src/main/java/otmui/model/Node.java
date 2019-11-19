@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 
 public class Node {
 
-    private common.Node bnode;
+    public common.Node bnode;
 
     public AbstractDrawNode drawNode; // graph pane object for this node
 
-    private Float xcoord;
-    private Float ycoord;
+    public Float xcoord;
+    public Float ycoord;
 
     public AbstractActuator actuator;
     public SplitsForNode splitsForNode;
