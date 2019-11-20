@@ -8,9 +8,6 @@ public abstract class AbstractDrawNode extends Group {
 
     public enum DrawNodeShape { RECTANGLE, CIRCLE, OCTAGON }
 
-    protected static Color color1 = Color.DODGERBLUE;
-    protected static Color color2 = Color.RED;
-
     public Long id;
     public Shape shape;
     public Double xpos;
@@ -23,6 +20,8 @@ public abstract class AbstractDrawNode extends Group {
     }
 
     public abstract void set_size(float mysize);
+    public abstract void highlight();
+    public abstract void unhighlight();
 
     public void set_visible(boolean visible){
         this.shape.setVisible(visible);
@@ -42,12 +41,5 @@ public abstract class AbstractDrawNode extends Group {
         return ypos;
     }
 
-    public void highlight() {
-        shape.setFill(color2);
-    }
-
-    public void unhighlight() {
-        shape.setFill(color1);
-    }
 
 }

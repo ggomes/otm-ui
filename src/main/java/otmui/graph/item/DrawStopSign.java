@@ -1,11 +1,12 @@
 package otmui.graph.item;
 
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 
-public class DrawNodeOctagon extends AbstractDrawNode  {
+public class DrawStopSign extends AbstractDrawNode  {
 
-    public DrawNodeOctagon(Long id, Float xpos, Float ypos, float r, Paint fill, double stroke_width) {
+    public DrawStopSign(Long id, Float xpos, Float ypos, float r, double stroke_width) {
         super( id,xpos,ypos);
 
         this.xpos -= r;
@@ -29,9 +30,8 @@ public class DrawNodeOctagon extends AbstractDrawNode  {
                 rcos22p5, -rsin22p5 });
 
         octagon.setStrokeWidth(stroke_width);
-        octagon.setFill(fill);
         setView(octagon);
-
+        unhighlight();
     }
 
     @Override
@@ -56,4 +56,15 @@ public class DrawNodeOctagon extends AbstractDrawNode  {
 
 
     }
+
+    @Override
+    public void highlight() {
+        shape.setFill(Color.DARKMAGENTA);
+    }
+
+    @Override
+    public void unhighlight() {
+        shape.setFill(Color.DARKRED);
+    }
+
 }

@@ -19,4 +19,14 @@ public class DrawNodeRectangle extends AbstractDrawNode {
         ((Rectangle)shape).setWidth(mysize);
     }
 
+    @Override
+    public void highlight() {
+        shape.setFill(Color.RED);
+    }
+
+    @Override
+    public void unhighlight() {
+        shape.setFill(Color.DODGERBLUE);
+    }
+
 }

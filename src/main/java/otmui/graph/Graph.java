@@ -60,7 +60,7 @@ public class Graph {
 
         // create actuators
         for (otmui.model.Actuator actuator : scenario.getActuators()) {
-            AbstractDrawNode drawActuator = makeDrawActuator(actuator,node_size);
+            AbstractDrawNode drawActuator = makeDrawActuator(actuator,((float)node_size)*0.7f);
             actuator.drawActuator = drawActuator;
             actuators.put(drawActuator.id,drawActuator);
         }
@@ -163,15 +163,15 @@ public class Graph {
     private static AbstractDrawNode makeDrawActuator(otmui.model.Actuator actuator, float size) {
 
         if (actuator==null)
-            return new DrawNodeOctagon(-1L,0f,0f,size, Color.BLACK, 0f);
+            return new DrawStopSign(-1L,0f,0f,size, 0f);
 
         switch (actuator.type) {
             case signal:
-                return new DrawNodeCircle(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, Color.GREEN, 4f);
+                return new DrawStopSign(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, 4f);
             case stop:
-                return new DrawNodeOctagon(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, Color.RED, 0f );
+                return new DrawStopSign(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, 0f );
             case other:
-                return new DrawNodeOctagon(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, Color.GREEN, 1f);
+                return new DrawStopSign(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, 1f);
         }
 
         return null;

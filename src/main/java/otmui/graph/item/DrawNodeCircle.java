@@ -1,5 +1,6 @@
 package otmui.graph.item;
 
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
@@ -22,4 +23,15 @@ public class DrawNodeCircle extends AbstractDrawNode {
     public void set_size(float mysize) {
         ((Circle) shape).setRadius(mysize);
     }
+
+    @Override
+    public void highlight() {
+        shape.setFill(Color.RED);
+    }
+
+    @Override
+    public void unhighlight() {
+        shape.setFill(Color.DODGERBLUE);
+    }
+
 }

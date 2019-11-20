@@ -51,6 +51,4 @@ public class Actuator {
         return ycoord;
     }
 
-
-
 }
