@@ -180,7 +180,6 @@ public class GraphPaneController implements Initializable {
 
     }
 
-
     /////////////////////////////////////////////////
     // highlighting
     /////////////////////////////////////////////////
@@ -270,7 +269,21 @@ public class GraphPaneController implements Initializable {
         allX.addAll(drawLinks.stream().map(x->x.getEndPosX()).collect(Collectors.toSet()));
         allY.addAll(drawLinks.stream().map(x->x.getEndPosY()).collect(Collectors.toSet()));
 
+        if(allX.isEmpty() || allY.isEmpty())
+            return;
 
+        double cX = allX.stream().mapToDouble(x -> x).average().getAsDouble();
+        double cY = allY.stream().mapToDouble(x -> x).average().getAsDouble();
+
+//        graphContainer.scrollPane.setLayoutX(100 + graphContainer.scrollPane.getLayoutX());
+//        graphContainer.canvas.setLayoutX(100 + graphContainer.canvas.getLayoutX());
+//        graphContainer.pane.setLayoutX(100 + graphContainer.pane.getLayoutX());
+
+//        graphContainer.scrollPane.getContent().setTranslateX(100);
+//        graphContainer.scrollPane.getContent().setTranslateY(100);
+
+
+        graphContainer.scrollPane.layout();
     }
 
     /////////////////////////////////////////////////

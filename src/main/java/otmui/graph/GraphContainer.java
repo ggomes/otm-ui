@@ -12,7 +12,7 @@ public class GraphContainer {
     public Group canvas;
     public Pane pane;
 
-    public MouseGestures mouseGestures;
+//    public MouseGestures mouseGestures;
 
     public GraphContainer() {
 
@@ -25,7 +25,7 @@ public class GraphContainer {
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
 
-        mouseGestures = new MouseGestures(this);
+//        mouseGestures = new MouseGestures(this);
     }
 
     public double getScale() {
