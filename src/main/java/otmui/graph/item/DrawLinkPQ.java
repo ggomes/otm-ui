@@ -21,7 +21,7 @@ public class DrawLinkPQ extends AbstractDrawLink  {
     }
 
     @Override
-    List<Double> get_additional_midline_points(double road2euclid) {
+    List<Double> get_additional_midline_points() {
         return new ArrayList<>();
     }
 

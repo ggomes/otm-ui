@@ -1,5 +1,6 @@
 package otmui.graph.item;
 
+import common.Point;
 import geometry.Side;
 import otmui.graph.color.AbstractColormap;
 import otmui.model.Link;
@@ -22,7 +23,15 @@ public class DrawLinkCTM extends AbstractDrawLink {
     }
 
     @Override
-    List<Double> get_additional_midline_points(double road2euclid) {
+    List<Double> get_additional_midline_points() {
+
+        double shape_length=0d;
+        for(int i=0;i<link.bLink.shape.size()-1;i++){
+            Point p0 = link.bLink.shape.get(i);
+            Point p1 = link.bLink.shape.get(i+1);
+            shape_length += Math.sqrt(Math.pow(p0.x-p1.x,2)+Math.pow(p0.y-p1.y,2));
+        }
+        double road2euclid = shape_length/link.bLink.length;
 
         // get a full lanegroup
         models.ctm.LaneGroup lg = (models.ctm.LaneGroup) this.link.bLink.lanegroups_flwdn.values()

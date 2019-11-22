@@ -26,7 +26,7 @@ public abstract class AbstractDrawLink extends Group {
     public AbstractDrawNode endNode;
     public double max_vehicles;
 
-    abstract List<Double> get_additional_midline_points(double road2euclid);
+    abstract List<Double> get_additional_midline_points();
 
     /////////////////////////////////////////////////
     // construction
@@ -72,14 +72,13 @@ public abstract class AbstractDrawLink extends Group {
             // needed to avoid switching around 0, which makes a strange shape
             if (Vector.dot(midline.get(i).direction,midline.get(i-1).direction)<0)
                 midline.get(i).direction = Vector.mult(midline.get(i).direction,-1f);
-
         }
 
         u = new Vector(midline.get(midline.size()-2).start,midline.get(midline.size()-1).start);
         midline.get(midline.size()-1).direction = Vector.normalize(Vector.cross_z(u));
 
         // get additional midline points for this model
-        List<Double> add_points = get_additional_midline_points(1d);  // TODO FIX THIS
+        List<Double> add_points = get_additional_midline_points();  // TODO FIX THIS
 
         // add additional points
         List<Arrow> add_midline = new ArrayList<>();

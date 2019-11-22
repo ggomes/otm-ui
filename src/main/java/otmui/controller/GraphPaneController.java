@@ -283,7 +283,7 @@ public class GraphPaneController implements Initializable {
 //        graphContainer.scrollPane.getContent().setTranslateY(100);
 
 
-        graphContainer.scrollPane.layout();
+//        graphContainer.scrollPane.layout();
     }
 
     /////////////////////////////////////////////////
