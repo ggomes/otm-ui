@@ -4,7 +4,7 @@ import common.Point;
 import geometry.Side;
 import otmui.graph.color.AbstractColormap;
 import otmui.model.Link;
-import models.AbstractLaneGroup;
+import models.BaseLaneGroup;
 import error.OTMException;
 import otmui.utils.Arrow;
 
@@ -18,7 +18,7 @@ public class DrawLinkCTM extends AbstractDrawLink {
     }
 
     @Override
-    public AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset,double lane_width, double road2euclid,AbstractColormap colormap) throws OTMException {
+    public AbstractDrawLanegroup create_draw_lanegroup(BaseLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset,double lane_width, double road2euclid,AbstractColormap colormap) throws OTMException {
         return new DrawLaneGroupCTM(lg,midline,lateral_offset,long_offset,lane_width,road2euclid,colormap);
     }
 

@@ -85,7 +85,7 @@ public class ParametersWindow extends VBox {
     public ParametersWindow(GlobalParameters params) {
         ObservableList<org.controlsfx.control.PropertySheet.Item> list = FXCollections.observableArrayList();
 
-        list.add(new CustomPropertyItem("Simulation#Time step [seconds]", params.sim_dt));
+//        list.add(new CustomPropertyItem("Simulation#Time step [seconds]", params.sim_dt));
         list.add(new CustomPropertyItem("Simulation#Start time [seconds]",params.start_time));
         list.add(new CustomPropertyItem("Simulation#Duration [seconds]",params.duration));
         list.add(new CustomPropertyItem("Simulation#Delay [ms]",params.sim_delay));

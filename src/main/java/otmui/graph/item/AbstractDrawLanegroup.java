@@ -1,6 +1,6 @@
 package otmui.graph.item;
 
-import models.AbstractLaneGroup;
+import models.BaseLaneGroup;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import otmui.GlobalParameters;
@@ -29,7 +29,7 @@ public abstract class AbstractDrawLanegroup {
     abstract public void set_temporary_color(Color color);
     abstract public void draw_state(AbstractLaneGroupInfo laneGroupInfo, AbstractColormap colormap);
 
-    public AbstractDrawLanegroup(AbstractLaneGroup lg,float lateral_offset) {
+    public AbstractDrawLanegroup(BaseLaneGroup lg,float lateral_offset) {
         this.lanes = lg.num_lanes;
         this.id = lg.id;
         this.lateral_offset = lateral_offset;

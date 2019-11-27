@@ -1,6 +1,7 @@
 package otmui.controller;
 
 import api.OTMdev;
+import javafx.stage.Modality;
 import otmui.MainApp;
 import otmui.event.NewScenarioEvent;
 import otmui.event.ResetScenarioEvent;
@@ -169,13 +170,14 @@ public class MenuController implements Initializable {
 
     @FXML
     private void menuParameters(ActionEvent event) {
-        Stage dialog = new Stage();
-        dialog.setTitle("Global Parameters");
+        Stage stage = new Stage();
+        stage.setTitle("Global Parameters");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(myApp.stage);
         ParametersWindow paramWindow = new ParametersWindow(myApp.params);
-        Scene dialogScene = new Scene(paramWindow, 500, 400);
-//        Scene dialogScene = new Scene(paramWindow);
-        dialog.setScene(dialogScene);
-        dialog.show();
+        Scene scene = new Scene(paramWindow, 500, 400);
+        stage.setScene(scene);
+        stage.show();
     }
 
     @FXML

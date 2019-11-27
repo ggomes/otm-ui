@@ -56,6 +56,10 @@ public class GraphPaneController implements Initializable {
         Graph graph = new Graph(scenario,myApp.params);
         graphContainer.set_graph(graph);
 
+        // set visibility
+        graph.getNodes().forEach(x -> x.set_visible(graph.view_nodes));
+        graph.getActuators().forEach(x -> x.set_visible(graph.view_actuators));
+
         // enable double click of drawNodes, and recenter on the canvas
         for (AbstractDrawNode drawNode : graph.getNodes()) {
             drawNode.setOnMouseClicked(mouseEvent -> {

@@ -2,7 +2,7 @@ package otmui.graph.item;
 
 import error.OTMException;
 import javafx.scene.paint.Color;
-import models.AbstractLaneGroup;
+import models.BaseLaneGroup;
 import otmui.graph.color.AbstractColormap;
 import otmui.graph.color.RGB;
 import otmui.utils.Arrow;
@@ -22,7 +22,7 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup  {
     // construction
     /////////////////////////////////////////////////
 
-    public DrawLaneGroupCTM(AbstractLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, AbstractColormap colormap) throws OTMException {
+    public DrawLaneGroupCTM(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, AbstractColormap colormap) throws OTMException {
 
         super(alg,lateral_offset);
 

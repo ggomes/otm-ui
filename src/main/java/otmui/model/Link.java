@@ -1,7 +1,7 @@
 package otmui.model;
 
 import actuator.AbstractActuator;
-import models.AbstractLaneGroup;
+import models.BaseLaneGroup;
 import otmui.graph.item.AbstractDrawLink;
 import otmui.utils.Vector;
 
@@ -70,13 +70,13 @@ public class Link {
 
     /** Lanegroups *******************************************/
 
-    public Collection<AbstractLaneGroup> getDwnLaneGroups(){
+    public Collection<BaseLaneGroup> getDwnLaneGroups(){
         return bLink.lanegroups_flwdn.values();
     }
 
     /** Model *******************************************/
 
-    public models.AbstractModel getModel(){
+    public models.BaseModel getModel(){
         return bLink.model;
     }
 

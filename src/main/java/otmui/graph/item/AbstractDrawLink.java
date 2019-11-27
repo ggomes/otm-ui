@@ -3,7 +3,7 @@ package otmui.graph.item;
 import geometry.Side;
 import otmui.GlobalParameters;
 import otmui.graph.color.AbstractColormap;
-import models.AbstractLaneGroup;
+import models.BaseLaneGroup;
 import error.OTMException;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -121,7 +121,7 @@ public abstract class AbstractDrawLink extends Group {
         double road2euclid = euclid_segment_length / road_segment_length;
 
         // populate draw_lanegroups
-        for (AbstractLaneGroup lg : link.bLink.lanegroups_flwdn.values()) {
+        for (BaseLaneGroup lg : link.bLink.lanegroups_flwdn.values()) {
 
             // offsets of the upstream inner corner
             float lateral_offset = lane_width*(lg.start_lane_dn-1);
@@ -146,7 +146,7 @@ public abstract class AbstractDrawLink extends Group {
 
     }
 
-    abstract AbstractDrawLanegroup create_draw_lanegroup(AbstractLaneGroup lg,List<Arrow> midline,float lateral_offset,float long_offset, double lane_width,double road2euclid,AbstractColormap colormap) throws OTMException ;
+    abstract AbstractDrawLanegroup create_draw_lanegroup(BaseLaneGroup lg,List<Arrow> midline,float lateral_offset,float long_offset, double lane_width,double road2euclid,AbstractColormap colormap) throws OTMException ;
 
     /////////////////////////////////////////////////
     // paint

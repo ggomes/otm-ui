@@ -133,10 +133,10 @@ public class Graph {
         AbstractDrawLink drawLink;
         switch(link.bLink.model.getClass().getSimpleName()){
 
-            case "Model_None":
-            case "Model_PQ":
-            case "Model_Micro":
-                drawLink = new DrawLinkPQ(link,
+            case "BaseModel":
+            case "ModelSpatialQ":
+            case "ModelNewell":
+                drawLink = new DrawLinkSpaceQ(link,
                         nodes.get(link.getStartNodeId()),
                         nodes.get(link.getEndNodeId()),
                         lane_width,
@@ -144,7 +144,7 @@ public class Graph {
                         colormap);
                 break;
 
-            case "Model_CTM":
+            case "ModelCTM":
                 drawLink = new DrawLinkCTM(link,
                         nodes.get(link.getStartNodeId()),
                         nodes.get(link.getEndNodeId()),

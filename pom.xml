@@ -292,7 +292,14 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.40.14</version>
+            <version>11.0.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/net.java.openjfx.backport/openjfx-78-backport-compat -->
+        <dependency>
+            <groupId>net.java.openjfx.backport</groupId>
+            <artifactId>openjfx-78-backport-compat</artifactId>
+            <version>1.8.0.1</version>
         </dependency>
 
     </dependencies>
