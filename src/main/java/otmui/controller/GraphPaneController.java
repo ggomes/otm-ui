@@ -222,10 +222,15 @@ public class GraphPaneController implements Initializable {
 
     public void unhighlightAll(){
         Graph graph = graphContainer.get_graph();
-        graph.getLinks().forEach(x-> unhighlightLink(x));
-        graph.getNodes().forEach(x-> unhighlightNode(x));
-        graph.getSensors().forEach(x-> unhighlightSensor(x));
-        graph.getActuators().forEach(x-> unhighlightActuator(x));
+
+        if(graph.getLinks()!=null)
+            graph.getLinks().forEach(x-> unhighlightLink(x));
+        if(graph.getNodes()!=null)
+            graph.getNodes().forEach(x-> unhighlightNode(x));
+        if(graph.getSensors()!=null)
+            graph.getSensors().forEach(x-> unhighlightSensor(x));
+        if(graph.getActuators()!=null)
+            graph.getActuators().forEach(x-> unhighlightActuator(x));
     }
 
     public void highlight(Set<AbstractDrawLink> selectLinks, Set<AbstractDrawNode> selectNodes, Set<DrawSensor> selectSensors,Set<AbstractDrawNode> selectActuators){

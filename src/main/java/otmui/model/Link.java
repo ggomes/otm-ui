@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Link {
+public class Link implements Comparable {
 
     public common.Link bLink;
 
@@ -88,4 +88,13 @@ public class Link {
         return bLink.is_source;
     }
 
+    @Override
+    public int compareTo(Object o) {
+        Link that = (Link) o;
+        if(this.getId()<that.getId())
+            return -1;
+        if(this.getId()>that.getId())
+            return 1;
+        return 0;
+    }
 }

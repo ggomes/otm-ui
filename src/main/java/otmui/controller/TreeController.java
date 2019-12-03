@@ -1,8 +1,7 @@
 package otmui.controller;
 
 import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 import otmui.ElementType;
 import otmui.MainApp;
@@ -57,7 +56,10 @@ public class TreeController implements Initializable {
         // links
         TreeItem<String> lks = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.LINK));
         rootItem.getChildren().add(lks);
-        for (Link l : scenario.getLinks())
+        List<Link> links = new ArrayList<>();
+        links.addAll(scenario.getLinks());
+        Collections.sort(links);
+        for (Link l : links)
             lks.getChildren().add(new TreeItem<>(Maps.name2linkid.getFromSecond(l.getId())));
 
         // subnetwork

@@ -67,7 +67,11 @@ public abstract class AbstractDrawLink extends Group {
             Vector u_this = Vector.normalize(Vector.diff(midline.get(i + 1).start, midline.get(i).start));
             Vector u_prev = Vector.normalize(Vector.diff(midline.get(i).start, midline.get(i-1).start));
 
-            midline.get(i).direction = Vector.normalize(Vector.diff(u_this,u_prev));
+            Vector du = Vector.diff(u_this,u_prev);
+            if(du.x==0d && du.y==0d)
+               midline.get(i).direction = Vector.cross_z(u_this);
+            else
+                midline.get(i).direction = Vector.normalize(du);
 
             // needed to avoid switching around 0, which makes a strange shape
             if (Vector.dot(midline.get(i).direction,midline.get(i-1).direction)<0)
