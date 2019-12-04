@@ -11,10 +11,9 @@ import java.util.List;
 
 public class DrawLanegroupSpaceQ extends AbstractDrawLanegroup  {
 
-
-    public DrawLanegroupSpaceQ(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, AbstractColormap colormap) throws OTMException {
+    public DrawLanegroupSpaceQ(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
         super(alg,lateral_offset);
-        draw_cells.add(new DrawCell(midline,0,lateral_offset,alg.length * road2euclid,alg.num_lanes *lane_width,colormap));
+        draw_cells.add(new DrawCell(midline,0,lateral_offset,alg.length * road2euclid,alg.num_lanes *lane_width,color));
     }
 
     @Override

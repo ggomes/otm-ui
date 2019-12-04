@@ -134,25 +134,31 @@ public class GraphPaneController implements Initializable {
     // drawing
     /////////////////////////////////////////////////
 
-    public void paintLinks() {
-
+    public void paintLinkShapes() {
         Graph graph = graphContainer.get_graph();
-
         float new_width = myApp.params.lane_width_meters.floatValue();
         float new_offset = myApp.params.link_offset.floatValue();
-        GlobalParameters.ColorScheme new_color_map = (GlobalParameters.ColorScheme) myApp.params.color_map.getValue();
+        GlobalParameters.RoadColorScheme new_color_map = (GlobalParameters.RoadColorScheme) myApp.params.road_color_scheme.getValue();
         if (Math.abs(new_width-graph.lane_width_meters)>0.1f
                 || Math.abs(new_offset-graph.link_offset)>0.1f
-                || new_color_map.equals(graph.color_map) ) {
-            graph.getLinks().forEach(x -> x.paint(new_offset,new_width,new_color_map));
+                || !new_color_map.equals(graph.road_color_scheme) ) {
+            graph.getLinks().forEach(x -> x.paintShape(new_offset,new_width,new_color_map));
             graph.lane_width_meters = new_width;
             graph.link_offset = new_offset;
-            graph.color_map = new_color_map;
+            graph.road_color_scheme = new_color_map;
         }
-
     }
 
-    public void paintNodes() {
+    public void paintLinkColors() {
+        Graph graph = graphContainer.get_graph();
+        GlobalParameters.RoadColorScheme new_color_map = (GlobalParameters.RoadColorScheme) myApp.params.road_color_scheme.getValue();
+        if(!new_color_map.equals(graph.road_color_scheme)){
+            graph.getLinks().forEach(x -> x.paintColor(new_color_map));
+            graph.road_color_scheme = new_color_map;
+        }
+    }
+
+    public void paintNodeShapes() {
 
         Graph graph = graphContainer.get_graph();
 

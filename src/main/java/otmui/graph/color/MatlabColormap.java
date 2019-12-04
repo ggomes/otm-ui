@@ -4,7 +4,7 @@ import otmui.GlobalParameters;
 
 public class MatlabColormap extends AbstractColormap {
 
-    public MatlabColormap(float max_density_vphpl, GlobalParameters.ColorScheme colorScheme){
+    public MatlabColormap(float max_density_vphpl, GlobalParameters.RoadColorScheme roadColorScheme){
         super( new double[][]{
             { 0.242 , 0.150 , 0.6603 } ,
             { 0.250 , 0.165 , 0.7076 } ,
@@ -70,7 +70,7 @@ public class MatlabColormap extends AbstractColormap {
             { 0.962 , 0.937 , 0.1265 } ,
             { 0.969 , 0.960 , 0.1064 } ,
             { 0.976 , 0.983 , 0.0805 }
-        } , max_density_vphpl,colorScheme);
+        } , max_density_vphpl, roadColorScheme);
 
     }
 }

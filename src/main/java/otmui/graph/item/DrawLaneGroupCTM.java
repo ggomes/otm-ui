@@ -22,7 +22,7 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup  {
     // construction
     /////////////////////////////////////////////////
 
-    public DrawLaneGroupCTM(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, AbstractColormap colormap) throws OTMException {
+    public DrawLaneGroupCTM(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
 
         super(alg,lateral_offset);
 
@@ -39,7 +39,7 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup  {
 
         // traverse cells
         for (int i = 0; i < lg.cells.size(); i++) {
-            DrawCell draw_cell = new DrawCell(midline,start_ind,lateral_offset,euclid_cell_length_m,width,colormap);
+            DrawCell draw_cell = new DrawCell(midline,start_ind,lateral_offset,euclid_cell_length_m,width,color);
             draw_cells.add(draw_cell);
             start_ind += draw_cell.arrows.size()-1;
         }

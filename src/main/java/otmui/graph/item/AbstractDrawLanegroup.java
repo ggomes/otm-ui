@@ -35,8 +35,12 @@ public abstract class AbstractDrawLanegroup {
         this.lateral_offset = lateral_offset;
     }
 
-    public void paint(float link_offset,float lane_width,GlobalParameters.ColorScheme colorscheme){
-        draw_cells.forEach(x->x.paint(link_offset+lateral_offset,lanes*lane_width,colorscheme));
+    public void paintShape(float link_offset, float lane_width, Color color){
+        draw_cells.forEach(x->x.paintShape(link_offset+lateral_offset,lanes*lane_width,color));
+    }
+
+    public void paintColor(Color color){
+        draw_cells.forEach(x->x.paintColor(color));
     }
 
     public Set<Polygon> get_polygons(){

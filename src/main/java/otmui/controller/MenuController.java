@@ -211,7 +211,7 @@ public class MenuController implements Initializable {
     // private
     /////////////////////////////////////////////////
 
-    private void loadFile(String filename) throws OTMException {
+    public void loadFile(String filename) throws OTMException {
 
         boolean validate = false;
 

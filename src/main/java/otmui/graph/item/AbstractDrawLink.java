@@ -32,7 +32,7 @@ public abstract class AbstractDrawLink extends Group {
     // construction
     /////////////////////////////////////////////////
 
-    public AbstractDrawLink(otmui.model.Link link, AbstractDrawNode startNode, AbstractDrawNode endNode, float lane_width, float link_offset, AbstractColormap colormap) throws OTMException {
+    public AbstractDrawLink(otmui.model.Link link, AbstractDrawNode startNode, AbstractDrawNode endNode, float lane_width, float link_offset, GlobalParameters.RoadColorScheme roadColorScheme) throws OTMException {
         this.link = link;
         this.id = link.getId();
         this.startNode = startNode;
@@ -125,13 +125,14 @@ public abstract class AbstractDrawLink extends Group {
         double road2euclid = euclid_segment_length / road_segment_length;
 
         // populate draw_lanegroups
+        Color color = AbstractColormap.get_color_for_roadtype(roadColorScheme,link.bLink.road_type);
         for (BaseLaneGroup lg : link.bLink.lanegroups_flwdn.values()) {
 
             // offsets of the upstream inner corner
             float lateral_offset = lane_width*(lg.start_lane_dn-1);
             float long_offset = lg.side== Side.middle ? 0 : link.bLink.length-lg.length;
 
-            AbstractDrawLanegroup draw_lg = create_draw_lanegroup(lg,midline,lateral_offset,long_offset,lane_width, road2euclid,colormap);
+            AbstractDrawLanegroup draw_lg = create_draw_lanegroup(lg,midline,lateral_offset,long_offset,lane_width, road2euclid,color);
             draw_lanegroups.add(draw_lg);
             getChildren().addAll(draw_lg.get_polygons());
         }
@@ -150,14 +151,20 @@ public abstract class AbstractDrawLink extends Group {
 
     }
 
-    abstract AbstractDrawLanegroup create_draw_lanegroup(BaseLaneGroup lg,List<Arrow> midline,float lateral_offset,float long_offset, double lane_width,double road2euclid,AbstractColormap colormap) throws OTMException ;
+    abstract AbstractDrawLanegroup create_draw_lanegroup(BaseLaneGroup lg,List<Arrow> midline,float lateral_offset,float long_offset, double lane_width,double road2euclid,Color color) throws OTMException ;
 
     /////////////////////////////////////////////////
     // paint
     /////////////////////////////////////////////////
 
-    public void paint(float link_offset, float lane_width, GlobalParameters.ColorScheme colormap){
-        draw_lanegroups.forEach(x -> x.paint(link_offset,lane_width,colormap));
+    public final void paintShape(float link_offset, float lane_width, GlobalParameters.RoadColorScheme road_color_scheme){
+        Color color = AbstractColormap.get_color_for_roadtype(road_color_scheme,link.bLink.road_type);
+        draw_lanegroups.forEach(x -> x.paintShape(link_offset,lane_width,color));
+    }
+
+    public final void paintColor(GlobalParameters.RoadColorScheme road_color_scheme){
+        Color color = AbstractColormap.get_color_for_roadtype(road_color_scheme,link.bLink.road_type);
+        draw_lanegroups.forEach(x -> x.paintColor(color));
     }
 
     public void highlight() {

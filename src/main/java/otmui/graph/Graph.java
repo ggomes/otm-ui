@@ -18,7 +18,7 @@ public class Graph {
     public boolean view_actuators;
     public float lane_width_meters;
     public float link_offset;
-    public GlobalParameters.ColorScheme color_map;
+    public GlobalParameters.RoadColorScheme road_color_scheme;
 
     public Map<Long,AbstractDrawNode> nodes; // <id,item>
     public Map<Long,AbstractDrawLink> links; // <id,item>
@@ -37,10 +37,7 @@ public class Graph {
         this.view_actuators = params.view_actuators.getValue();
         this.lane_width_meters = params.lane_width_meters.getValue();;
         this.link_offset = params.link_offset.getValue();;
-        this.color_map = (GlobalParameters.ColorScheme) params.color_map.getValue();;
-
-        // create the colormap
-        AbstractColormap colormap = params.get_colormap();
+        this.road_color_scheme = (GlobalParameters.RoadColorScheme) params.road_color_scheme.getValue();;
 
         // create nodes
         for (Node node : scenario.getNodes()) {
@@ -53,7 +50,7 @@ public class Graph {
         float lane_width_meters = params.lane_width_meters.floatValue();
         float link_offset = params.link_offset.floatValue();
         for (Link link : scenario.getLinks()) {
-            AbstractDrawLink drawLink = makeDrawLink(link, lane_width_meters, link_offset, colormap, nodes);
+            AbstractDrawLink drawLink = makeDrawLink(link, lane_width_meters, link_offset, road_color_scheme, nodes);
             link.drawLink = drawLink;
             links.put(drawLink.id, drawLink);
         }
@@ -128,7 +125,7 @@ public class Graph {
                 new DrawNodeCircle(node.getId(),node.getXcoord(),-node.getYcoord(),radius, Color.DODGERBLUE, 0f);
     }
 
-    private static AbstractDrawLink makeDrawLink(otmui.model.Link link, float lane_width, float link_offset, AbstractColormap colormap,Map<Long,AbstractDrawNode> nodes) throws OTMException {
+    private static AbstractDrawLink makeDrawLink(otmui.model.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme, Map<Long,AbstractDrawNode> nodes) throws OTMException {
 
         AbstractDrawLink drawLink;
         switch(link.bLink.model.getClass().getSimpleName()){
@@ -141,7 +138,7 @@ public class Graph {
                         nodes.get(link.getEndNodeId()),
                         lane_width,
                         link_offset,
-                        colormap);
+                        road_color_scheme);
                 break;
 
             case "ModelCTM":
@@ -150,7 +147,7 @@ public class Graph {
                         nodes.get(link.getEndNodeId()),
                         lane_width,
                         link_offset,
-                        colormap );
+                        road_color_scheme );
                 break;
 
             default:

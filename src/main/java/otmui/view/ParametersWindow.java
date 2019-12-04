@@ -93,7 +93,7 @@ public class ParametersWindow extends VBox {
         list.add(new CustomPropertyItem("DrawLinks#Lane width [m]",params.lane_width_meters));
         list.add(new CustomPropertyItem("DrawLinks#Lane offset [m]",params.link_offset));
         list.add(new CustomPropertyItem("DrawNodes#Node size [m]",params.node_size));
-        list.add(new CustomPropertyItem("DrawLinks#Color scheme",params.color_map));
+        list.add(new CustomPropertyItem("DrawLinks#Color scheme",params.road_color_scheme));
         list.add(new CustomPropertyItem("DrawLinks#Max density [veh/km/lane]",params.max_density_vpkpl));
 
         list.add(new CustomPropertyItem("DrawNodes#Show nodes",params.view_nodes));
@@ -103,8 +103,8 @@ public class ParametersWindow extends VBox {
         propertySheet.setPropertyEditorFactory(new Callback<PropertySheet.Item, PropertyEditor<?>>() {
             @Override
             public PropertyEditor<?> call(PropertySheet.Item param) {
-                if(param.getValue() instanceof GlobalParameters.ColorScheme) {
-                    return Editors.createChoiceEditor(param, new ArrayList<>(Arrays.asList(GlobalParameters.ColorScheme.values())) );               } else
+                if(param.getValue() instanceof GlobalParameters.RoadColorScheme) {
+                    return Editors.createChoiceEditor(param, new ArrayList<>(Arrays.asList(GlobalParameters.RoadColorScheme.values())) );               } else
                     if (param.getValue() instanceof Boolean) {
                     return Editors.createCheckEditor(param);
                 } else if (param.getValue() instanceof Integer) {

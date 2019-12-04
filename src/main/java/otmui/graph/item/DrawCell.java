@@ -15,9 +15,10 @@ public class DrawCell {
 
     public List<Arrow> arrows;
     public Polygon polygon;
-    public final Color mycolor;
+    public Color mycolor;
 
-    public DrawCell(List<Arrow> midline, int ind, double lateral_offset, double length, double width, AbstractColormap colormap){
+    public DrawCell(List<Arrow> midline, int ind, double lateral_offset, double length, double width,Color color){
+
         arrows = new ArrayList<>();
         double remaining = length;
         while(ind<midline.size() && remaining>-AbstractDrawLink.epsilon) {
@@ -26,9 +27,9 @@ public class DrawCell {
             remaining -= a.distance_to_next;
         }
 
-        mycolor = colormap.get_color_for_roadtype(Link.RoadType.freeway);
-
-        this.polygon = make_polygon(arrows,(float) lateral_offset,(float) width,colormap,Link.RoadType.freeway);
+        polygon = new Polygon();
+        make_polygon(arrows,(float) lateral_offset,(float) width );
+        polygon.setFill(color);
     }
 
     /////////////////////////////////////////////////
@@ -55,7 +56,25 @@ public class DrawCell {
     // set
     /////////////////////////////////////////////////
 
-    public void paint(float lateral_offset, float width, GlobalParameters.ColorScheme colorscheme){
+    public void paintShape(float lateral_offset, float width, Color color){
+        make_polygon(arrows,lateral_offset,width);
+        paintColor(color);
+    }
+
+    public void paintColor(Color color){
+        mycolor = color;
+        polygon.setFill(color);
+    }
+
+    /////////////////////////////////////////////////
+    // get
+    /////////////////////////////////////////////////
+
+    public double get_downstream_offset(){
+        return arrows.get(arrows.size()-1).position;
+    }
+
+    private void make_polygon(List<Arrow> arrows, float lateral_offset, float width ) {
 
         List<Vector> inner = new ArrayList<>();
         List<Vector> outer = new ArrayList<>();
@@ -76,46 +95,8 @@ public class DrawCell {
             polygon.getPoints().addAll(new Double[]{(double) p.x, (double) -p.y});
         }
 
-        polygon.setFill(mycolor);
-
+//        return polygon;
     }
-
-    /////////////////////////////////////////////////
-    // get
-    /////////////////////////////////////////////////
-
-    public double get_downstream_offset(){
-        return arrows.get(arrows.size()-1).position;
-    }
-
-    private Polygon make_polygon(List<Arrow> arrows, float lateral_offset, float width, AbstractColormap colormap, Link.RoadType road_type) {
-
-        List<Vector> inner = new ArrayList<>();
-        List<Vector> outer = new ArrayList<>();
-
-        for (Arrow a : arrows) {
-            inner.add(Vector.sum(a.start,Vector.mult(a.direction,lateral_offset)));
-            outer.add(Vector.sum(a.start,Vector.mult(a.direction,lateral_offset+width)));
-        }
-
-        Polygon polygon = new Polygon();
-        polygon.setStrokeWidth(0d);
-
-        for (Vector p : inner)
-            polygon.getPoints().addAll(new Double[]{(double) p.x, (double) -p.y});
-
-        for (int i = outer.size() - 1; i >= 0; i--) {
-            Vector p = outer.get(i);
-            polygon.getPoints().addAll(new Double[]{(double) p.x, (double) -p.y});
-        }
-
-        polygon.setFill(mycolor);
-
-        return polygon;
-    }
-
-
-
 
 //    private static Polygon make_polygon(Vector pup, Vector pdn, float offset, float width, AbstractColormap colormap, Link.RoadType road_type) {
 //

@@ -12,11 +12,11 @@ public abstract class  AbstractColormap {
     public List<RGB> colorlist;
     public double cmin = 0d;
     public float max_density_vphpl;
-    public GlobalParameters.ColorScheme colorScheme;
+    public GlobalParameters.RoadColorScheme roadColorScheme;
 
-    public AbstractColormap(double [][] colors,float max_density_vphpl,GlobalParameters.ColorScheme colorScheme){
+    public AbstractColormap(double [][] colors, float max_density_vphpl, GlobalParameters.RoadColorScheme roadColorScheme){
         this.max_density_vphpl = max_density_vphpl;
-        this.colorScheme = colorScheme;
+        this.roadColorScheme = roadColorScheme;
         colorlist = new ArrayList<>();
         for(int i=0;i<colors.length;i++)
             colorlist.add(new RGB(colors[i]));
@@ -39,9 +39,9 @@ public abstract class  AbstractColormap {
     }
 
 
-    public Color get_color_for_roadtype(Link.RoadType road_type){
+    public static Color get_color_for_roadtype(GlobalParameters.RoadColorScheme roadColorScheme, Link.RoadType road_type){
         Color color;
-        switch(colorScheme){
+        switch(roadColorScheme){
             case Black:
                 color = new Color(0d,0d,0d,0.7);
                 break;
@@ -66,6 +66,9 @@ public abstract class  AbstractColormap {
 //                        color = Color.DARKGREEN;
 //                        color = Color.DEEPPINK;
 //                        color = Color.GREENYELLOW;
+                    case bridge:
+                        color = Color.TOMATO;
+                        break;
                     default:
                         color = Color.BLACK;
                         break;

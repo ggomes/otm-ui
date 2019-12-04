@@ -2,7 +2,6 @@ package otmui;
 
 import api.OTM;
 import api.OTMdev;
-import javafx.event.Event;
 import otmui.controller.*;
 import otmui.event.*;
 import otmui.model.Scenario;
@@ -19,6 +18,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -59,8 +59,49 @@ public class MainApp extends Application {
 
         this.stage = stage;
 
-        // construct the OTM api .....................
+        // Assemble the UI elements
+        build_ui();
+
+        // Wire up the event handlers
+        add_event_filters(stage.getScene());
+
+        // Create an OTM object
+        Parameters args = getParameters();
+        File configfile = args.getUnnamed().size()>0 ? new File(args.getUnnamed().get(0)) : null;
         this.otm = new OTMdev(new OTM());
+        if (configfile!=null && configfile.exists())
+            menuController.loadFile(configfile.getAbsolutePath());
+    }
+
+    /////////////////////////////////////////////////
+    // get
+    /////////////////////////////////////////////////
+
+    public static String getGitHash(){
+        InputStream inputStream = MainApp.class.getResourceAsStream("/sim.properties");
+        Properties properties = new Properties();
+        try {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read properties file", e);
+        }
+        finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
+        }
+        return properties.getProperty("sim.git");
+    }
+
+    /////////////////////////////////////////////////
+    // private
+    /////////////////////////////////////////////////
+
+    private void build_ui() throws IOException {
 
         // UI ...........................................
         selectionManager = new SelectionManager(this);
@@ -132,6 +173,10 @@ public class MainApp extends Application {
 
         stage.show();
 
+    }
+
+    private void add_event_filters(Scene scene){
+
         // Event filters and handlers .........................................
 
         // loading new scenario
@@ -182,38 +227,13 @@ public class MainApp extends Application {
 
         // parameter changes
         scene.addEventFilter(ParameterChange.SIMULATION,e->System.out.println("Simulation parameter changed"));
-        scene.addEventFilter(ParameterChange.DRAWLINKS,e->graphpaneController.paintLinks());
-        scene.addEventFilter(ParameterChange.DRAWNODES,e->graphpaneController.paintNodes());
+        scene.addEventFilter(ParameterChange.DRAWLINKSHAPES, e->graphpaneController.paintLinkShapes());
+        scene.addEventFilter(ParameterChange.DRAWLINKCOLORS, e->graphpaneController.paintLinkColors());
+        scene.addEventFilter(ParameterChange.DRAWNODESHAPES, e->graphpaneController.paintNodeShapes());
+//        scene.addEventFilter(ParameterChange.DRAWNODECOLORS, e->graphpaneController.paintNodeColors());
         scene.addEventFilter(ParameterChange.DRAWACTUATORS,e->graphpaneController.paintActuators());
+
     }
-
-    /////////////////////////////////////////////////
-    // get
-    /////////////////////////////////////////////////
-
-    public static String getGitHash(){
-        InputStream inputStream = MainApp.class.getResourceAsStream("/sim.properties");
-        Properties properties = new Properties();
-        try {
-            properties.load(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read properties file", e);
-        }
-        finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    // Ignore
-                }
-            }
-        }
-        return properties.getProperty("sim.git");
-    }
-
-    /////////////////////////////////////////////////
-    // private
-    /////////////////////////////////////////////////
 
     private void processNewScenario(Scenario scenario)  {
         if(scenario==null)

@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 
 public class GlobalParameters {
 
-    public enum ColorScheme { Black, Cells, RoadType}
+    public enum RoadColorScheme { Black, Cells, RoadType }
 
     // simulation run parameters
     public SimpleFloatProperty start_time           = new SimpleFloatProperty(null,"start_time",0f);            // seconds after midnight
@@ -23,7 +23,7 @@ public class GlobalParameters {
     public SimpleFloatProperty link_offset          = new SimpleFloatProperty(null,"link_offset",0f);           // [m] painted width of a lane
     public SimpleFloatProperty lane_width_meters    = new SimpleFloatProperty(null,"lane_width_meters",5f);            // [m] painted width of a lane
     public SimpleFloatProperty node_size            = new SimpleFloatProperty(null,"node_size",4f);           // [m] painted radius for circular nodes
-    public SimpleObjectProperty color_map           = new SimpleObjectProperty(null,"color_map",ColorScheme.Black);
+    public SimpleObjectProperty road_color_scheme = new SimpleObjectProperty(null,"road color scheme", RoadColorScheme.Black);
     public SimpleBooleanProperty view_nodes         = new SimpleBooleanProperty(null,"view_nodes",false);
     public SimpleBooleanProperty view_actuators     = new SimpleBooleanProperty(null,"view_actuators",false);
     public SimpleFloatProperty max_density_vpkpl    = new SimpleFloatProperty(null,"max_density_vpkpl",100f);   // [vpkpl] used for displaying MN states
@@ -33,19 +33,19 @@ public class GlobalParameters {
         sim_dt.addListener(             e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
         duration.addListener(           e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
         sim_delay.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
-        link_offset.addListener(        e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKS)));
-        lane_width_meters.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKS)));
-        node_size.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODES)));
-        color_map.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKS)));
-        max_density_vpkpl.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKS)));
-        view_nodes.addListener(         e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODES)));
+        link_offset.addListener(        e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
+        lane_width_meters.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
+        node_size.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODESHAPES)));
+        road_color_scheme.addListener(e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKCOLORS)));
+        max_density_vpkpl.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
+        view_nodes.addListener(         e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODESHAPES)));
         view_actuators.addListener(     e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWACTUATORS)));
     }
 
     public AbstractColormap get_colormap(){
         return new MatlabColormap(
                 this.max_density_vpkpl.floatValue() ,
-                (GlobalParameters.ColorScheme) this.color_map.getValue());
+                (RoadColorScheme) this.road_color_scheme.getValue());
 //        return new HSVColormap(
 //                this.max_density_vpkpl.floatValue() ,
 //                (GlobalParameters.ColorScheme) this.color_map.getValue());
@@ -61,7 +61,7 @@ public class GlobalParameters {
         str += "link_offset = " + link_offset.floatValue() + "\n";
         str += "lane_width_meters = " + lane_width_meters.floatValue() + "\n";
         str += "node_size = " + node_size.floatValue() + "\n";
-        str += "color_map = " + color_map.toString() + "\n";
+        str += "road_color_scheme = " + road_color_scheme.toString() + "\n";
         str += "max_density_vpkpl = " + max_density_vpkpl.toString() + "\n";
         return str;
     }
