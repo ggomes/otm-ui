@@ -11,17 +11,17 @@ public class Network {
     public Map<Long, Node> nodes;
     public Map<Long, Link> links;
 
-    public Network(common.Network bNetwork, boolean node_position_in_meters) {
+    public Network(common.Network cnetwork, boolean node_position_in_meters) {
 
         nodes = new HashMap();
-        for (common.Node bNode : bNetwork.nodes.values())
-            nodes.put(bNode.getId(), new Node(bNode));
+        for (common.Node cnode : cnetwork.nodes.values())
+            nodes.put(cnode.getId(), new Node(cnode));
 
         links = new HashMap();
-        for (common.Link bLink : bNetwork.links.values()) {
-            Link link = new Link(bLink);
-            links.put(bLink.getId(), link);
-            Maps.name2linkid.put(String.format("link %d", link.getId()), bLink.getId());
+        for (common.Link clink : cnetwork.links.values()) {
+            Link link = new Link(clink);
+            links.put(clink.getId(), link);
+            Maps.name2linkid.put(String.format("link %d", link.getId()), clink.getId());
         }
 
         if (!node_position_in_meters)
@@ -43,12 +43,12 @@ public class Network {
             double dx = Math.acos(1-cos2*(1-Math.cos(lon-clon)))*R;
             node.xcoord = (float) (lon<clon ? -dx : dx);
             node.ycoord = (float) ( (lat - clat) * R );
-            node.bnode.xcoord = node.xcoord;
-            node.bnode.ycoord = node.ycoord;
+            node.cnode.xcoord = node.xcoord;
+            node.cnode.ycoord = node.ycoord;
         }
 
         for(Link link : links){
-            for(common.Point point : link.bLink.shape){
+            for(common.Point point : link.clink.shape){
                 double lon = point.x * conv;
                 double lat = point.y* conv;
                 double dx = Math.acos(1-cos2*(1-Math.cos(lon-clon)))*R;

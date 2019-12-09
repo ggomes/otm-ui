@@ -29,7 +29,7 @@ public class DrawCell {
 
         polygon = new Polygon();
         make_polygon(arrows,(float) lateral_offset,(float) width );
-        polygon.setFill(color);
+        paintColor(color);
     }
 
     /////////////////////////////////////////////////

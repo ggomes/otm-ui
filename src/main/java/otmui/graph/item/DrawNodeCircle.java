@@ -16,7 +16,6 @@ public class DrawNodeCircle extends AbstractDrawNode {
         circle.setStrokeWidth(stroke_width);
         circle.setFill(fill);
         setView(circle);
-
     }
 
     @Override

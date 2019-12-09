@@ -38,23 +38,6 @@ public class TestConfigs {
             e.printStackTrace();
             fail();
         }
-
-//        // load the scenario from XML
-//        try {
-//            myApp.otm.api.load(filename,myApp.params.sim_dt.floatValue(),validate);
-//        } catch (Exception e) {
-//            throw new OTMException(e);
-//        }
-//
-//        // check
-//        if(myApp.otm.scenario()==null)
-//            return;
-//
-//        Scenario scenario = new Scenario(myApp.otm);
-//
-//        if(scenario!=null)
-//            menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(scenario));
-
     }
 
 }

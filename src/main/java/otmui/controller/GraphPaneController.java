@@ -8,6 +8,8 @@ import otmui.graph.GraphContainer;
 import otmui.graph.Graph;
 import otmui.graph.color.AbstractColormap;
 import otmui.graph.item.*;
+import otmui.model.Link;
+import otmui.model.Node;
 import otmui.model.Scenario;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -23,6 +25,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
+
 public class GraphPaneController implements Initializable {
 
     public MainApp myApp;
@@ -37,7 +41,7 @@ public class GraphPaneController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        graphContainer = new GraphContainer();
+        graphContainer = new GraphContainer(this);
         graphLayout.getChildren().add(graphContainer.scrollPane);
 
         AnchorPane.setBottomAnchor(graphContainer.scrollPane,0d);
@@ -60,7 +64,7 @@ public class GraphPaneController implements Initializable {
         graph.getNodes().forEach(x -> x.set_visible(graph.view_nodes));
         graph.getActuators().forEach(x -> x.set_visible(graph.view_actuators));
 
-        // enable double click of drawNodes, and recenter on the canvas
+        // enable click of drawNodes, and recenter on the canvas
         for (AbstractDrawNode drawNode : graph.getNodes()) {
             drawNode.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
@@ -76,7 +80,7 @@ public class GraphPaneController implements Initializable {
             });
         }
 
-        // enable double click of drawLink
+        // enable click of drawLink
         for (AbstractDrawLink drawLink : graph.getLinks()) {
             drawLink.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
@@ -92,7 +96,7 @@ public class GraphPaneController implements Initializable {
             });
         }
 
-        // enable double click of drawActuator
+        // enable click of drawActuator
         for (AbstractDrawNode drawActuator : graph.getActuators()) {
             drawActuator.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
@@ -108,7 +112,7 @@ public class GraphPaneController implements Initializable {
             });
         }
 
-        // enable double click of drawSensor
+        // enable click of drawSensor
         for (DrawSensor drawSensor : graph.getSensors()) {
             drawSensor.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
@@ -134,18 +138,25 @@ public class GraphPaneController implements Initializable {
     // drawing
     /////////////////////////////////////////////////
 
+    public void paintLinkShapes(Set<Long> link_ids){
+        Graph graph = graphContainer.get_graph();
+        graph.getLinks().stream()
+                .filter(l->link_ids.contains(l))
+                .forEach(x -> x.paintShape(graph.link_offset,graph.lane_width_meters,graph.road_color_scheme));
+    }
+
     public void paintLinkShapes() {
         Graph graph = graphContainer.get_graph();
         float new_width = myApp.params.lane_width_meters.floatValue();
         float new_offset = myApp.params.link_offset.floatValue();
-        GlobalParameters.RoadColorScheme new_color_map = (GlobalParameters.RoadColorScheme) myApp.params.road_color_scheme.getValue();
+        GlobalParameters.RoadColorScheme new_color_scheme = (GlobalParameters.RoadColorScheme) myApp.params.road_color_scheme.getValue();
         if (Math.abs(new_width-graph.lane_width_meters)>0.1f
                 || Math.abs(new_offset-graph.link_offset)>0.1f
-                || !new_color_map.equals(graph.road_color_scheme) ) {
-            graph.getLinks().forEach(x -> x.paintShape(new_offset,new_width,new_color_map));
+                || !new_color_scheme.equals(graph.road_color_scheme) ) {
+            graph.getLinks().forEach(x -> x.paintShape(new_offset,new_width,new_color_scheme));
             graph.lane_width_meters = new_width;
             graph.link_offset = new_offset;
-            graph.road_color_scheme = new_color_map;
+            graph.road_color_scheme = new_color_scheme;
         }
     }
 
@@ -191,6 +202,63 @@ public class GraphPaneController implements Initializable {
     }
 
     /////////////////////////////////////////////////
+    // context menu
+    /////////////////////////////////////////////////
+
+    public void merge_nodes(){
+
+        Scenario scn = myApp.scenario;
+//        Set<Long> node_ids = myApp.selectionManager.selectedNodes.stream().map(x->x.id).collect(toSet());
+        Set<Long> node_ids = new HashSet<>();
+        node_ids.add(5907558429l);
+        node_ids.add(5907558443l);
+        node_ids.add(3058751229l);
+        node_ids.add(3058751218l);
+
+        // set of scenario nodes
+        Set<Node> nodes = node_ids.stream().map(id->scn.getNodeWithId(id)).collect(toSet());
+
+        // TODO the nodes mustn't have more than one actuator
+
+        float xcoord = (float) nodes.stream().mapToDouble(n->n.getXcoord()).average().getAsDouble();
+        float ycoord = (float) nodes.stream().mapToDouble(n->n.getYcoord()).average().getAsDouble();
+        Node new_node = scn.create_node(xcoord,ycoord);
+
+        // set of adjacent links
+        Set<Long> links = nodes.stream().flatMap(n->n.getInLinkIds().stream()).collect(toSet());
+        links.addAll(nodes.stream().flatMap(n->n.getOutLinkIds().stream()).collect(toSet()));
+
+        // process internal and external links
+        for(Long link_id : links){
+            Link link = scn.getLinkWithId(link_id);
+            boolean starts_at = node_ids.contains(link.getStartNodeId());
+            boolean ends_at = node_ids.contains(link.getEndNodeId());
+            if(starts_at && ends_at) {
+                scn.delete_link(link);
+            }
+            else if(starts_at)
+                link.setStartNode(new_node);
+            else if(ends_at)
+                link.setEndNode(new_node);
+        }
+
+        // delete nodes
+        for(Node node : nodes)
+            scn.delete_node(node);
+
+        // DRAW
+
+        // create draw node
+        graphContainer.get_graph().add_node(new_node);
+    }
+
+    public void merge_links(){
+        System.out.println("merge_links");
+        Set<Long> link_ids = myApp.selectionManager.selectedLinks.stream().map(x->x.id).collect(toSet());
+        System.out.println(link_ids);
+    }
+
+    /////////////////////////////////////////////////
     // highlighting
     /////////////////////////////////////////////////
 
@@ -228,7 +296,6 @@ public class GraphPaneController implements Initializable {
 
     public void unhighlightAll(){
         Graph graph = graphContainer.get_graph();
-
         if(graph.getLinks()!=null)
             graph.getLinks().forEach(x-> unhighlightLink(x));
         if(graph.getNodes()!=null)
@@ -265,24 +332,24 @@ public class GraphPaneController implements Initializable {
             return;
 
         // collect node positions
-        allX.addAll(drawNodes.stream().map(x->x.getXPos()).collect(Collectors.toSet()));
-        allY.addAll(drawNodes.stream().map(x->x.getYPos()).collect(Collectors.toSet()));
+        allX.addAll(drawNodes.stream().map(x->x.getXPos()).collect(toSet()));
+        allY.addAll(drawNodes.stream().map(x->x.getYPos()).collect(toSet()));
 
         // collect sensor positions
-        allX.addAll(drawSensors.stream().map(x->x.getXPos()).collect(Collectors.toSet()));
-        allY.addAll(drawSensors.stream().map(x->x.getYPos()).collect(Collectors.toSet()));
+        allX.addAll(drawSensors.stream().map(x->x.getXPos()).collect(toSet()));
+        allY.addAll(drawSensors.stream().map(x->x.getYPos()).collect(toSet()));
 
         // collect actuator positions
-        allX.addAll(drawActuators.stream().map(x->x.getXPos()).collect(Collectors.toSet()));
-        allY.addAll(drawActuators.stream().map(x->x.getYPos()).collect(Collectors.toSet()));
+        allX.addAll(drawActuators.stream().map(x->x.getXPos()).collect(toSet()));
+        allY.addAll(drawActuators.stream().map(x->x.getYPos()).collect(toSet()));
 
         // collect link start positions
-        allX.addAll(drawLinks.stream().map(x->x.getStartPosX()).collect(Collectors.toSet()));
-        allY.addAll(drawLinks.stream().map(x->x.getStartPosY()).collect(Collectors.toSet()));
+        allX.addAll(drawLinks.stream().map(x->x.getStartPosX()).collect(toSet()));
+        allY.addAll(drawLinks.stream().map(x->x.getStartPosY()).collect(toSet()));
 
         // collect link end positions
-        allX.addAll(drawLinks.stream().map(x->x.getEndPosX()).collect(Collectors.toSet()));
-        allY.addAll(drawLinks.stream().map(x->x.getEndPosY()).collect(Collectors.toSet()));
+        allX.addAll(drawLinks.stream().map(x->x.getEndPosX()).collect(toSet()));
+        allY.addAll(drawLinks.stream().map(x->x.getEndPosY()).collect(toSet()));
 
         if(allX.isEmpty() || allY.isEmpty())
             return;

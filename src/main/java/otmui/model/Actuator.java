@@ -7,7 +7,7 @@ public class Actuator {
 
     public enum Type {signal,stop,other}
 
-    private actuator.AbstractActuator bactuator;
+    public actuator.AbstractActuator bactuator;
     public AbstractDrawNode drawActuator;
     public Actuator.Type type;
 

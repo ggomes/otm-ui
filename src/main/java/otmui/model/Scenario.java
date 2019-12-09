@@ -2,6 +2,7 @@ package otmui.model;
 
 import actuator.AbstractActuator;
 import api.OTMdev;
+import common.RoadConnection;
 import otmui.Maps;
 import commodity.Subnetwork;
 import control.AbstractController;
@@ -9,18 +10,21 @@ import error.OTMException;
 import keys.DemandType;
 import profiles.AbstractDemandProfile;
 import profiles.DemandProfile;
+import sensor.AbstractSensor;
 
 import java.util.*;
+
+import static java.util.stream.Collectors.toMap;
 
 public class Scenario {
 
     private final OTMdev otm;
 
-    private final Network network;
-    private final Map<Long,DemandsForLink> demands_for_links;
-    private final Map<Long,SplitsForNode> splits;
-    private final Map<Long, Actuator> actuators;
-    private final Map<Long, Sensor> sensors;
+    private Network network;
+    private Map<Long,DemandsForLink> demands_for_links;
+    private Map<Long,SplitsForNode> splits;
+    private Map<Long, Actuator> actuators;
+    private Map<Long, Sensor> sensors;
 
     public Scenario(OTMdev otm) throws OTMException {
 
@@ -187,4 +191,90 @@ public class Scenario {
     public OTMdev get_otm(){
         return otm;
     }
+
+    ///////////////////////
+    // setters
+    ///////////////////////
+
+    public void delete_link(Link link){
+
+        long link_id = link.getId();
+
+        if(!network.links.containsKey(link_id))
+            return;
+
+        common.Link clink = otm.scenario.network.links.get(link_id);
+
+        // remove road connections
+        Set<RoadConnection> rcs = clink.get_roadconnections_entering();
+        rcs.addAll(clink.get_roadconnections_leaving());
+        for(common.RoadConnection rc : rcs)
+            otm.scenario.network.road_connections.remove(rc.getId());
+
+        // remove from the network
+        long start_node = link.getStartNodeId();
+        long end_node = link.getEndNodeId();
+
+        network.links.remove(link_id);
+        network.nodes.get(start_node).getOutLinkIds().remove(link_id);
+        network.nodes.get(end_node).getInLinkIds().remove(link_id);
+
+        otm.scenario.network.links.remove(link_id);
+        otm.scenario.network.nodes.get(start_node).out_links.remove(link_id);
+        otm.scenario.network.nodes.get(end_node).in_links.remove(link_id);
+
+        // remove sensors
+        sensors = sensors.entrySet().stream()
+                .filter(e->e.getValue().bsensor.get_link().getId()!=link_id)
+                .collect(toMap(s->s.getKey(),s->(Sensor) s));
+
+        otm.scenario.sensors = otm.scenario.sensors.entrySet().stream()
+                .filter(e->e.getValue().target instanceof common.Link)
+                .filter(e->((common.Link)e.getValue().target).getId()!=link_id)
+                .collect(toMap(s->s.getKey(),s->(AbstractSensor) s));
+
+        // TODO remove actuators
+
+        // remove demands
+        demands_for_links = demands_for_links.entrySet().stream()
+                .filter(e->e.getValue().link_id!=link_id)
+                .collect(toMap(s->s.getKey(),s->(DemandsForLink) s));
+
+        // TODO Remove demands from the otm scenario
+
+    }
+
+    public void delete_node(Node node){
+
+        long node_id = node.getId();
+
+        if(!network.nodes.containsKey(node_id))
+            return;
+
+        // remove from the network
+        network.nodes.remove(node_id);
+
+        for(common.Link link : node.cnode.in_links.values())
+            link.end_node = null;
+        for(common.Link link : node.cnode.out_links.values())
+            link.start_node = null;
+        otm.scenario.network.nodes.remove(node_id);
+
+        // remove actuators
+        if(node.actuator!=null)
+            actuators.remove(node.actuator.id);
+
+        // remove splits
+        if(splits!=null)
+           splits.remove(node_id);
+
+    }
+
+    public Node create_node(float xcoord,float ycoord){
+        common.Node new_cnode = otm.otm.scenario().create_node(xcoord,ycoord);
+        Node new_node = new Node(new_cnode);
+        network.nodes.put(new_cnode.getId(),new_node);
+        return new_node;
+    }
+
 }

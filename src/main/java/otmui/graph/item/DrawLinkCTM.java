@@ -4,7 +4,6 @@ import common.Point;
 import geometry.Side;
 import javafx.scene.paint.Color;
 import otmui.GlobalParameters;
-import otmui.graph.color.AbstractColormap;
 import otmui.model.Link;
 import models.BaseLaneGroup;
 import error.OTMException;
@@ -28,15 +27,15 @@ public class DrawLinkCTM extends AbstractDrawLink {
     List<Double> get_additional_midline_points() {
 
         double shape_length=0d;
-        for(int i=0;i<link.bLink.shape.size()-1;i++){
-            Point p0 = link.bLink.shape.get(i);
-            Point p1 = link.bLink.shape.get(i+1);
+        for(int i = 0; i<link.clink.shape.size()-1; i++){
+            Point p0 = link.clink.shape.get(i);
+            Point p1 = link.clink.shape.get(i+1);
             shape_length += Math.sqrt(Math.pow(p0.x-p1.x,2)+Math.pow(p0.y-p1.y,2));
         }
-        double road2euclid = shape_length/link.bLink.length;
+        double road2euclid = shape_length/link.clink.length;
 
         // get a full lanegroup
-        models.ctm.LaneGroup lg = (models.ctm.LaneGroup) this.link.bLink.lanegroups_flwdn.values()
+        models.ctm.LaneGroup lg = (models.ctm.LaneGroup) this.link.clink.lanegroups_flwdn.values()
                 .stream()
                 .filter(x->x.side== Side.middle)
                 .findFirst().get();

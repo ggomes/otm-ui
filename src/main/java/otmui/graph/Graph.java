@@ -2,7 +2,6 @@ package otmui.graph;
 
 import javafx.scene.paint.Color;
 import otmui.GlobalParameters;
-import otmui.graph.color.AbstractColormap;
 import otmui.graph.item.*;
 import otmui.model.Link;
 import otmui.model.Node;
@@ -39,21 +38,11 @@ public class Graph {
         this.link_offset = params.link_offset.getValue();;
         this.road_color_scheme = (GlobalParameters.RoadColorScheme) params.road_color_scheme.getValue();;
 
-        // create nodes
-        for (Node node : scenario.getNodes()) {
-            AbstractDrawNode drawNode = makeDrawNode(node,node_size);
-            node.drawNode = drawNode;
-            nodes.put( drawNode.id, drawNode);
-        }
+        // create nodes and links
+        scenario.getNodes().forEach(x->add_node(x));
 
-        // create links
-        float lane_width_meters = params.lane_width_meters.floatValue();
-        float link_offset = params.link_offset.floatValue();
-        for (Link link : scenario.getLinks()) {
-            AbstractDrawLink drawLink = makeDrawLink(link, lane_width_meters, link_offset, road_color_scheme, nodes);
-            link.drawLink = drawLink;
-            links.put(drawLink.id, drawLink);
-        }
+        for(Link link : scenario.getLinks())
+            add_link(link);
 
         // create actuators
         for (otmui.model.Actuator actuator : scenario.getActuators()) {
@@ -115,6 +104,23 @@ public class Graph {
         return getMaxY()-getMinY();
     }
 
+
+    /////////////////////////////////////////////////
+    // setters
+    /////////////////////////////////////////////////
+
+    public void add_node(Node node){
+        AbstractDrawNode drawNode = makeDrawNode(node,node_size);
+        node.drawNode = drawNode;
+        nodes.put( drawNode.id, drawNode);
+    }
+
+    public void add_link(Link link) throws OTMException {
+        AbstractDrawLink drawLink = makeDrawLink(link, lane_width_meters, link_offset, road_color_scheme, nodes);
+        link.drawLink = drawLink;
+        links.put(drawLink.id, drawLink);
+    }
+
     /////////////////////////////////////////////////
     // private
     /////////////////////////////////////////////////
@@ -128,7 +134,7 @@ public class Graph {
     private static AbstractDrawLink makeDrawLink(otmui.model.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme, Map<Long,AbstractDrawNode> nodes) throws OTMException {
 
         AbstractDrawLink drawLink;
-        switch(link.bLink.model.getClass().getSimpleName()){
+        switch(link.clink.model.getClass().getSimpleName()){
 
             case "BaseModel":
             case "ModelSpatialQ":
