@@ -5,7 +5,6 @@ import otmui.MainApp;
 import otmui.graph.item.AbstractDrawLink;
 import otmui.graph.item.AbstractDrawNode;
 import otmui.graph.item.DrawSensor;
-import otmui.model.Scenario;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.Initializable;

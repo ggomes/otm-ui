@@ -7,7 +7,6 @@ import otmui.MainApp;
 import otmui.Maps;
 import otmui.event.NewScenarioEvent;
 import otmui.event.ResetScenarioEvent;
-import otmui.model.*;
 import otmui.simulation.OTMTask;
 import otmui.view.ParametersWindow;
 import otmui.view.PlotRequestWindow;
@@ -21,29 +20,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import xml.JaxbLoader;
 
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class MenuController implements Initializable {
 
     private MainApp myApp;
-    private static Map<String,String> testFiles = new HashMap<>();
-
-    static {
-        for(String testname : JaxbLoader.get_test_config_names())
-            testFiles.put(testname,JaxbLoader.get_test_fullpath(testname));
-    }
 
     @FXML
     private MenuBar menubar;
 
-    @FXML
-    private Menu openTest;
+//    @FXML
+//    private Menu openTest;
 
     @FXML
     private MenuItem menuRun;
@@ -66,11 +56,6 @@ public class MenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        for(Map.Entry<String,String> r : testFiles.entrySet()){
-            MenuItem x = new MenuItem(r.getKey());
-            x.setOnAction(e->menuOpenTest(e));
-            openTest.getItems().add(x);
-        }
         disableRun();
         disablePause();
         disableRewind();
@@ -226,20 +211,12 @@ public class MenuController implements Initializable {
             throw new OTMException(e);
         }
 
+        // get demand and split data
+        myApp.demands = myApp.otm.otm.scenario.get_demands();
+        myApp.splits = myApp.otm.otm.scenario.get_splits();
+
+        // Populate naming maps
         Maps.populate(myApp.otm);
-
-//        // Create the otm-ui scenario
-//        Scenario scenario = new Scenario(myApp.otm);
-//
-//        // Fire new scenario event
-//        if(scenario!=null) {
-//            enablePlots();
-//            enableParameters();
-//            enableRun();
-//            menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(scenario));
-//        }
-
-        // TODO REMOVE ABOVE
 
         // Fire new scenario event
         enablePlots();
@@ -248,29 +225,5 @@ public class MenuController implements Initializable {
         menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(myApp.otm));
 
     }
-
-//    public void loadTest(String testname) throws OTMException {
-//
-//        // load the scenario from XML
-//        try {
-//            myApp.otm.otm.load_test(testname);
-//            myApp.otm = new OTMdev(myApp.otm.otm);
-//        } catch (Exception e) {
-//            throw new OTMException(e);
-//        }
-//
-//        // check
-//        if(myApp.otm.scenario==null)
-//            return;
-//
-//        Scenario scenario = new Scenario(myApp.otm);
-//
-//        if(scenario!=null) {
-//            enablePlots();
-//            enableParameters();
-//            enableRun();
-//            menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(scenario));
-//        }
-//    }
 
 }

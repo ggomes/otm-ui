@@ -1,6 +1,5 @@
 package otmui.view;
 
-import otmui.model.Scenario;
 import control.AbstractController;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;

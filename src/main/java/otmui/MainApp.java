@@ -1,10 +1,10 @@
 package otmui;
 
 import api.OTMdev;
+import api.info.DemandInfo;
+import api.info.SplitInfo;
 import otmui.controller.*;
 import otmui.event.*;
-import otmui.model.Scenario;
-import error.OTMException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
@@ -20,15 +20,18 @@ import org.controlsfx.control.StatusBar;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 public class MainApp extends Application {
 
     public OTMdev otm;  // runnable OTM scenario.
+    public Map<Long,Set<DemandInfo>> demands;
+    public Map<Long,Set<SplitInfo>> splits;
 
     public Stage stage;
 
-//    public Scenario scenario;
     public SelectionManager selectionManager;
     public MenuController menuController;
     public StatusBarController statusbarController;
@@ -176,8 +179,6 @@ public class MainApp extends Application {
     private void add_event_filters(Scene scene){
 
         // loading new scenario
-//        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->processNewScenario(e.scenario) );
-
         scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED_OTM, e->treeController.loadScenario(e.otmdev) );
         scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED_OTM, e->graphpaneController.loadScenario(e.otmdev) );
         scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED_OTM, e->statusbarController.loadScenario(e.otmdev) );
@@ -198,8 +199,8 @@ public class MainApp extends Application {
         scene.addEventFilter(TreeSelectEvent.CLICK2_LINK,e->selectionManager.treeSecondClickLink(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_COMMODITY,e->selectionManager.treeSecondClickCommodity(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_SUBNETWORK,e->selectionManager.treeSecondClickSubnetwork(e));
-//        scene.addEventFilter(TreeSelectEvent.CLICK2_DEMAND,e->selectionManager.treeSecondClickDemand(e));
-//        scene.addEventFilter(TreeSelectEvent.CLICK2_SPLIT,e->selectionManager.treeSecondClickSplit(e));
+        scene.addEventFilter(TreeSelectEvent.CLICK2_DEMAND,e->selectionManager.treeSecondClickDemand(e));
+        scene.addEventFilter(TreeSelectEvent.CLICK2_SPLIT,e->selectionManager.treeSecondClickSplit(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_ACTUATOR,e->selectionManager.treeSecondClickActuator(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_CONTROLLER,e->selectionManager.treeSecondClickController(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_SENSOR,e->selectionManager.treeSecondClickSensor(e));
@@ -209,8 +210,8 @@ public class MainApp extends Application {
         scene.addEventFilter(FormSelectEvent.CLICK1_NODE, e->selectionManager.formFirstClickNode(e.itemId));
         scene.addEventFilter(FormSelectEvent.CLICK1_SUBNETWORK, e->selectionManager.formFirstClickSubnetwork(e.itemId));
         scene.addEventFilter(FormSelectEvent.CLICK1_COMMODITY, e->selectionManager.formFirstClickCommodity(e.itemId));
-//        scene.addEventFilter(FormSelectEvent.CLICK1_DEMAND, e->selectionManager.formFirstClickDemand(e.itemId));
-//        scene.addEventFilter(FormSelectEvent.CLICK1_SPLIT, e->selectionManager.formFirstClickSplit(e.itemId));
+        scene.addEventFilter(FormSelectEvent.CLICK1_DEMAND, e->selectionManager.formFirstClickDemand(e.itemId));
+        scene.addEventFilter(FormSelectEvent.CLICK1_SPLIT, e->selectionManager.formFirstClickSplit(e.itemId));
         scene.addEventFilter(FormSelectEvent.CLICK1_ACTUATOR, e->selectionManager.formFirstClickActuator(e.itemId));
         scene.addEventFilter(FormSelectEvent.CLICK1_CONTROLLER, e->selectionManager.formFirstClickController(e.itemId));
         scene.addEventFilter(FormSelectEvent.CLICK1_SENSOR, e->selectionManager.formFirstClickSensor(e.itemId));
@@ -219,8 +220,8 @@ public class MainApp extends Application {
         scene.addEventFilter(FormSelectEvent.CLICK2_NODE, e->selectionManager.formSecondClickNode(e));
         scene.addEventFilter(FormSelectEvent.CLICK2_SUBNETWORK, e->selectionManager.formSecondClickSubnetwork(e));
         scene.addEventFilter(FormSelectEvent.CLICK2_COMMODITY, e->selectionManager.formSecondClickCommodity(e));
-//        scene.addEventFilter(FormSelectEvent.CLICK2_DEMAND, e->selectionManager.formSecondClickDemand(e));
-//        scene.addEventFilter(FormSelectEvent.CLICK2_SPLIT, e->selectionManager.formSecondClickSplit(e));
+        scene.addEventFilter(FormSelectEvent.CLICK2_DEMAND, e->selectionManager.formSecondClickDemand(e));
+        scene.addEventFilter(FormSelectEvent.CLICK2_SPLIT, e->selectionManager.formSecondClickSplit(e));
         scene.addEventFilter(FormSelectEvent.CLICK2_ACTUATOR, e->selectionManager.formSecondClickActuator(e));
         scene.addEventFilter(FormSelectEvent.CLICK2_CONTROLLER, e->selectionManager.formSecondClickController(e));
         scene.addEventFilter(FormSelectEvent.CLICK2_SENSOR, e->selectionManager.formSecondClickSensor(e));
@@ -235,32 +236,18 @@ public class MainApp extends Application {
 
     }
 
-//    private void processNewScenario(Scenario scenario)  {
-//        if(scenario==null)
-//            return;
+    private void reset(){
+        if(otm.scenario==null)
+            return;
 //        try {
-//            this.scenario = scenario;
-//            treeController.loadScenario(scenario);
-//            graphpaneController.loadScenario(scenario);
-//            datapaneController.loadScenario(scenario);
-//            statusbarController.loadScenario(scenario);
+//            scenario.reset();
+            treeController.reset();
+            graphpaneController.reset();
+            datapaneController.reset();
+            statusbarController.reset();
 //        } catch (OTMException e) {
 //            e.printStackTrace();
 //        }
-//    }
-
-//    private void reset(){
-//        if(scenario==null)
-//            return;
-////        try {
-////            scenario.reset();
-//            treeController.reset();
-//            graphpaneController.reset();
-//            datapaneController.reset();
-//            statusbarController.reset();
-////        } catch (OTMException e) {
-////            e.printStackTrace();
-////        }
-//    }
+    }
 
 }

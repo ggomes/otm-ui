@@ -2,7 +2,6 @@ package otmui.view;
 
 import api.OTMdev;
 import otmui.event.FormSelectEvent;
-import otmui.model.Scenario;
 import commodity.Subnetwork;
 import javafx.collections.ObservableList;
 import javafx.event.Event;

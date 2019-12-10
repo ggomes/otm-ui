@@ -11,14 +11,12 @@ import otmui.graph.Graph;
 import otmui.graph.item.AbstractDrawLink;
 import otmui.graph.item.AbstractDrawNode;
 import otmui.graph.item.DrawSensor;
-import otmui.model.*;
 import commodity.Commodity;
 import commodity.Subnetwork;
 import control.AbstractController;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import profiles.AbstractDemandProfile;
 import sensor.AbstractSensor;
 
 import java.util.HashSet;
@@ -282,17 +280,17 @@ public class SelectionManager {
 //        e.consume();
     }
 
-//    public void treeSecondClickDemand(TreeSelectEvent e){
-//        long id = Maps.name2demandid.getFromFirst(getItemName(e));
-//        myApp.datapaneController.showDemandData(myApp.otm.scenario.get_demands_with_link_id(id));
-////        e.consume();
-//    }
-//
-//    public void treeSecondClickSplit(TreeSelectEvent e){
-//        long id = Maps.name2splitid.getFromFirst(getItemName(e));
-//        myApp.datapaneController.showSplitData(myApp.scenario.getSplitWithId(id));
-////        e.consume();
-//    }
+    public void treeSecondClickDemand(TreeSelectEvent e){
+        long id = Maps.name2demandid.getFromFirst(getItemName(e));
+        myApp.datapaneController.showDemandData(id,myApp.demands.get(id));
+//        e.consume();
+    }
+
+    public void treeSecondClickSplit(TreeSelectEvent e){
+        long id = Maps.name2splitid.getFromFirst(getItemName(e));
+        myApp.datapaneController.showSplitData(id,myApp.splits.get(id));
+//        e.consume();
+    }
 
     public void treeSecondClickActuator(TreeSelectEvent e){
         long id = Maps.name2actuatorid.getFromFirst(getItemName(e));
@@ -347,21 +345,17 @@ public class SelectionManager {
         highlightSelection();
     }
 
-//    public void formFirstClickDemand(Long itemId){
-//        clearSelection();
-//        DemandsForLink demandsForLink = myApp.otm.scenario.get_demands_with_link_id(itemId);
-//        Link link = myApp.otm.scenario.getLinkWithId(demandsForLink.link_id);
-//        selectedLinks.add(link.drawLink);
-//        highlightSelection();
-//    }
-//
-//    public void formFirstClickSplit(Long itemId){
-//        clearSelection();
-//        SplitsForNode splitsForNode = myApp.otm.scenario.getSplitWithId(itemId);
-//        Node node = myApp.otm.scenario.getNodeWithId(splitsForNode.node_id);
-//        selectedNodes.add(node.drawNode);
-//        highlightSelection();
-//    }
+    public void formFirstClickDemand(Long itemId){
+        clearSelection();
+        selectedLinks.add(myApp.graphpaneController.graphContainer.get_graph().drawlinks.get(itemId));
+        highlightSelection();
+    }
+
+    public void formFirstClickSplit(Long itemId){
+        clearSelection();
+        selectedNodes.add(myApp.graphpaneController.graphContainer.get_graph().drawnodes.get(itemId));
+        highlightSelection();
+    }
 
     public void formFirstClickCommodity(Long itemId){
         Commodity com = myApp.otm.scenario.commodities.get(itemId);
@@ -401,15 +395,15 @@ public class SelectionManager {
         e.consume();
     }
 
-//    public void formSecondClickDemand(FormSelectEvent e){
-//        myApp.datapaneController.showDemandData(myApp.otm.scenario.get_demands_with_link_id(e.itemId));
-//        e.consume();
-//    }
-//
-//    public void formSecondClickSplit(FormSelectEvent e){
-//        myApp.datapaneController.showSplitData(myApp.otm.scenario.getSplitWithId(e.itemId));
-//        e.consume();
-//    }
+    public void formSecondClickDemand(FormSelectEvent e){
+        myApp.datapaneController.showDemandData(e.itemId,myApp.demands.get(e.itemId));
+        e.consume();
+    }
+
+    public void formSecondClickSplit(FormSelectEvent e){
+        myApp.datapaneController.showSplitData(e.itemId,myApp.splits.get(e.itemId));
+        e.consume();
+    }
 
     public void formSecondClickCommodity(FormSelectEvent e){
         myApp.datapaneController.showCommodityData(myApp.otm.scenario.commodities.get(e.itemId));

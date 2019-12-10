@@ -1,8 +1,6 @@
 package otmui.graph.item;
 
 import otmui.GlobalParameters;
-import otmui.graph.color.AbstractColormap;
-import otmui.model.Link;
 import models.BaseLaneGroup;
 import error.OTMException;
 import otmui.utils.Arrow;

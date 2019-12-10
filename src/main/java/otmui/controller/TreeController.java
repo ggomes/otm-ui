@@ -106,68 +106,6 @@ public class TreeController implements Initializable {
 
     }
 
-//    public void loadScenario(Scenario scenario){
-//
-//        // populate the tree
-//        TreeItem<String> rootItem = new TreeItem<>("scenario");
-//        rootItem.setExpanded(false);
-//
-//        // commodities
-//        TreeItem<String> comms = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.COMMODITY));
-//        rootItem.getChildren().add(comms);
-//        for (commodity.Commodity comm : scenario.getCommodities())
-//            comms.getChildren().add(new TreeItem<>(Maps.name2commodityid.getFromSecond(comm.getId())));
-//
-//        // links
-//        TreeItem<String> lks = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.LINK));
-//        rootItem.getChildren().add(lks);
-//        List<Link> links = new ArrayList<>();
-//        links.addAll(scenario.getLinks());
-//        Collections.sort(links);
-//        for (Link l : links)
-//            lks.getChildren().add(new TreeItem<>(Maps.name2linkid.getFromSecond(l.getId())));
-//
-//        // subnetwork
-//        TreeItem<String> snt = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.SUBNETWORK));
-//        rootItem.getChildren().add(snt);
-//        for (Subnetwork s : scenario.getSubnetworks())
-//            snt.getChildren().add(new TreeItem<>(Maps.name2subnetworkid.getFromSecond(s.getId())));
-//
-//        // demands
-//        TreeItem<String> dmd = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.DEMAND));
-//        rootItem.getChildren().add(dmd);
-//        for (DemandsForLink d : scenario.getDemandsForLinks())
-//            dmd.getChildren().add(new TreeItem<>(Maps.name2demandid.getFromSecond(d.get_link_id())));
-//
-//        // splitsForNode
-//        TreeItem<String> spt = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.SPLIT));
-//        rootItem.getChildren().add(spt);
-//        for (SplitsForNode s : scenario.getSplits())
-//            spt.getChildren().add(new TreeItem<>(Maps.name2splitid.getFromSecond(s.getId())));
-//
-//        // actuators
-//        TreeItem<String> act = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.ACTUATOR));
-//        rootItem.getChildren().add(act);
-//        for (Actuator a : scenario.getActuators())
-//            act.getChildren().add(new TreeItem<>(Maps.name2actuatorid.getFromSecond(a.getId())));
-//
-//        // controllers
-//        TreeItem<String> cnt = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.CONTROLLER));
-//        rootItem.getChildren().add(cnt);
-//        for(AbstractController c : scenario.getControllers())
-//            cnt.getChildren().add(new TreeItem<>(Maps.name2controllerid.getFromSecond(c.getId())));
-//
-//        // sensors
-//        TreeItem<String> sns = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.SENSOR));
-//        rootItem.getChildren().add(sns);
-//        for (Sensor s : scenario.getSensors())
-//            sns.getChildren().add(new TreeItem<>(Maps.name2sensorid.getFromSecond(s.get_id())));
-//
-//
-//        scenariotree.setRoot(rootItem);
-//
-//    }
-
     public void reset(){
         clearSelection();
     }

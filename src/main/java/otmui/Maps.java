@@ -1,13 +1,8 @@
 package otmui;
 
 import api.OTMdev;
-import otmui.model.Actuator;
-import otmui.model.Link;
-import otmui.model.Sensor;
 import otmui.utils.BijectiveMap;
 import profiles.AbstractDemandProfile;
-
-import java.util.HashMap;
 
 public class Maps {
 

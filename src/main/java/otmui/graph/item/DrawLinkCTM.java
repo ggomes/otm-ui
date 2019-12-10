@@ -4,7 +4,6 @@ import common.Point;
 import geometry.Side;
 import javafx.scene.paint.Color;
 import otmui.GlobalParameters;
-import otmui.model.Link;
 import models.BaseLaneGroup;
 import error.OTMException;
 import otmui.utils.Arrow;

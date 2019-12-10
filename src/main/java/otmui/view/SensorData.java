@@ -1,7 +1,5 @@
 package otmui.view;
 
-import otmui.model.Scenario;
-import otmui.model.Sensor;
 import javafx.collections.ObservableList;
 import sensor.AbstractSensor;
 import sensor.FixedSensor;

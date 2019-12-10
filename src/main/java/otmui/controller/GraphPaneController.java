@@ -9,9 +9,6 @@ import otmui.graph.GraphContainer;
 import otmui.graph.Graph;
 import otmui.graph.color.AbstractColormap;
 import otmui.graph.item.*;
-import otmui.model.Link;
-import otmui.model.Node;
-import otmui.model.Scenario;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,7 +22,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -177,7 +173,6 @@ public class GraphPaneController implements Initializable {
         }
 
         otmdev.scenario.network.node_positions_in_meters = true;
-
     }
 
     /////////////////////////////////////////////////

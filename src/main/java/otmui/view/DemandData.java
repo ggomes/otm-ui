@@ -1,22 +1,21 @@
 package otmui.view;
 
+import api.OTMdev;
+import api.info.DemandInfo;
+import api.info.Profile1DInfo;
 import otmui.event.FormSelectEvent;
-import otmui.model.DemandsForLink;
-import otmui.model.Scenario;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import keys.KeyCommodityDemandTypeId;
-import profiles.Profile1D;
 
-import java.util.Map;
+import java.util.Set;
 
 public class DemandData extends AbstractData {
 
-    public DemandData(DemandsForLink demandsForLink, Scenario scenario) {
+    public DemandData(long link_id,Set<DemandInfo> demands, OTMdev otm) {
         super();
 
         ObservableList<Node> X = vbox.getChildren();
@@ -24,8 +23,8 @@ public class DemandData extends AbstractData {
         // id .................
         X.add(UIFactory.createLabelButton(
                 "link id",
-                String.format("%d", demandsForLink.get_link_id()),
-                e->Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_LINK, demandsForLink.get_link_id()))
+                String.format("%d", link_id),
+                e->Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_LINK, link_id))
         ).pane);
 
         // data
@@ -38,18 +37,18 @@ public class DemandData extends AbstractData {
 
         xAxis.setLabel("time [hr]");
         yAxis.setLabel("flow [vph]");
-        for(Map.Entry<KeyCommodityDemandTypeId, Profile1D> e : demandsForLink.demands.entrySet()){
-            KeyCommodityDemandTypeId key = e.getKey();
-            Long comm_id = key.commodity_id;
+        for(DemandInfo demand : demands){
+//            KeyCommodityDemandTypeId
+            Long comm_id = demand.commodity_id;
             XYChart.Series series = new XYChart.Series();
-            series.setName(scenario.getCommodityWithId(comm_id).get_name());
-            Profile1D profile = e.getValue();
-            double t = profile.start_time;
-            double dt = profile.dt==0 ? 3600 : profile.dt;
-            for(Double val : profile.values) {
+            series.setName(otm.scenario.commodities.get(comm_id).get_name());
+            Profile1DInfo profile = demand.profile;
+            double t = profile.getStart_time();
+            double dt = profile.getDt()==0 ? 3600 : profile.getDt();
+            for(Double val : profile.getValues()) {
                 series.getData().add(new XYChart.Data(t/3600, val*3600));
                 t += dt;
-                if(profile.values.size()<40)
+                if(profile.getValues().size()<40)
                     series.getData().add(new XYChart.Data(t/3600, val*3600));
             }
             lineChart.getData().add(series);

@@ -1,7 +1,6 @@
 package otmui.view;
 
 import api.OTMdev;
-import otmui.model.Scenario;
 import commodity.Subnetwork;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;

@@ -2,8 +2,6 @@ package otmui.view;
 
 import api.OTMdev;
 import otmui.event.FormSelectEvent;
-import otmui.model.Node;
-import otmui.model.Scenario;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 

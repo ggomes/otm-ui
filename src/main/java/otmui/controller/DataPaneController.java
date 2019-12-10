@@ -1,8 +1,9 @@
 package otmui.controller;
 
 import actuator.AbstractActuator;
+import api.info.DemandInfo;
+import api.info.SplitInfo;
 import otmui.MainApp;
-//import otmui.model.*;
 import otmui.view.*;
 import commodity.Subnetwork;
 import control.AbstractController;
@@ -13,6 +14,7 @@ import sensor.AbstractSensor;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class DataPaneController implements Initializable {
 
@@ -62,15 +64,15 @@ public class DataPaneController implements Initializable {
         dataPane.setContent(subnetworkData.getScrollPane());
     }
 
-//    protected void showDemandData(DemandsForLink demandsForLink){
-//        DemandData demandData = new DemandData(demandsForLink,myApp.otm);
-//        dataPane.setContent(demandData.getScrollPane());
-//    }
+    protected void showDemandData(long link_id,Set<DemandInfo> demands){
+        DemandData demandData = new DemandData(link_id,demands,myApp.otm);
+        dataPane.setContent(demandData.getScrollPane());
+    }
 
-//    protected void showSplitData(SplitsForNode splitsForNode){
-//        SplitData splitData = new SplitData(splitsForNode,myApp.otm);
-//        dataPane.setContent(splitData.getScrollPane());
-//    }
+    protected void showSplitData(long node_id,Set<SplitInfo> splits){
+        SplitData splitData = new SplitData(node_id,splits,myApp.otm);
+        dataPane.setContent(splitData.getScrollPane());
+    }
 
     protected void showActuatorData(AbstractActuator actuator){
         ActuatorData actuatorData = new ActuatorData(actuator);

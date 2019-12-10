@@ -1,7 +1,6 @@
 package otmui.view;
 
 import otmui.controller.component.*;
-import otmui.model.AddLanes;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
@@ -114,19 +113,19 @@ public class UIFactory {
         return new PaneCtrl(pane,ctrl);
     }
 
-    public static VBox createAddLanes(String label,AddLanes addLanes){
-        VBox vbox = new VBox();
-        vbox.setStyle("-fx-padding: 10;" +
-                "-fx-border-style: solid inside;" +
-                "-fx-border-width: 1;" +
-                "-fx-border-insets: 3;" +
-                "-fx-border-radius: 3;" +
-                "-fx-border-color: gray;");
-        vbox.getChildren().add(createLabelLabel(label,"").pane);
-        vbox.getChildren().add(createLabelText("lanes",String.format("%d",addLanes.lanes)).pane);
-        vbox.getChildren().add(createLabelText("length [km]",String.format("%.3f",addLanes.length)).pane);
-        return vbox;
-    }
+//    public static VBox createAddLanes(String label,AddLanes addLanes){
+//        VBox vbox = new VBox();
+//        vbox.setStyle("-fx-padding: 10;" +
+//                "-fx-border-style: solid inside;" +
+//                "-fx-border-width: 1;" +
+//                "-fx-border-insets: 3;" +
+//                "-fx-border-radius: 3;" +
+//                "-fx-border-color: gray;");
+//        vbox.getChildren().add(createLabelLabel(label,"").pane);
+//        vbox.getChildren().add(createLabelText("lanes",String.format("%d",addLanes.lanes)).pane);
+//        vbox.getChildren().add(createLabelText("length [km]",String.format("%.3f",addLanes.length)).pane);
+//        return vbox;
+//    }
 
     public static VBox createLanegroupPanel(models.BaseLaneGroup lanegroup){
         VBox vbox = new VBox();
