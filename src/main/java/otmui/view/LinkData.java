@@ -1,9 +1,8 @@
 package otmui.view;
 
+import api.OTMdev;
 import models.BaseLaneGroup;
 import otmui.event.FormSelectEvent;
-import otmui.model.AddLanes;
-import otmui.model.Link;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.Node;
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class LinkData extends AbstractData {
 
-    public LinkData(Link link){
+    public LinkData(common.Link link, OTMdev otm){
         super();
 
         ObservableList<Node> X = vbox.getChildren();
@@ -25,38 +24,38 @@ public class LinkData extends AbstractData {
         // start node .................
         X.add(UIFactory.createLabelButton(
                 "start node",
-                link.getStartNodeId().toString(),
-                e->doubleClickNode(link.getStartNodeId())
+                link.start_node.getId().toString(),
+                e->doubleClickNode(link.start_node.getId())
         ).pane);
 
         // end node .................
         X.add(UIFactory.createLabelButton(
                 "end node",
-                link.getEndNodeId().toString(),
-                e->doubleClickNode(link.getEndNodeId())
+                link.end_node.getId().toString(),
+                e->doubleClickNode(link.end_node.getId())
         ).pane);
 
         // length [LabelText] ................
         X.add(UIFactory.createLabelText(
                 "length [km]",
-                link.getLength().toString()
+                String.format("%.0f",link.length)
         ).pane);
 
         // full lanes [LabelText] ................
         X.add(UIFactory.createLabelText(
                 "full lanes",
-                String.format("%d",link.getLanes())
+                String.format("%d",link.full_lanes)
         ).pane);
 
-        // left pocket
-        AddLanes left = link.getLeftLanes();
-        if(left!=null)
-            X.add(UIFactory.createAddLanes("Left pocket:",left));
-
-        // right pocket
-        AddLanes right = link.getRightLanes();
-        if(right!=null)
-            X.add(UIFactory.createAddLanes("Right pocket:",right));
+//        // left pocket
+//        AddLanes left = link.getLeftLanes();
+//        if(left!=null)
+//            X.add(UIFactory.createAddLanes("Left pocket:",left));
+//
+//        // right pocket
+//        AddLanes right = link.getRightLanes();
+//        if(right!=null)
+//            X.add(UIFactory.createAddLanes("Right pocket:",right));
 
         // hov lanes
         // DO THIS!!!
@@ -65,32 +64,32 @@ public class LinkData extends AbstractData {
         // DO THIS!!!
 
         // link model type
-        X.add(UIFactory.createLabelLabel("link type",link.getModel().name).pane);
+        X.add(UIFactory.createLabelLabel("link type",link.model.name).pane);
 
         // lanegroups
-        Collection<BaseLaneGroup> lanegroups = link.getDwnLaneGroups();
+        Collection<BaseLaneGroup> lanegroups = link.lanegroups_flwdn.values();
         List<String> lanegroupIds = lanegroups.stream().map(x->String.format("%d",x.id)).collect(Collectors.toList());
         X.add(UIFactory.createLabelCombobox("lanegroups",lanegroupIds).pane);
 
         // is sink
-        X.add(UIFactory.createLabelCheckbox("is sink",link.isSink()).pane);
+        X.add(UIFactory.createLabelCheckbox("is sink",link.is_sink).pane);
 
         // is source
-        X.add(UIFactory.createLabelCheckbox("is source",link.isSource()).pane);
+        X.add(UIFactory.createLabelCheckbox("is source",link.is_source).pane);
 
-        // demandsForLink
-        if(link.demandsForLink !=null)
-            X.add(UIFactory.createLabelButton(
-                    "demands",
-                    "",
-                    e->Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_DEMAND,link.demandsForLink.get_link_id()))
-            ).pane);
-
-        // actuator
-        if(link.actuator!=null) {
-            String actuatorId = String.format("%d",link.actuator.getId());
-            X.add(UIFactory.createLabelText("actuator", actuatorId).pane);
-        }
+//        // demandsForLink
+//        if(link.demandsForLink !=null)
+//            X.add(UIFactory.createLabelButton(
+//                    "demands",
+//                    "",
+//                    e->Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_DEMAND,link.demandsForLink.get_link_id()))
+//            ).pane);
+//
+//        // actuator
+//        if(link.actuator!=null) {
+//            String actuatorId = String.format("%d",link.actuator.getId());
+//            X.add(UIFactory.createLabelText("actuator", actuatorId).pane);
+//        }
 
     }
 

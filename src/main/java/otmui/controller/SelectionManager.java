@@ -7,6 +7,7 @@ import otmui.Maps;
 import otmui.event.FormSelectEvent;
 import otmui.event.GraphSelectEvent;
 import otmui.event.TreeSelectEvent;
+import otmui.graph.Graph;
 import otmui.graph.item.AbstractDrawLink;
 import otmui.graph.item.AbstractDrawNode;
 import otmui.graph.item.DrawSensor;
@@ -17,6 +18,8 @@ import control.AbstractController;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import profiles.AbstractDemandProfile;
+import sensor.AbstractSensor;
 
 import java.util.HashSet;
 import java.util.List;
@@ -127,33 +130,29 @@ public class SelectionManager {
     }
 
     public void graphSecondClickNode(GraphSelectEvent e){
-        // open data pane for node
         AbstractDrawNode drawNode = (AbstractDrawNode) e.getSelected();
-        Node node = myApp.scenario.getNodeWithId(drawNode.id);
+        common.Node node = myApp.otm.scenario.network.nodes.get(drawNode.id);
         myApp.datapaneController.showNodeData(node);
         e.consume();
     }
 
     public void graphSecondClickLink(GraphSelectEvent e){
-        // open data pane for link
         AbstractDrawLink drawLink = (AbstractDrawLink) e.getSelected();
-        Link link = myApp.scenario.getLinkWithId(drawLink.id);
+        common.Link link = myApp.otm.scenario.network.links.get(drawLink.id);
         myApp.datapaneController.showLinkData(link);
         e.consume();
     }
 
     public void graphSecondClickSensor(GraphSelectEvent e){
-        // open data pane for sensor
         DrawSensor drawSensor = (DrawSensor) e.getSelected();
-        Sensor sensor = myApp.scenario.getSensorWithId(drawSensor.id);
+        AbstractSensor sensor = myApp.otm.scenario.sensors.get(drawSensor.id);
         myApp.datapaneController.showSensorData(sensor);
         e.consume();
     }
 
     public void graphSecondClickActuator(GraphSelectEvent e){
-        // open data pane for node
         AbstractDrawNode drawActuator = (AbstractDrawNode) e.getSelected();
-        AbstractActuator actuator = myApp.scenario.getActuatorWithId(drawActuator.id);
+        AbstractActuator actuator = myApp.otm.scenario.actuators.get(drawActuator.id);
         myApp.datapaneController.showActuatorData(actuator);
         e.consume();
     }
@@ -163,14 +162,17 @@ public class SelectionManager {
     /////////////////////////////////////////////////
 
     public void treeFirstClick(TreeSelectEvent e){
-        ObservableList<TreeItem> items = myApp.scenarioTreeController.getTreeView().getSelectionModel().getSelectedItems();
+        ObservableList<TreeItem> items = myApp.treeController.getTreeView().getSelectionModel().getSelectedItems();
         Set<AbstractDrawLink> drawLinks = new HashSet<>();
         Set<AbstractDrawNode> drawNodes = new HashSet<>();
         Set<DrawSensor> drawSensors = new HashSet<>();
         Set<AbstractDrawNode> drawActuators = new HashSet<>();
 
+        runner.Scenario scenario = myApp.otm.scenario;
+        Graph graph = myApp.graphpaneController.graphContainer.get_graph();
+
         // get all drawLinks and drawNodes that have been selected
-        Long id;
+        Long id, target_id;
         for(TreeItem item : items){
             if(item==null)
                 continue;
@@ -183,78 +185,69 @@ public class SelectionManager {
 
                     case LINK:
                         id = Maps.name2linkid.getFromFirst((String)item.getValue());
-                        Link link = myApp.scenario.getLinkWithId(id);
-                        if(link.drawLink !=null)
-                            drawLinks.add(link.drawLink);
+                        if(graph.drawnodes.containsKey(id))
+                            drawLinks.add(graph.drawlinks.get(id));
                         break;
 
                     case SUBNETWORK:
                         id = Maps.name2subnetworkid.getFromFirst((String)item.getValue());
-                        Subnetwork subnetwork = myApp.scenario.getSubnetworkWithId(id);
+                        Subnetwork subnetwork = scenario.subnetworks.get(id);
                         drawLinks.addAll(subnetwork
                                 .get_link_ids().stream()
-                                .map(x->myApp.scenario.getLinkWithId(x))
-                                .filter(Objects::nonNull)
-                                .map(x->x.drawLink)
+                                .map(x->graph.drawlinks.get(x))
                                 .filter(Objects::nonNull)
                                 .collect(Collectors.toSet())
                         );
                         break;
 
-                    case DEMAND:
-                        id = Maps.name2demandid.getFromFirst((String)item.getValue());
-                        DemandsForLink demandsForLink = myApp.scenario.get_demands_with_link_id(id);
-                        Link linkd = myApp.scenario.getLinkWithId(demandsForLink.link_id);
-                        if(linkd!=null && linkd.drawLink !=null)
-                            drawLinks.add(linkd.drawLink);
-                        break;
-
-                    case SPLIT:
-                        id = Maps.name2splitid.getFromFirst((String)item.getValue());
-                        SplitsForNode splitsForNode = myApp.scenario.getSplitWithId(id);
-                        Node nodex = myApp.scenario.getNodeWithId(splitsForNode.node_id);
-                        if(nodex!=null && nodex.drawNode !=null)
-                            drawNodes.add(nodex.drawNode);
-                        break;
+//                    case DEMAND:
+//                        id = Maps.name2demandid.getFromFirst((String)item.getValue());
+//                        AbstractDemandProfile profile = scenario.data_demands.get(id).source.link.getId();
+//                        Link linkd = scenario.getLinkWithId(demandsForLink.link_id);
+//                        if(linkd!=null && linkd.drawLink !=null)
+//                            drawLinks.add(linkd.drawLink);
+//                        break;
+//
+//                    case SPLIT:
+//                        id = Maps.name2splitid.getFromFirst((String)item.getValue());
+//                        SplitsForNode splitsForNode = scenario.getSplitWithId(id);
+//                        Node nodex = scenario.getNodeWithId(splitsForNode.node_id);
+//                        if(nodex!=null && nodex.drawNode !=null)
+//                            drawNodes.add(nodex.drawNode);
+//                        break;
 
                     case ACTUATOR:
                         id = Maps.name2actuatorid.getFromFirst((String)item.getValue());
-                        AbstractActuator actuator = myApp.scenario.getActuatorWithId(id);
+                        AbstractActuator actuator = scenario.actuators.get(id);
+                        target_id = actuator.target.getId();
                         if(actuator.target instanceof common.Node) {
-                            Node node = myApp.scenario.getNodeWithId(actuator.target.getId());
-                            if(node!=null)
-                                drawNodes.add(node.drawNode);
+                            if(graph.drawnodes.containsKey(target_id))
+                                drawNodes.add(graph.drawnodes.get(target_id));
                         }
                         if(actuator.target instanceof common.Link){
-                            Link alink = myApp.scenario.getLinkWithId(((common.Node) actuator.target).getId());
-                            if(alink!=null)
-                                drawLinks.add(alink.drawLink);
+                            if(graph.drawlinks.containsKey(target_id))
+                                drawLinks.add(graph.drawlinks.get(target_id));
                         }
                         break;
 
                     case CONTROLLER:
                         id = Maps.name2controllerid.getFromFirst((String)item.getValue());
-                        AbstractController controller = myApp.scenario.getControllerWithId(id);
+                        AbstractController controller = scenario.controllers.get(id);
                         for(actuator.AbstractActuator bact : controller.actuators.values()) {
-                            AbstractActuator act = myApp.scenario.getActuatorWithId(bact.id);
+                            AbstractActuator act = scenario.actuators.get(bact.id);
                             if (act == null)
                                 continue;
-                            if (bact.target instanceof common.Node){
-                                Long nodeid = act.target.getId();
-                                AbstractDrawNode drawNode = myApp.scenario.getNodeWithId(nodeid).drawNode;
-                                drawNodes.add(drawNode);
-                            }
-                            if(bact.target instanceof common.Link) {
-                                AbstractDrawLink drawLink = myApp.scenario.getLinkWithId(act.target.getId()).drawLink;
-                                drawLinks.add(drawLink);
-                            }
+                            target_id = act.target.getId();
+                            if (bact.target instanceof common.Node)
+                                drawNodes.add(graph.drawnodes.get(target_id));
+                            if(bact.target instanceof common.Link)
+                                drawLinks.add(graph.drawlinks.get(target_id));
                         }
                         break;
 
                     case SENSOR:
                         id = Maps.name2sensorid.getFromFirst((String)item.getValue());
-                        Sensor sensor = myApp.scenario.getSensorWithId(id);
-                        drawSensors.add(sensor.drawSensor);
+                        drawSensors.add(graph.drawsensors.get(id));
                         break;
                 }
         }
@@ -272,50 +265,50 @@ public class SelectionManager {
 
     public void treeSecondClickLink(TreeSelectEvent e){
         Long linkid = Maps.name2linkid.getFromFirst(getItemName(e));
-        Link link = myApp.scenario.getLinkWithId(linkid);
+        common.Link link = myApp.otm.scenario.network.links.get(linkid);
         myApp.datapaneController.showLinkData(link);
 //        e.consume();
     }
 
     public void treeSecondClickCommodity(TreeSelectEvent e){
         long id = Maps.name2commodityid.getFromFirst(getItemName(e));
-        myApp.datapaneController.showCommodityData(myApp.scenario.getCommodityWithId(id));
+        myApp.datapaneController.showCommodityData(myApp.otm.scenario.commodities.get(id));
 //        e.consume();
     }
 
     public void treeSecondClickSubnetwork(TreeSelectEvent e){
         long id = Maps.name2subnetworkid.getFromFirst(getItemName(e));
-        myApp.datapaneController.showSubnewtorkData(myApp.scenario.getSubnetworkWithId(id));
+        myApp.datapaneController.showSubnewtorkData(myApp.otm.scenario.subnetworks.get(id));
 //        e.consume();
     }
 
-    public void treeSecondClickDemand(TreeSelectEvent e){
-        long id = Maps.name2demandid.getFromFirst(getItemName(e));
-        myApp.datapaneController.showDemandData(myApp.scenario.get_demands_with_link_id(id));
-//        e.consume();
-    }
-
-    public void treeSecondClickSplit(TreeSelectEvent e){
-        long id = Maps.name2splitid.getFromFirst(getItemName(e));
-        myApp.datapaneController.showSplitData(myApp.scenario.getSplitWithId(id));
-//        e.consume();
-    }
+//    public void treeSecondClickDemand(TreeSelectEvent e){
+//        long id = Maps.name2demandid.getFromFirst(getItemName(e));
+//        myApp.datapaneController.showDemandData(myApp.otm.scenario.get_demands_with_link_id(id));
+////        e.consume();
+//    }
+//
+//    public void treeSecondClickSplit(TreeSelectEvent e){
+//        long id = Maps.name2splitid.getFromFirst(getItemName(e));
+//        myApp.datapaneController.showSplitData(myApp.scenario.getSplitWithId(id));
+////        e.consume();
+//    }
 
     public void treeSecondClickActuator(TreeSelectEvent e){
         long id = Maps.name2actuatorid.getFromFirst(getItemName(e));
-        myApp.datapaneController.showActuatorData(myApp.scenario.getActuatorWithId(id));
+        myApp.datapaneController.showActuatorData(myApp.otm.scenario.actuators.get(id));
 //        e.consume();
     }
 
     public void treeSecondClickController(TreeSelectEvent e){
         long id = Maps.name2controllerid.getFromFirst(getItemName(e));
-        myApp.datapaneController.showControllerData(myApp.scenario.getControllerWithId(id));
+        myApp.datapaneController.showControllerData(myApp.otm.scenario.controllers.get(id));
 //        e.consume();
     }
 
     public void treeSecondClickSensor(TreeSelectEvent e){
         long id = Maps.name2sensorid.getFromFirst(getItemName(e));
-        myApp.datapaneController.showSensorData(myApp.scenario.getSensorWithId(id));
+        myApp.datapaneController.showSensorData(myApp.otm.scenario.sensors.get(id));
 //        e.consume();
     }
 
@@ -327,35 +320,26 @@ public class SelectionManager {
 
     public void formFirstClickLink(Long itemId){
         clearSelection();
-
-        Link link = myApp.scenario.getLinkWithId(itemId);
-        if(link!=null)
-            selectedLinks.add(link.drawLink);
-
+        Graph graph = myApp.graphpaneController.graphContainer.get_graph();
+        selectedLinks.add(graph.drawlinks.get(itemId));
         highlightSelection();
     }
 
     public void formFirstClickNode(Long itemId){
-
         clearSelection();
-
-        // setText this node
-        Node node = myApp.scenario.getNodeWithId(itemId);
-        if(node!=null)
-            selectedNodes.add(node.drawNode);
-
+        Graph graph = myApp.graphpaneController.graphContainer.get_graph();
+        selectedNodes.add(graph.drawnodes.get(itemId));
         highlightSelection();
     }
 
     public void formFirstClickSubnetwork(Long itemId){
         clearSelection();
         Set<AbstractDrawLink> drawLinks = new HashSet<>();
-        Subnetwork subnetwork = myApp.scenario.getSubnetworkWithId(itemId);
+        Subnetwork subnetwork = myApp.otm.scenario.subnetworks.get(itemId);
+        Graph graph = myApp.graphpaneController.graphContainer.get_graph();
         drawLinks.addAll(subnetwork
                 .get_link_ids().stream()
-                .map(x->myApp.scenario.getLinkWithId(x))
-                .filter(Objects::nonNull)
-                .map(x->x.drawLink)
+                .map(x->graph.drawlinks.get(x))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet())
         );
@@ -363,24 +347,24 @@ public class SelectionManager {
         highlightSelection();
     }
 
-    public void formFirstClickDemand(Long itemId){
-        clearSelection();
-        DemandsForLink demandsForLink = myApp.scenario.get_demands_with_link_id(itemId);
-        Link link = myApp.scenario.getLinkWithId(demandsForLink.link_id);
-        selectedLinks.add(link.drawLink);
-        highlightSelection();
-    }
-
-    public void formFirstClickSplit(Long itemId){
-        clearSelection();
-        SplitsForNode splitsForNode = myApp.scenario.getSplitWithId(itemId);
-        Node node = myApp.scenario.getNodeWithId(splitsForNode.node_id);
-        selectedNodes.add(node.drawNode);
-        highlightSelection();
-    }
+//    public void formFirstClickDemand(Long itemId){
+//        clearSelection();
+//        DemandsForLink demandsForLink = myApp.otm.scenario.get_demands_with_link_id(itemId);
+//        Link link = myApp.otm.scenario.getLinkWithId(demandsForLink.link_id);
+//        selectedLinks.add(link.drawLink);
+//        highlightSelection();
+//    }
+//
+//    public void formFirstClickSplit(Long itemId){
+//        clearSelection();
+//        SplitsForNode splitsForNode = myApp.otm.scenario.getSplitWithId(itemId);
+//        Node node = myApp.otm.scenario.getNodeWithId(splitsForNode.node_id);
+//        selectedNodes.add(node.drawNode);
+//        highlightSelection();
+//    }
 
     public void formFirstClickCommodity(Long itemId){
-        Commodity com = myApp.scenario.getCommodityWithId(itemId);
+        Commodity com = myApp.otm.scenario.commodities.get(itemId);
         List<Long> subnets = com.get_subnetwork_ids();
         if(subnets.size()==1)
             formFirstClickSubnetwork(subnets.get(0));
@@ -403,47 +387,47 @@ public class SelectionManager {
     /** Second click: open form ---------------- **/
 
     public void formSecondClickLink(FormSelectEvent e){
-        myApp.datapaneController.showLinkData(myApp.scenario.getLinkWithId(e.itemId));
+        myApp.datapaneController.showLinkData(myApp.otm.scenario.network.links.get(e.itemId));
         e.consume();
     }
 
     public void formSecondClickNode(FormSelectEvent e){
-        myApp.datapaneController.showNodeData(myApp.scenario.getNodeWithId(e.itemId));
+        myApp.datapaneController.showNodeData(myApp.otm.scenario.network.nodes.get(e.itemId));
         e.consume();
     }
 
     public void formSecondClickSubnetwork(FormSelectEvent e){
-        myApp.datapaneController.showSubnewtorkData(myApp.scenario.getSubnetworkWithId(e.itemId));
+        myApp.datapaneController.showSubnewtorkData(myApp.otm.scenario.subnetworks.get(e.itemId));
         e.consume();
     }
 
-    public void formSecondClickDemand(FormSelectEvent e){
-        myApp.datapaneController.showDemandData(myApp.scenario.get_demands_with_link_id(e.itemId));
-        e.consume();
-    }
-
-    public void formSecondClickSplit(FormSelectEvent e){
-        myApp.datapaneController.showSplitData(myApp.scenario.getSplitWithId(e.itemId));
-        e.consume();
-    }
+//    public void formSecondClickDemand(FormSelectEvent e){
+//        myApp.datapaneController.showDemandData(myApp.otm.scenario.get_demands_with_link_id(e.itemId));
+//        e.consume();
+//    }
+//
+//    public void formSecondClickSplit(FormSelectEvent e){
+//        myApp.datapaneController.showSplitData(myApp.otm.scenario.getSplitWithId(e.itemId));
+//        e.consume();
+//    }
 
     public void formSecondClickCommodity(FormSelectEvent e){
-        myApp.datapaneController.showCommodityData(myApp.scenario.getCommodityWithId(e.itemId));
+        myApp.datapaneController.showCommodityData(myApp.otm.scenario.commodities.get(e.itemId));
         e.consume();
     }
 
     public void formSecondClickController(FormSelectEvent e){
-        myApp.datapaneController.showControllerData(myApp.scenario.getControllerWithId(e.itemId));
+        myApp.datapaneController.showControllerData(myApp.otm.scenario.controllers.get(e.itemId));
         e.consume();
     }
 
     public void formSecondClickSensor(FormSelectEvent e){
-        myApp.datapaneController.showSensorData(myApp.scenario.getSensorWithId(e.itemId));
+        myApp.datapaneController.showSensorData(myApp.otm.scenario.sensors.get(e.itemId));
         e.consume();
     }
 
     public void formSecondClickActuator(FormSelectEvent e){
-        myApp.datapaneController.showActuatorData(myApp.scenario.getActuatorWithId(e.itemId));
+        myApp.datapaneController.showActuatorData(myApp.otm.scenario.actuators.get(e.itemId));
         e.consume();
     }
 
@@ -461,12 +445,12 @@ public class SelectionManager {
         selectedActuators.forEach(x->x.unhighlight());
         selectedActuators.clear();
 
-        myApp.scenarioTreeController.clearSelection();
+        myApp.treeController.clearSelection();
     }
 
     private void highlightSelection(){
         myApp.graphpaneController.highlight(selectedLinks,selectedNodes,selectedSensors,selectedActuators);
-        myApp.scenarioTreeController.highlight(selectedLinks,selectedSensors,selectedActuators);
+        myApp.treeController.highlight(selectedLinks,selectedSensors,selectedActuators);
         myApp.statusbarController.setText(selectedLinks,selectedNodes,selectedSensors,selectedActuators);
     }
 

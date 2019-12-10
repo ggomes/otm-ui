@@ -1,5 +1,6 @@
 package otmui.view;
 
+import api.OTMdev;
 import otmui.event.FormSelectEvent;
 import otmui.model.Scenario;
 import commodity.Subnetwork;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class CommodityData extends AbstractData {
 
-    public CommodityData(commodity.Commodity commodity, Scenario scenario) {
+    public CommodityData(commodity.Commodity commodity, OTMdev otm) {
         super();
 
         ObservableList<Node> X = vbox.getChildren();
@@ -32,7 +33,7 @@ public class CommodityData extends AbstractData {
         List<Long> subnets = commodity.get_subnetwork_ids();
 
         if(subnets.size()==1) {
-            Subnetwork subnetwork = scenario.getSubnetworkWithId(subnets.get(0));
+            Subnetwork subnetwork = otm.scenario.subnetworks.get(subnets.get(0));
             X.add(UIFactory.createLabelButton("subnetwork",
                     subnetwork.getId().toString(),
                     e -> DoubleClickSubnetwork(subnetwork.getId())

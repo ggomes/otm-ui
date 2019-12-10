@@ -18,11 +18,11 @@ public class Node {
     public AbstractActuator actuator;
     public SplitsForNode splitsForNode;
 
-    public Node(common.Node cnode){
-        this.cnode = cnode;
-        xcoord = cnode.xcoord;
-        ycoord = cnode.ycoord;
-    }
+//    public Node(common.Node cnode){
+//        this.cnode = cnode;
+//        xcoord = cnode.xcoord;
+//        ycoord = cnode.ycoord;
+//    }
 
     public Long getId(){
         return cnode.getId();

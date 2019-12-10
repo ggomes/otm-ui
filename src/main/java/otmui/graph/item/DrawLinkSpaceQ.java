@@ -13,7 +13,7 @@ import java.util.List;
 
 public class DrawLinkSpaceQ extends AbstractDrawLink  {
 
-    public DrawLinkSpaceQ(Link link, AbstractDrawNode startNode, AbstractDrawNode endNode, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme) throws OTMException {
+    public DrawLinkSpaceQ(common.Link link, AbstractDrawNode startNode, AbstractDrawNode endNode, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme) throws OTMException {
         super(link, startNode, endNode, lane_width, link_offset, road_color_scheme);
     }
 

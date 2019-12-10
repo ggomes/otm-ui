@@ -1,5 +1,6 @@
 package otmui.view;
 
+import api.OTMdev;
 import otmui.event.FormSelectEvent;
 import otmui.model.Node;
 import otmui.model.Scenario;
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class NodeData extends AbstractData {
 
-    public NodeData(Node node,Scenario scenario){
+    public NodeData(common.Node node, OTMdev otm){
         super();
 
         ObservableList<javafx.scene.Node> X = vbox.getChildren();
@@ -21,25 +22,25 @@ public class NodeData extends AbstractData {
         // input links .................
         X.add(UIFactory.createLabelList(
                 "input links",
-                scenario.getInlinkIdsForNodeId(node.getId()).stream()
+                node.in_links.keySet().stream()
                         .map(x->x.toString())
                         .collect(Collectors.toList())).pane);
 
         // output links ................
         X.add(UIFactory.createLabelList(
                 "output links",
-                scenario.getOutlinkIdsForNodeId(node.getId()).stream()
+                node.out_links.keySet().stream()
                         .map(x->x.toString())
                         .collect(Collectors.toList())
         ).pane);
 
-        // splitsForNode .....................
-        if(node.splitsForNode !=null)
-            X.add(UIFactory.createLabelButton(
-                    "splitsForNode",
-                    "",
-                    e-> Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_SPLIT,node.splitsForNode.getId()))
-            ).pane);
+//        // splitsForNode .....................
+//        if(node.splitsForNode !=null)
+//            X.add(UIFactory.createLabelButton(
+//                    "splitsForNode",
+//                    "",
+//                    e-> Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_SPLIT,node.splitsForNode.getId()))
+//            ).pane);
 
         // actuator ...................
         if(node.actuator!=null)

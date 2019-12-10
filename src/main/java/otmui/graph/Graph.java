@@ -1,12 +1,12 @@
 package otmui.graph;
 
+import actuator.AbstractActuator;
+import api.OTMdev;
 import javafx.scene.paint.Color;
 import otmui.GlobalParameters;
 import otmui.graph.item.*;
-import otmui.model.Link;
-import otmui.model.Node;
-import otmui.model.Scenario;
 import error.OTMException;
+import sensor.AbstractSensor;
 
 import java.util.*;
 
@@ -19,16 +19,17 @@ public class Graph {
     public float link_offset;
     public GlobalParameters.RoadColorScheme road_color_scheme;
 
-    public Map<Long,AbstractDrawNode> nodes; // <id,item>
-    public Map<Long,AbstractDrawLink> links; // <id,item>
-    public Map<Long,DrawSensor> sensors; // <id,item>
-    public Map<Long,AbstractDrawNode> actuators; // <id,item>
+    public Map<Long,AbstractDrawNode> drawnodes; // <id,item>
+    public Map<Long,AbstractDrawLink> drawlinks; // <id,item>
+    public Map<Long,DrawSensor> drawsensors; // <id,item>
+    public Map<Long,AbstractDrawNode> drawactuators; // <id,item>
 
     /////////////////////////////////////////////////
     // construction
     /////////////////////////////////////////////////
 
-    public Graph(Scenario scenario, GlobalParameters params) throws OTMException {
+    public Graph(OTMdev otmdev, GlobalParameters params) throws OTMException {
+
         clear();
 
         this.node_size = params.node_size.floatValue();
@@ -39,61 +40,93 @@ public class Graph {
         this.road_color_scheme = (GlobalParameters.RoadColorScheme) params.road_color_scheme.getValue();;
 
         // create nodes and links
-        scenario.getNodes().forEach(x->add_node(x));
+        otmdev.scenario.network.nodes.values().forEach(x->add_node(x));
 
-        for(Link link : scenario.getLinks())
+        for(common.Link link : otmdev.scenario.network.links.values())
             add_link(link);
 
         // create actuators
-        for (otmui.model.Actuator actuator : scenario.getActuators()) {
-            AbstractDrawNode drawActuator = makeDrawActuator(actuator,((float)node_size)*0.7f);
-            actuator.drawActuator = drawActuator;
-            actuators.put(drawActuator.id,drawActuator);
+        for (AbstractActuator actuator : otmdev.scenario.actuators.values()) {
+            AbstractDrawNode drawActuator = makeDrawActuator(otmdev,actuator,((float)node_size)*0.7f);
+//            actuator.drawActuator = drawActuator;
+            drawactuators.put(drawActuator.id,drawActuator);
         }
 
         // create sensors
-        for (otmui.model.Sensor sensor : scenario.getSensors()) {
+        for (AbstractSensor sensor : otmdev.scenario.sensors.values()) {
             DrawSensor drawSensor = makeDrawSensor(sensor, lane_width_meters, link_offset);
-            sensor.drawSensor = drawSensor;
-            sensors.put(drawSensor.id,drawSensor);
+//            sensor.drawSensor = drawSensor;
+            drawsensors.put(drawSensor.id,drawSensor);
         }
 
     }
+
+//    public Graph(Scenario scenario, GlobalParameters params) throws OTMException {
+//        clear();
+//
+//        this.node_size = params.node_size.floatValue();
+//        this.view_nodes = params.view_nodes.getValue();
+//        this.view_actuators = params.view_actuators.getValue();
+//        this.lane_width_meters = params.lane_width_meters.getValue();;
+//        this.link_offset = params.link_offset.getValue();;
+//        this.road_color_scheme = (GlobalParameters.RoadColorScheme) params.road_color_scheme.getValue();;
+//
+//        // create nodes and links
+//        scenario.getNodes().forEach(x->add_node(x));
+//
+//        for(Link link : scenario.getLinks())
+//            add_link(link);
+//
+//        // create actuators
+//        for (otmui.model.Actuator actuator : scenario.getActuators()) {
+//            AbstractDrawNode drawActuator = makeDrawActuator(otmdev,actuator,((float)node_size)*0.7f);
+//            actuator.drawActuator = drawActuator;
+//            actuators.put(drawActuator.id,drawActuator);
+//        }
+//
+//        // create sensors
+//        for (otmui.model.Sensor sensor : scenario.getSensors()) {
+//            DrawSensor drawSensor = makeDrawSensor(sensor, lane_width_meters, link_offset);
+//            sensor.drawSensor = drawSensor;
+//            sensors.put(drawSensor.id,drawSensor);
+//        }
+//
+//    }
 
     /////////////////////////////////////////////////
     // getters
     /////////////////////////////////////////////////
 
     public Collection<AbstractDrawNode> getNodes(){
-        return nodes.values();
+        return drawnodes.values();
     }
 
     public Collection<AbstractDrawNode> getActuators(){
-        return actuators.values();
+        return drawactuators.values();
     }
 
     public Collection<AbstractDrawLink> getLinks(){
-        return links.values();
+        return drawlinks.values();
     }
 
     public Collection<DrawSensor> getSensors(){
-        return sensors.values();
+        return drawsensors.values();
     }
 
     public Double getMinX(){
-        return nodes.values().stream().mapToDouble(AbstractDrawNode::getXPos).min().getAsDouble();
+        return drawnodes.values().stream().mapToDouble(AbstractDrawNode::getXPos).min().getAsDouble();
     }
 
     public Double getMinY(){
-        return nodes.values().stream().mapToDouble(AbstractDrawNode::getYPos).min().getAsDouble();
+        return drawnodes.values().stream().mapToDouble(AbstractDrawNode::getYPos).min().getAsDouble();
     }
 
     public Double getMaxX(){
-        return nodes.values().stream().mapToDouble(AbstractDrawNode::getXPos).max().getAsDouble();
+        return drawnodes.values().stream().mapToDouble(AbstractDrawNode::getXPos).max().getAsDouble();
     }
 
     public Double getMaxY(){
-        return nodes.values().stream().mapToDouble(AbstractDrawNode::getYPos).max().getAsDouble();
+        return drawnodes.values().stream().mapToDouble(AbstractDrawNode::getYPos).max().getAsDouble();
     }
 
     public Double getWidth(){
@@ -104,44 +137,47 @@ public class Graph {
         return getMaxY()-getMinY();
     }
 
-
     /////////////////////////////////////////////////
-    // setters
+    // adders
     /////////////////////////////////////////////////
 
-    public void add_node(Node node){
-        AbstractDrawNode drawNode = makeDrawNode(node,node_size);
-        node.drawNode = drawNode;
-        nodes.put( drawNode.id, drawNode);
+    public void add_node(common.Node node){
+        AbstractDrawNode drawNode = makeDrawNode(node);
+//        node.drawNode = drawNode;
+        drawnodes.put( drawNode.id, drawNode);
     }
 
-    public void add_link(Link link) throws OTMException {
-        AbstractDrawLink drawLink = makeDrawLink(link, lane_width_meters, link_offset, road_color_scheme, nodes);
-        link.drawLink = drawLink;
-        links.put(drawLink.id, drawLink);
+    public void add_link(common.Link link) throws OTMException {
+        AbstractDrawLink drawLink = makeDrawLink(link, lane_width_meters, link_offset, road_color_scheme, drawnodes);
+//        link.drawLink = drawLink;
+        drawlinks.put(drawLink.id, drawLink);
     }
 
     /////////////////////////////////////////////////
-    // private
+    // makers
     /////////////////////////////////////////////////
 
-    private static AbstractDrawNode makeDrawNode(otmui.model.Node node, float radius) {
+    public AbstractDrawNode makeDrawNode(common.Node node) {
+        return makeDrawNode(node, node_size);
+    }
+
+    public static AbstractDrawNode makeDrawNode(common.Node node, float radius) {
         return node==null ?
                 new DrawNodeCircle(-1L,0f,0f,radius, Color.BLACK, 0f) :
-                new DrawNodeCircle(node.getId(),node.getXcoord(),-node.getYcoord(),radius, Color.DODGERBLUE, 0f);
+                new DrawNodeCircle(node.getId(),node.xcoord,-node.ycoord,radius, Color.DODGERBLUE, 0f);
     }
 
-    private static AbstractDrawLink makeDrawLink(otmui.model.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme, Map<Long,AbstractDrawNode> nodes) throws OTMException {
+    public static AbstractDrawLink makeDrawLink(common.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme, Map<Long,AbstractDrawNode> nodes) throws OTMException {
 
         AbstractDrawLink drawLink;
-        switch(link.clink.model.getClass().getSimpleName()){
+        switch(link.model.getClass().getSimpleName()){
 
             case "BaseModel":
             case "ModelSpatialQ":
             case "ModelNewell":
                 drawLink = new DrawLinkSpaceQ(link,
-                        nodes.get(link.getStartNodeId()),
-                        nodes.get(link.getEndNodeId()),
+                        nodes.get(link.start_node.getId()),
+                        nodes.get(link.end_node.getId()),
                         lane_width,
                         link_offset,
                         road_color_scheme);
@@ -149,8 +185,8 @@ public class Graph {
 
             case "ModelCTM":
                 drawLink = new DrawLinkCTM(link,
-                        nodes.get(link.getStartNodeId()),
-                        nodes.get(link.getEndNodeId()),
+                        nodes.get(link.start_node.getId()),
+                        nodes.get(link.end_node.getId()),
                         lane_width,
                         link_offset,
                         road_color_scheme );
@@ -163,33 +199,32 @@ public class Graph {
         return drawLink;
     }
 
-    private static AbstractDrawNode makeDrawActuator(otmui.model.Actuator actuator, float size) {
+    public static AbstractDrawNode makeDrawActuator(OTMdev otmdev,AbstractActuator actuator, float size) {
 
         if (actuator==null)
             return new DrawStopSign(-1L,0f,0f,size, 0f);
 
-        switch (actuator.type) {
+        common.Node node = otmdev.scenario.network.nodes.get(actuator.target.getId());
+
+        switch (actuator.getType()) {
             case signal:
-                return new DrawStopSign(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, 4f);
+                return new DrawStopSign(actuator.getId(), node.xcoord, -node.ycoord, size, 4f);
             case stop:
-                return new DrawStopSign(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, 0f );
-            case other:
-                return new DrawStopSign(actuator.getId(), actuator.getXcoord(), -actuator.getYcoord(), size, 1f);
+                return new DrawStopSign(actuator.getId(), node.xcoord, -node.ycoord, size, 0f );
+            default:
+                return new DrawStopSign(actuator.getId(), node.xcoord, -node.ycoord, size, 1f);
         }
-
-        return null;
-
     }
 
-    private static DrawSensor makeDrawSensor(otmui.model.Sensor sensor, float lane_width, float link_offset) {
+    public static DrawSensor makeDrawSensor(AbstractSensor sensor, float lane_width, float link_offset) throws OTMException {
         return sensor==null ? new DrawSensor() : new DrawSensor(sensor, lane_width, link_offset);
     }
 
-    private void clear() {
-        nodes = new HashMap<>(); // <id,item>
-        links = new HashMap<>(); // <id,item>
-        actuators = new HashMap<>(); // <id,item>
-        sensors = new HashMap<>(); // <id,item>
+    public void clear() {
+        drawnodes = new HashMap<>(); // <id,item>
+        drawlinks = new HashMap<>(); // <id,item>
+        drawactuators = new HashMap<>(); // <id,item>
+        drawsensors = new HashMap<>(); // <id,item>
     }
 
 }

@@ -1,39 +1,49 @@
 package otmui.graph.item;
 
+import error.OTMException;
+import otmui.utils.Arrow;
 import otmui.utils.Vector;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
+import sensor.AbstractSensor;
+import sensor.FixedSensor;
 
 public class DrawSensor extends Group {
 
-    public otmui.model.Sensor sensor;
     public Long id;
+    public Arrow geom;
     public Shape shape;
 
     protected static Color color1 = Color.DODGERBLUE;
     protected static Color color2 = Color.RED;
 
     public DrawSensor() {
-        this.sensor = null;
         this.id = null;
     }
 
-    public DrawSensor(otmui.model.Sensor sensor, float lane_width, float link_offset) {
-        this.sensor = sensor;
-        this.id = sensor.bsensor.id;
+    public DrawSensor(AbstractSensor sensor, float lane_width, float link_offset) throws OTMException {
 
-        if(sensor.geom==null)
+        this.id = sensor.id;
+
+        if(!(sensor instanceof FixedSensor))
+            return;
+
+        FixedSensor fsensor = (FixedSensor) sensor;
+
+        this.geom = traverse_distance(fsensor.get_link(),fsensor.get_position());
+
+        if(geom==null)
             return;
 
         float sensor_length = 2f;
 
-        Vector p = sensor.geom.start;
-        Vector u = sensor.geom.direction;
+        Vector p = geom.start;
+        Vector u = geom.direction;
 
-        int start_lane = sensor.bsensor.start_lane;
-        int end_lane = sensor.bsensor.end_lane;
+        int start_lane = fsensor.start_lane;
+        int end_lane = fsensor.end_lane;
 
         Vector n = Vector.cross_z(u);
 
@@ -70,11 +80,11 @@ public class DrawSensor extends Group {
     }
 
     public double getXPos(){
-        return (double) sensor.geom.start.x;
+        return geom.start.x;
     }
 
     public double getYPos(){
-        return (double) sensor.geom.start.y;
+        return geom.start.y;
     }
 
     /** *****************
@@ -91,4 +101,44 @@ public class DrawSensor extends Group {
             shape.setFill(color1);
     }
 
+    /** Starting from upstream node, traverse the link a distance x and return the resulting point.
+     * Return null if x<0 or x> length.
+     */
+    private static Arrow traverse_distance(common.Link link, float x) throws OTMException {
+
+        int seg_ind = 0;
+        Vector current_point = new Vector( link.shape.get(seg_ind) );
+        Vector next_point = new Vector( link.shape.get(seg_ind+1) );
+        Vector u = new Vector(current_point,next_point);
+        float segment_length = Vector.length(u);
+        float remaining_distance = x;
+
+        Arrow P = null;
+        while(remaining_distance>0){
+
+            if(remaining_distance>segment_length){
+                // point is not in this segment
+
+                remaining_distance -= segment_length;
+
+                seg_ind += 1;
+
+                if( seg_ind >= link.shape.size() )
+                    throw new OTMException("Point not within the link");
+
+                current_point = new Vector(link.shape.get(seg_ind) );
+                next_point = new Vector(link.shape.get(seg_ind+1) );
+                u = new Vector(current_point,next_point);
+                segment_length = Vector.length(u);
+
+            } else{   // point is in this segment
+                Vector unorm = Vector.normalize(u);
+                P = new Arrow( Double.NaN,Vector.sum(current_point,Vector.mult(unorm,remaining_distance)) ,
+                        unorm );
+                remaining_distance = -1f;
+            }
+        }
+
+        return P;
+    }
 }

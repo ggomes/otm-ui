@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class ControllerData extends AbstractData {
 
-    public ControllerData(AbstractController controller, Scenario scenario) {
+    public ControllerData(AbstractController controller) {
         super();
 
         ObservableList<Node> X = vbox.getChildren();

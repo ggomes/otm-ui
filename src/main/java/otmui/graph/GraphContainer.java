@@ -4,9 +4,9 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
 import otmui.controller.GraphPaneController;
+import otmui.graph.item.AbstractDrawNode;
 
 public class GraphContainer {
 
@@ -82,4 +82,22 @@ public class GraphContainer {
         return graph;
     }
 
+
+    /////////////////////////////////////////////////
+    // setters
+    /////////////////////////////////////////////////
+
+    public void add_node(common.Node node){
+        AbstractDrawNode drawNode = graph.makeDrawNode(node);
+//        node.drawNode = drawNode;
+        graph.drawnodes.put( drawNode.id, drawNode);
+        pane.getChildren().add(drawNode);
+    }
+
+//    public void add_link(Link link) throws OTMException {
+//        AbstractDrawLink drawLink = graph.makeDrawLink(link, lane_width_meters, link_offset, road_color_scheme, nodes);
+//        link.drawLink = drawLink;
+//        graph.links.put(drawLink.id, drawLink);
+//        pane.getChildren().add(drawLink);
+//    }
 }

@@ -18,9 +18,9 @@ public class Link implements Comparable {
     public AbstractActuator actuator;
     public DemandsForLink demandsForLink;
 
-    public Link(common.Link clink){
-        this.clink = clink;
-    }
+//    public Link(common.Link clink){
+//        this.clink = clink;
+//    }
 
     public Long getId(){
         return clink.getId();
@@ -49,24 +49,24 @@ public class Link implements Comparable {
         return x;
     }
 
-    public AddLanes getLeftLanes(){
-        if( clink.road_geom==null || clink.road_geom.dn_in==null || clink.road_geom.dn_in.lanes==0 )
-            return null;
-        return new AddLanes(clink.road_geom.dn_in);
-    }
+//    public AddLanes getLeftLanes(){
+//        if( clink.road_geom==null || clink.road_geom.dn_in==null || clink.road_geom.dn_in.lanes==0 )
+//            return null;
+//        return new AddLanes(clink.road_geom.dn_in);
+//    }
+//
+//    public AddLanes getRightLanes(){
+//        if( clink.road_geom==null || clink.road_geom.dn_out==null || clink.road_geom.dn_out.lanes==0 )
+//            return null;
+//        return new AddLanes(clink.road_geom.dn_out);
+//    }
 
-    public AddLanes getRightLanes(){
-        if( clink.road_geom==null || clink.road_geom.dn_out==null || clink.road_geom.dn_out.lanes==0 )
-            return null;
-        return new AddLanes(clink.road_geom.dn_out);
-    }
-
-    public AddLanes getHOVlanes(){
-
-        if( clink.road_geom.dn_out.lanes==0 )
-            return null;
-        return new AddLanes(clink.road_geom.dn_out);
-    }
+//    public AddLanes getHOVlanes(){
+//
+//        if( clink.road_geom.dn_out.lanes==0 )
+//            return null;
+//        return new AddLanes(clink.road_geom.dn_out);
+//    }
 
     /** Lanegroups *******************************************/
 

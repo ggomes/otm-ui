@@ -1,5 +1,6 @@
 package otmui.controller;
 
+import api.OTMdev;
 import otmui.MainApp;
 import otmui.graph.item.AbstractDrawLink;
 import otmui.graph.item.AbstractDrawNode;
@@ -36,7 +37,7 @@ public class StatusBarController implements Initializable {
 
     }
 
-    public void loadScenario(Scenario scenario){
+    public void loadScenario(OTMdev otmdev){
         this.statusBar.setText("Scenario loaded.");
     }
 

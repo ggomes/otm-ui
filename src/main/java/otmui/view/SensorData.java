@@ -3,25 +3,32 @@ package otmui.view;
 import otmui.model.Scenario;
 import otmui.model.Sensor;
 import javafx.collections.ObservableList;
+import sensor.AbstractSensor;
+import sensor.FixedSensor;
 
 public class SensorData extends AbstractData  {
 
-    public SensorData(Sensor sensor, Scenario scenario){
+    public SensorData(AbstractSensor sensor){
         super();
+
+        if(!(sensor instanceof FixedSensor))
+            return;
+
+        FixedSensor fsensor = (FixedSensor) sensor;
 
         ObservableList<javafx.scene.Node> X = vbox.getChildren();
 
         // sensor id ....................
-        X.add(UIFactory.createLabelText("id", String.format("%d",sensor.get_id())).pane);
+        X.add(UIFactory.createLabelText("id", String.format("%d",sensor.id)).pane);
 
         // link id ....................
-        X.add(UIFactory.createLabelText("link id", String.format("%d",sensor.bsensor.get_link().getId())).pane);
+        X.add(UIFactory.createLabelText("link id", String.format("%d",fsensor.get_link().getId())).pane);
 
         // position ....................
-        X.add(UIFactory.createLabelText("position [m]", String.format("%.1f",sensor.bsensor.get_position())).pane);
+        X.add(UIFactory.createLabelText("position [m]", String.format("%.1f",fsensor.get_position())).pane);
 
         // lanes
-        X.add(UIFactory.createLabelText("lanes", String.format("%d - %d",sensor.bsensor.start_lane,sensor.bsensor.end_lane)).pane);
+        X.add(UIFactory.createLabelText("lanes", String.format("%d - %d",fsensor.start_lane,fsensor.end_lane)).pane);
     }
 
 

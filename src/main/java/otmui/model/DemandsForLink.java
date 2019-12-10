@@ -13,10 +13,10 @@ public class DemandsForLink {
     public Long link_id;
     public Map<KeyCommodityDemandTypeId, Profile1D> demands;  // commodity id -> demandsForLink profile
 
-    public DemandsForLink(Long link_id){
-        this.link_id = link_id;
-        demands = new HashMap<>();
-    }
+//    public DemandsForLink(Long link_id){
+//        this.link_id = link_id;
+//        demands = new HashMap<>();
+//    }
 
     public void add_profile(DemandProfile dp) throws OTMException {
 

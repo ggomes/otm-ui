@@ -1,6 +1,5 @@
 package otmui;
 
-import api.OTM;
 import api.OTMdev;
 import otmui.controller.*;
 import otmui.event.*;
@@ -29,12 +28,12 @@ public class MainApp extends Application {
 
     public Stage stage;
 
-    public Scenario scenario;
+//    public Scenario scenario;
     public SelectionManager selectionManager;
     public MenuController menuController;
     public StatusBarController statusbarController;
 
-    public TreeController scenarioTreeController;
+    public TreeController treeController;
     public GraphPaneController graphpaneController;
     public DataPaneController datapaneController;
 
@@ -68,9 +67,10 @@ public class MainApp extends Application {
         // Create an OTM object
         Parameters args = getParameters();
         File configfile = args.getUnnamed().size()>0 ? new File(args.getUnnamed().get(0)) : null;
-        this.otm = new OTMdev(new OTM());
         if (configfile!=null && configfile.exists())
             menuController.loadFile(configfile.getAbsolutePath());
+
+//        graphpaneController.merge_nodes();
     }
 
     /////////////////////////////////////////////////
@@ -103,12 +103,17 @@ public class MainApp extends Application {
 
     private void build_ui() throws IOException {
 
-        // UI ...........................................
-        selectionManager = new SelectionManager(this);
-
+        // Layout .......................................
         BorderPane layout = new BorderPane();
 
-        // add menu
+        SplitPane splitPaneH = new SplitPane();
+        splitPaneH.setOrientation(Orientation.HORIZONTAL);
+        layout.setCenter(splitPaneH);
+
+        // Selection manager ............................
+        selectionManager = new SelectionManager(this);
+
+        // Menu ..........................................
         FXMLLoader menuLoader = new FXMLLoader(getClass().getResource("/fxml/menuLayout.fxml"));
 
         AnchorPane menuPane = menuLoader.load();
@@ -116,43 +121,37 @@ public class MainApp extends Application {
         layout.setTop(menuPane.lookup("#menubar"));
         menuController.setApp(this);
 
-        // add status bar
+        // Status bar ....................................
         StatusBar statusBar = new StatusBar();
         statusbarController = new StatusBarController(statusBar,this);
         layout.setBottom(statusBar);
 
-        // add splitpane
-        SplitPane splitPaneH = new SplitPane();
-        splitPaneH.setOrientation(Orientation.HORIZONTAL);
-        layout.setCenter(splitPaneH);
-
-        // add scenario tree
+        // Scenario tree ................................
         FXMLLoader scenarioTreeLoader = new FXMLLoader(getClass().getResource("/fxml/treeLayout.fxml"));
         AnchorPane scenarioTreePane = scenarioTreeLoader.load();
-        scenarioTreeController = scenarioTreeLoader.getController();
-        scenarioTreeController.setApp(this);
+        treeController = scenarioTreeLoader.getController();
+        treeController.setApp(this);
         splitPaneH.getItems().add(scenarioTreePane);
 
-        // add vertical splitsForNode pane
+        // Graph .........................................
         SplitPane splitPaneV = new SplitPane();
         splitPaneV.setOrientation(Orientation.VERTICAL);
         splitPaneH.getItems().add(splitPaneV);
 
-        // add graph
         FXMLLoader graphPaneLoader = new FXMLLoader(getClass().getResource("/fxml/graphLayout.fxml"));
         AnchorPane graphPane = graphPaneLoader.load();
         graphpaneController = graphPaneLoader.getController();
         graphpaneController.setApp(this);
         splitPaneV.getItems().add(graphPane);
 
-        // add data pane
+        // Data ...........................................
         FXMLLoader dataPaneLoader = new FXMLLoader(getClass().getResource("/fxml/dataLayout.fxml"));
         AnchorPane dataPane = dataPaneLoader.load();
         datapaneController = dataPaneLoader.getController();
         datapaneController.setApp(this);
         splitPaneV.getItems().add(dataPane);
 
-        // put into a scene and show
+        // put into a scene and show ........................
         Scene scene = new Scene(layout);
         scene.getStylesheets().add("/styles/Styles.css");
         stage.setTitle("Open Traffic Modeller");
@@ -172,16 +171,17 @@ public class MainApp extends Application {
 //        stage.setMaximized(true);
 
         stage.show();
-
     }
 
     private void add_event_filters(Scene scene){
 
-        // Event filters and handlers .........................................
-
         // loading new scenario
-        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->processNewScenario(e.scenario) );
-        scene.addEventFilter(ResetScenarioEvent.SCENARIO_RESET, e->reset() );
+//        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->processNewScenario(e.scenario) );
+
+        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED_OTM, e->treeController.loadScenario(e.otmdev) );
+        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED_OTM, e->graphpaneController.loadScenario(e.otmdev) );
+        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED_OTM, e->statusbarController.loadScenario(e.otmdev) );
+//        scene.addEventFilter(ResetScenarioEvent.SCENARIO_RESET, e->reset() );
 
         // graph click
         scene.addEventFilter(GraphSelectEvent.CLICK1_NODE, e->selectionManager.graphFirstClickNode(e));
@@ -198,8 +198,8 @@ public class MainApp extends Application {
         scene.addEventFilter(TreeSelectEvent.CLICK2_LINK,e->selectionManager.treeSecondClickLink(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_COMMODITY,e->selectionManager.treeSecondClickCommodity(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_SUBNETWORK,e->selectionManager.treeSecondClickSubnetwork(e));
-        scene.addEventFilter(TreeSelectEvent.CLICK2_DEMAND,e->selectionManager.treeSecondClickDemand(e));
-        scene.addEventFilter(TreeSelectEvent.CLICK2_SPLIT,e->selectionManager.treeSecondClickSplit(e));
+//        scene.addEventFilter(TreeSelectEvent.CLICK2_DEMAND,e->selectionManager.treeSecondClickDemand(e));
+//        scene.addEventFilter(TreeSelectEvent.CLICK2_SPLIT,e->selectionManager.treeSecondClickSplit(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_ACTUATOR,e->selectionManager.treeSecondClickActuator(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_CONTROLLER,e->selectionManager.treeSecondClickController(e));
         scene.addEventFilter(TreeSelectEvent.CLICK2_SENSOR,e->selectionManager.treeSecondClickSensor(e));
@@ -209,8 +209,8 @@ public class MainApp extends Application {
         scene.addEventFilter(FormSelectEvent.CLICK1_NODE, e->selectionManager.formFirstClickNode(e.itemId));
         scene.addEventFilter(FormSelectEvent.CLICK1_SUBNETWORK, e->selectionManager.formFirstClickSubnetwork(e.itemId));
         scene.addEventFilter(FormSelectEvent.CLICK1_COMMODITY, e->selectionManager.formFirstClickCommodity(e.itemId));
-        scene.addEventFilter(FormSelectEvent.CLICK1_DEMAND, e->selectionManager.formFirstClickDemand(e.itemId));
-        scene.addEventFilter(FormSelectEvent.CLICK1_SPLIT, e->selectionManager.formFirstClickSplit(e.itemId));
+//        scene.addEventFilter(FormSelectEvent.CLICK1_DEMAND, e->selectionManager.formFirstClickDemand(e.itemId));
+//        scene.addEventFilter(FormSelectEvent.CLICK1_SPLIT, e->selectionManager.formFirstClickSplit(e.itemId));
         scene.addEventFilter(FormSelectEvent.CLICK1_ACTUATOR, e->selectionManager.formFirstClickActuator(e.itemId));
         scene.addEventFilter(FormSelectEvent.CLICK1_CONTROLLER, e->selectionManager.formFirstClickController(e.itemId));
         scene.addEventFilter(FormSelectEvent.CLICK1_SENSOR, e->selectionManager.formFirstClickSensor(e.itemId));
@@ -219,8 +219,8 @@ public class MainApp extends Application {
         scene.addEventFilter(FormSelectEvent.CLICK2_NODE, e->selectionManager.formSecondClickNode(e));
         scene.addEventFilter(FormSelectEvent.CLICK2_SUBNETWORK, e->selectionManager.formSecondClickSubnetwork(e));
         scene.addEventFilter(FormSelectEvent.CLICK2_COMMODITY, e->selectionManager.formSecondClickCommodity(e));
-        scene.addEventFilter(FormSelectEvent.CLICK2_DEMAND, e->selectionManager.formSecondClickDemand(e));
-        scene.addEventFilter(FormSelectEvent.CLICK2_SPLIT, e->selectionManager.formSecondClickSplit(e));
+//        scene.addEventFilter(FormSelectEvent.CLICK2_DEMAND, e->selectionManager.formSecondClickDemand(e));
+//        scene.addEventFilter(FormSelectEvent.CLICK2_SPLIT, e->selectionManager.formSecondClickSplit(e));
         scene.addEventFilter(FormSelectEvent.CLICK2_ACTUATOR, e->selectionManager.formSecondClickActuator(e));
         scene.addEventFilter(FormSelectEvent.CLICK2_CONTROLLER, e->selectionManager.formSecondClickController(e));
         scene.addEventFilter(FormSelectEvent.CLICK2_SENSOR, e->selectionManager.formSecondClickSensor(e));
@@ -235,32 +235,32 @@ public class MainApp extends Application {
 
     }
 
-    private void processNewScenario(Scenario scenario)  {
-        if(scenario==null)
-            return;
-        try {
-            this.scenario = scenario;
-            scenarioTreeController.loadScenario(scenario);
-            graphpaneController.loadScenario(scenario);
-            datapaneController.loadScenario(scenario);
-            statusbarController.loadScenario(scenario);
-        } catch (OTMException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void reset(){
-        if(scenario==null)
-            return;
+//    private void processNewScenario(Scenario scenario)  {
+//        if(scenario==null)
+//            return;
 //        try {
-//            scenario.reset();
-            scenarioTreeController.reset();
-            graphpaneController.reset();
-            datapaneController.reset();
-            statusbarController.reset();
+//            this.scenario = scenario;
+//            treeController.loadScenario(scenario);
+//            graphpaneController.loadScenario(scenario);
+//            datapaneController.loadScenario(scenario);
+//            statusbarController.loadScenario(scenario);
 //        } catch (OTMException e) {
 //            e.printStackTrace();
 //        }
-    }
+//    }
+
+//    private void reset(){
+//        if(scenario==null)
+//            return;
+////        try {
+////            scenario.reset();
+//            treeController.reset();
+//            graphpaneController.reset();
+//            datapaneController.reset();
+//            statusbarController.reset();
+////        } catch (OTMException e) {
+////            e.printStackTrace();
+////        }
+//    }
 
 }

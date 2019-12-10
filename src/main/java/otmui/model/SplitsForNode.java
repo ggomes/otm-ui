@@ -11,10 +11,10 @@ public class SplitsForNode {
     public Long node_id;
     public Map<KeyCommodityLink, SplitMatrixProfile> splits;  // commodity/inlink -> splitsForNode matrix
 
-    public SplitsForNode(common.Node node){
-        this.node_id = node.getId();
-        splits = node.splits;
-    }
+//    public SplitsForNode(common.Node node){
+//        this.node_id = node.getId();
+//        splits = node.splits;
+//    }
 
     public Long getId(){
         return node_id;

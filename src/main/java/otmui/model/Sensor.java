@@ -11,10 +11,10 @@ public class Sensor {
     public DrawSensor drawSensor;
     public Arrow geom;
 
-    public Sensor(sensor.FixedSensor bsensor) throws OTMException{
-        this.bsensor = bsensor;
-        this.geom = traverse_distance(bsensor.get_link(),bsensor.get_position());
-    }
+//    public Sensor(sensor.FixedSensor bsensor) throws OTMException{
+//        this.bsensor = bsensor;
+//        this.geom = traverse_distance(bsensor.get_link(),bsensor.get_position());
+//    }
 
     /** Starting from upstream node, traverse the link a distance x and return the resulting point.
      * Return null if x<0 or x> length.

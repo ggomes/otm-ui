@@ -1,8 +1,10 @@
 package otmui.controller;
 
+import api.OTM;
 import api.OTMdev;
 import javafx.stage.Modality;
 import otmui.MainApp;
+import otmui.Maps;
 import otmui.event.NewScenarioEvent;
 import otmui.event.ResetScenarioEvent;
 import otmui.model.*;
@@ -100,14 +102,14 @@ public class MenuController implements Initializable {
 
     @FXML
     private void menuOpenTest(ActionEvent event) {
-        String item = ((MenuItem) event.getSource()).getText();
-        if(!testFiles.containsKey(item))
-            return;
-        try {
-            loadTest(item);
-        } catch (OTMException ex) {
-            UIFactory.createExceptionDialog(ex).showAndWait();
-        }
+//        String item = ((MenuItem) event.getSource()).getText();
+//        if(!testFiles.containsKey(item))
+//            return;
+//        try {
+//            loadTest(item);
+//        } catch (OTMException ex) {
+//            UIFactory.createExceptionDialog(ex).showAndWait();
+//        }
     }
 
     @FXML
@@ -208,57 +210,67 @@ public class MenuController implements Initializable {
     public void disablePlots(){ menuPlots.setDisable(true); }
 
     /////////////////////////////////////////////////
-    // private
+    // load
     /////////////////////////////////////////////////
 
     public void loadFile(String filename) throws OTMException {
 
-        boolean validate = false;
-
         // load the scenario from XML
         try {
-            myApp.otm.otm.load(filename,validate,false);
+            myApp.otm = new OTMdev(new OTM());
+            myApp.otm.otm.load(filename,false,false);
             myApp.otm = new OTMdev(myApp.otm.otm);
+            if(myApp.otm.scenario==null)
+                return;
         } catch (Exception e) {
             throw new OTMException(e);
         }
 
-        // check
-        if(myApp.otm.scenario==null)
-            return;
+        Maps.populate(myApp.otm);
 
-        Scenario scenario = new Scenario(myApp.otm);
+//        // Create the otm-ui scenario
+//        Scenario scenario = new Scenario(myApp.otm);
+//
+//        // Fire new scenario event
+//        if(scenario!=null) {
+//            enablePlots();
+//            enableParameters();
+//            enableRun();
+//            menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(scenario));
+//        }
 
-        if(scenario!=null) {
-            enablePlots();
-            enableParameters();
-            enableRun();
-            menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(scenario));
-        }
+        // TODO REMOVE ABOVE
+
+        // Fire new scenario event
+        enablePlots();
+        enableParameters();
+        enableRun();
+        menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(myApp.otm));
+
     }
 
-    private void loadTest(String testname) throws OTMException {
-
-        // load the scenario from XML
-        try {
-            myApp.otm.otm.load_test(testname);
-            myApp.otm = new OTMdev(myApp.otm.otm);
-        } catch (Exception e) {
-            throw new OTMException(e);
-        }
-
-        // check
-        if(myApp.otm.scenario==null)
-            return;
-
-        Scenario scenario = new Scenario(myApp.otm);
-
-        if(scenario!=null) {
-            enablePlots();
-            enableParameters();
-            enableRun();
-            menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(scenario));
-        }
-    }
+//    public void loadTest(String testname) throws OTMException {
+//
+//        // load the scenario from XML
+//        try {
+//            myApp.otm.otm.load_test(testname);
+//            myApp.otm = new OTMdev(myApp.otm.otm);
+//        } catch (Exception e) {
+//            throw new OTMException(e);
+//        }
+//
+//        // check
+//        if(myApp.otm.scenario==null)
+//            return;
+//
+//        Scenario scenario = new Scenario(myApp.otm);
+//
+//        if(scenario!=null) {
+//            enablePlots();
+//            enableParameters();
+//            enableRun();
+//            menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(scenario));
+//        }
+//    }
 
 }

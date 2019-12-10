@@ -19,7 +19,7 @@ public abstract class AbstractDrawLink extends Group {
     public static float epsilon = 0.5f; // meters
     protected static Color color_highlight = Color.RED;
 
-    public otmui.model.Link link;
+    public common.Link link;
     public Long id;
     public List<AbstractDrawLanegroup> draw_lanegroups;
     public AbstractDrawNode startNode;
@@ -32,20 +32,22 @@ public abstract class AbstractDrawLink extends Group {
     // construction
     /////////////////////////////////////////////////
 
-    public AbstractDrawLink(otmui.model.Link link, AbstractDrawNode startNode, AbstractDrawNode endNode, float lane_width, float link_offset, GlobalParameters.RoadColorScheme roadColorScheme) throws OTMException {
+    public AbstractDrawLink(common.Link link, AbstractDrawNode startNode, AbstractDrawNode endNode, float lane_width, float link_offset, GlobalParameters.RoadColorScheme roadColorScheme) throws OTMException {
         this.link = link;
         this.id = link.getId();
         this.startNode = startNode;
         this.endNode = endNode;
-        this.max_vehicles = link.clink.get_max_vehicles();
+        this.max_vehicles = link.get_max_vehicles();
         this.draw_lanegroups = new ArrayList<>();
 
         // case for mn, where get_max_vehicles returns infinity
         if(Double.isInfinite(this.max_vehicles))
-            this.max_vehicles = (float) (link.clink.length * link.clink.full_lanes * (180.0 / 1600.0));
+            this.max_vehicles = (float) (link.length * link.full_lanes * (180.0 / 1600.0));
 
         // Draw the road ....................................................
-        List<Vector> shape = link.getShape();
+        List<Vector> shape = new ArrayList<>();
+        for(common.Point p : link.shape)
+            shape.add(new Vector(p.x,p.y));
 
         // traverse the points from downstream to upstream. Create Segments
         if(shape.size()<2)
@@ -121,16 +123,16 @@ public abstract class AbstractDrawLink extends Group {
 
         // road2euclid
         double euclid_segment_length = midline.get(midline.size()-1).position-midline.get(0).position;
-        double road_segment_length = link.clink.length;
+        double road_segment_length = link.length;
         double road2euclid = euclid_segment_length / road_segment_length;
 
         // populate draw_lanegroups
-        Color color = AbstractColormap.get_color_for_roadtype(roadColorScheme,link.clink.road_type);
-        for (BaseLaneGroup lg : link.clink.lanegroups_flwdn.values()) {
+        Color color = AbstractColormap.get_color_for_roadtype(roadColorScheme,link.road_type);
+        for (BaseLaneGroup lg : link.lanegroups_flwdn.values()) {
 
             // offsets of the upstream inner corner
             float lateral_offset = lane_width*(lg.start_lane_dn-1);
-            float long_offset = lg.side== Side.middle ? 0 : link.clink.length-lg.length;
+            float long_offset = lg.side== Side.middle ? 0 : link.length-lg.length;
 
             AbstractDrawLanegroup draw_lg = create_draw_lanegroup(lg,midline,lateral_offset,long_offset,lane_width, road2euclid,color);
             draw_lanegroups.add(draw_lg);
@@ -158,12 +160,12 @@ public abstract class AbstractDrawLink extends Group {
     /////////////////////////////////////////////////
 
     public final void paintShape(float link_offset, float lane_width, GlobalParameters.RoadColorScheme road_color_scheme){
-        Color color = AbstractColormap.get_color_for_roadtype(road_color_scheme,link.clink.road_type);
+        Color color = AbstractColormap.get_color_for_roadtype(road_color_scheme,link.road_type);
         draw_lanegroups.forEach(x -> x.paintShape(link_offset,lane_width,color));
     }
 
     public final void paintColor(GlobalParameters.RoadColorScheme road_color_scheme){
-        Color color = AbstractColormap.get_color_for_roadtype(road_color_scheme,link.clink.road_type);
+        Color color = AbstractColormap.get_color_for_roadtype(road_color_scheme,link.road_type);
         draw_lanegroups.forEach(x -> x.paintColor(color));
     }
 

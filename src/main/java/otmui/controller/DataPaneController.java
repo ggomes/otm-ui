@@ -2,13 +2,14 @@ package otmui.controller;
 
 import actuator.AbstractActuator;
 import otmui.MainApp;
-import otmui.model.*;
+//import otmui.model.*;
 import otmui.view.*;
 import commodity.Subnetwork;
 import control.AbstractController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
+import sensor.AbstractSensor;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -33,9 +34,6 @@ public class DataPaneController implements Initializable {
         this.myApp = myApp;
     }
 
-    public void loadScenario(Scenario scenario){
-    }
-
     public void reset(){
 
     }
@@ -44,35 +42,35 @@ public class DataPaneController implements Initializable {
     // show
     /////////////////////////////////////////////////
 
-    protected void showLinkData(Link link){
-        LinkData edgeData = new LinkData(link);
+    protected void showLinkData(common.Link link){
+        LinkData edgeData = new LinkData(link,myApp.otm);
         dataPane.setContent(edgeData.getScrollPane());
     }
 
-    protected void showNodeData(otmui.model.Node node){
-        NodeData nodeData = new NodeData(node,myApp.scenario);
+    protected void showNodeData(common.Node node){
+        NodeData nodeData = new NodeData(node,myApp.otm);
         dataPane.setContent(nodeData.getScrollPane());
     }
 
     protected void showCommodityData(commodity.Commodity commodity){
-        CommodityData commodityData = new CommodityData(commodity,myApp.scenario);
+        CommodityData commodityData = new CommodityData(commodity,myApp.otm);
         dataPane.setContent(commodityData.getScrollPane());
     }
 
     protected void showSubnewtorkData(Subnetwork subnetwork){
-        SubnetworkData subnetworkData = new SubnetworkData(subnetwork,myApp.scenario);
+        SubnetworkData subnetworkData = new SubnetworkData(subnetwork,myApp.otm);
         dataPane.setContent(subnetworkData.getScrollPane());
     }
 
-    protected void showDemandData(DemandsForLink demandsForLink){
-        DemandData demandData = new DemandData(demandsForLink,myApp.scenario);
-        dataPane.setContent(demandData.getScrollPane());
-    }
+//    protected void showDemandData(DemandsForLink demandsForLink){
+//        DemandData demandData = new DemandData(demandsForLink,myApp.otm);
+//        dataPane.setContent(demandData.getScrollPane());
+//    }
 
-    protected void showSplitData(SplitsForNode splitsForNode){
-        SplitData splitData = new SplitData(splitsForNode);
-        dataPane.setContent(splitData.getScrollPane());
-    }
+//    protected void showSplitData(SplitsForNode splitsForNode){
+//        SplitData splitData = new SplitData(splitsForNode,myApp.otm);
+//        dataPane.setContent(splitData.getScrollPane());
+//    }
 
     protected void showActuatorData(AbstractActuator actuator){
         ActuatorData actuatorData = new ActuatorData(actuator);
@@ -80,12 +78,12 @@ public class DataPaneController implements Initializable {
     }
 
     protected void showControllerData(AbstractController controller){
-        ControllerData controllerData = new ControllerData(controller,myApp.scenario);
+        ControllerData controllerData = new ControllerData(controller);
         dataPane.setContent(controllerData.getScrollPane());
     }
 
-    protected void showSensorData(Sensor sensor){
-        SensorData sensorData = new SensorData(sensor,myApp.scenario);
+    protected void showSensorData(AbstractSensor sensor){
+        SensorData sensorData = new SensorData(sensor);
         dataPane.setContent(sensorData.getScrollPane());
     }
 
