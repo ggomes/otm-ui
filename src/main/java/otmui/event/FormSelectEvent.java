@@ -6,19 +6,10 @@ import javafx.event.EventType;
 
 public class FormSelectEvent extends Event {
 
-    public Long itemId;
+    public Object item;
 
     public static final EventType<FormSelectEvent> FORM_ANY = new EventType<>(Event.ANY, "FORM_ANY");
-
-    public static final EventType<FormSelectEvent> CLICK1_LINK = new EventType<>(FORM_ANY, "CLICK1_LINK");
-    public static final EventType<FormSelectEvent> CLICK1_NODE= new EventType<>(FORM_ANY, "CLICK1_NODE");
-    public static final EventType<FormSelectEvent> CLICK1_SUBNETWORK = new EventType<>(FORM_ANY, "CLICK1_SUBNETWORK");
-    public static final EventType<FormSelectEvent> CLICK1_COMMODITY = new EventType<>(FORM_ANY, "CLICK1_COMMODITY");
-    public static final EventType<FormSelectEvent> CLICK1_DEMAND = new EventType<>(FORM_ANY, "CLICK1_DEMAND");
-    public static final EventType<FormSelectEvent> CLICK1_SPLIT= new EventType<>(FORM_ANY, "CLICK1_SPLIT");
-    public static final EventType<FormSelectEvent> CLICK1_ACTUATOR = new EventType<>(FORM_ANY, "CLICK1_ACTUATOR");
-    public static final EventType<FormSelectEvent> CLICK1_CONTROLLER = new EventType<>(FORM_ANY, "CLICK1_CONTROLLER");
-    public static final EventType<FormSelectEvent> CLICK1_SENSOR = new EventType<>(FORM_ANY, "CLICK1_SENSOR");
+    public static final EventType<FormSelectEvent> CLICK1 = new EventType<>(FORM_ANY, "CLICK1");
 
     public static final EventType<FormSelectEvent> CLICK2_LINK = new EventType<>(FORM_ANY, "CLICK2_LINK");
     public static final EventType<FormSelectEvent> CLICK2_NODE = new EventType<>(FORM_ANY, "CLICK2_NODE");
@@ -30,9 +21,9 @@ public class FormSelectEvent extends Event {
     public static final EventType<FormSelectEvent> CLICK2_CONTROLLER = new EventType<>(FORM_ANY, "CLICK2_CONTROLLER");
     public static final EventType<FormSelectEvent> CLICK2_SENSOR = new EventType<>(FORM_ANY, "CLICK2_SENSOR");
 
-    public FormSelectEvent(EventType<FormSelectEvent> type, Long itemId) {
+    public FormSelectEvent(EventType<FormSelectEvent> type, Object item) {
         super(type);
-        this.itemId = itemId;
+        this.item = item;
     }
 
     @Override
@@ -45,8 +36,8 @@ public class FormSelectEvent extends Event {
         return (EventType<? extends FormSelectEvent>) super.getEventType();
     }
 
-    public Long getItemId(){
-        return itemId;
+    public Object getItem(){
+        return item;
     }
 
 }

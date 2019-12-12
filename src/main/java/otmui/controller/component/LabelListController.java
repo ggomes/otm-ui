@@ -42,7 +42,7 @@ public class LabelListController extends LabelItemController {
             case "input links":
             case "link":
                 if(clickcount==1)
-                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK1_LINK,itemId));
+                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK1,itemId));
                 if(clickcount==2)
                     Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2_LINK,itemId));
                 break;
@@ -59,14 +59,14 @@ public class LabelListController extends LabelItemController {
             case "vehicle type":
             case "vehicle types":
                 if(clickcount==1)
-                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK1_COMMODITY,itemId));
+                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK1,itemId));
                 if(clickcount==2)
                     Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2_COMMODITY,itemId));
                 break;
             case "actuator":
             case "actuators":
                 if(clickcount==1)
-                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK1_ACTUATOR,itemId));
+                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK1,itemId));
                 if(clickcount==2)
                     Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2_ACTUATOR,itemId));
                 break;

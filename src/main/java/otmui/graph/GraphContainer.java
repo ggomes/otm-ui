@@ -6,7 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
 import otmui.controller.GraphPaneController;
-import otmui.graph.item.AbstractDrawNode;
+import otmui.item.AbstractNode;
 
 public class GraphContainer {
 
@@ -88,7 +88,7 @@ public class GraphContainer {
     /////////////////////////////////////////////////
 
     public void add_node(common.Node node){
-        AbstractDrawNode drawNode = graph.makeDrawNode(node);
+        AbstractNode drawNode = graph.makeDrawNode(node);
 //        node.drawNode = drawNode;
         graph.drawnodes.put( drawNode.id, drawNode);
         pane.getChildren().add(drawNode);

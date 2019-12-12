@@ -25,14 +25,14 @@ public class LinkData extends AbstractData {
         X.add(UIFactory.createLabelButton(
                 "start node",
                 link.start_node.getId().toString(),
-                e->doubleClickNode(link.start_node.getId())
+                e->doubleClickNode(link.start_node)
         ).pane);
 
         // end node .................
         X.add(UIFactory.createLabelButton(
                 "end node",
                 link.end_node.getId().toString(),
-                e->doubleClickNode(link.end_node.getId())
+                e->doubleClickNode(link.end_node)
         ).pane);
 
         // length [LabelText] ................
@@ -93,9 +93,9 @@ public class LinkData extends AbstractData {
 
     }
 
-    private void doubleClickNode(long id){
-        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK1_NODE,id));
-        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_NODE,id));
+    private void doubleClickNode(common.Node node){
+        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK1,node));
+        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_NODE,node));
     }
 
 }

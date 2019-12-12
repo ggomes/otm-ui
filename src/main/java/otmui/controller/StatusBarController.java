@@ -1,17 +1,18 @@
 package otmui.controller;
 
 import api.OTMdev;
+import javafx.scene.Scene;
 import otmui.MainApp;
-import otmui.graph.item.AbstractDrawLink;
-import otmui.graph.item.AbstractDrawNode;
-import otmui.graph.item.DrawSensor;
+import otmui.event.NewScenarioEvent;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.Initializable;
 import org.controlsfx.control.StatusBar;
+import otmui.item.AbstractItem;
 import utils.OTMUtils;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -26,14 +27,18 @@ public class StatusBarController implements Initializable {
     // construction
     /////////////////////////////////////////////////
 
-    public StatusBarController(StatusBar statusBar, MainApp myApp){
+    public StatusBarController(StatusBar statusBar){
         this.statusBar = statusBar;
-        this.myApp = myApp;
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL url, ResourceBundle resourceBundle) { }
 
+    public void attach_event_listeners(MainApp myApp) {
+        this.myApp = myApp;
+
+        Scene scene = myApp.stage.getScene();
+        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED_OTM, e->loadScenario(e.otmdev) );
     }
 
     public void loadScenario(OTMdev otmdev){
@@ -57,15 +62,15 @@ public class StatusBarController implements Initializable {
         statusBar.textProperty().unbind();
     }
 
-    public void setText(Set<AbstractDrawLink> selectedLinks, Set<AbstractDrawNode> selectedNodes, Set<DrawSensor> selectedSensors, Set<AbstractDrawNode> selectedActuators){
+    public void setText(Map<Class,Set<AbstractItem>> selection){
         String str = "links {" +
-                OTMUtils.comma_format(selectedLinks.stream().map(x->x.id).collect(toList())) +
+                OTMUtils.comma_format(selection.get("link").stream().map(x->x.id).collect(toList())) +
                 "} , nodes {" +
-                OTMUtils.comma_format(selectedNodes.stream().map(x->x.id).collect(toList())) +
+                OTMUtils.comma_format(selection.get("node").stream().map(x->x.id).collect(toList())) +
                 "} , sensors {" +
-                OTMUtils.comma_format(selectedSensors.stream().map(x->x.id).collect(toList())) +
+                OTMUtils.comma_format(selection.get("sensor").stream().map(x->x.id).collect(toList())) +
                 "}, actuators {" +
-                OTMUtils.comma_format(selectedActuators.stream().map(x->x.id).collect(toList())) +
+                OTMUtils.comma_format(selection.get("actuator").stream().map(x->x.id).collect(toList())) +
                 "}";
         this.statusBar.setText(str);
     }

@@ -63,7 +63,7 @@ public class MenuController implements Initializable {
         disableParameters();
     }
 
-    public void setApp(MainApp myApp){
+    public void attach_event_listeners(MainApp myApp){
         this.myApp = myApp;
     }
 

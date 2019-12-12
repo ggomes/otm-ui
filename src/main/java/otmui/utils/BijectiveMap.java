@@ -22,4 +22,21 @@ public class BijectiveMap<A,B> {
         return BtoA.get(b);
     }
 
+    public void removeForFirst(A a){
+        if(!AtoB.containsKey(a))
+            return;
+        B b = AtoB.get(a);
+        AtoB.remove(a);
+        BtoA.remove(b);
+    }
+
+
+    public void removeForSecond(B b){
+        if(!BtoA.containsKey(b))
+            return;
+        A a = BtoA.get(b);
+        AtoB.remove(a);
+        BtoA.remove(b);
+    }
+
 }

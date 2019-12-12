@@ -44,7 +44,7 @@ public class CommodityData extends AbstractData {
     }
 
     private void DoubleClickSubnetwork(long id){
-        Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK1_SUBNETWORK,id));
+        Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK1,id));
         Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_SUBNETWORK,id));
     }
 

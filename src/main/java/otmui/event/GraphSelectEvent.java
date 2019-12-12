@@ -11,10 +11,7 @@ public class GraphSelectEvent extends Event {
 
     public static final EventType<GraphSelectEvent> GRAPH_ANY = new EventType<>(Event.ANY, "GRAPH_ANY");
 
-    public static final EventType<GraphSelectEvent> CLICK1_NODE = new EventType<>(GRAPH_ANY, "CLICK1_NODE");
-    public static final EventType<GraphSelectEvent> CLICK1_LINK = new EventType<>(GRAPH_ANY, "CLICK1_LINK");
-    public static final EventType<GraphSelectEvent> CLICK1_SENSOR = new EventType<>(GRAPH_ANY, "CLICK1_SENSOR");
-    public static final EventType<GraphSelectEvent> CLICK1_ACTUATOR = new EventType<>(GRAPH_ANY, "CLICK1_ACTUATOR");
+    public static final EventType<GraphSelectEvent> CLICK1 = new EventType<>(GRAPH_ANY, "CLICK1");
 
     public static final EventType<GraphSelectEvent> CLICK2_NODE = new EventType<>(GRAPH_ANY, "CLICK2_NODE");
     public static final EventType<GraphSelectEvent> CLICK2_LINK = new EventType<>(GRAPH_ANY, "CLICK2_LINK");
