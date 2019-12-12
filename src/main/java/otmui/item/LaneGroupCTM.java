@@ -11,7 +11,7 @@ import output.animation.macro.CellInfo;
 
 import java.util.List;
 
-public class DrawLaneGroupCTM extends AbstractDrawLanegroup {
+public class LaneGroupCTM extends LaneGroup {
 
     public double max_vehicles_per_cell;
     public double euclid_cell_length_m;
@@ -21,7 +21,7 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup {
     // construction
     /////////////////////////////////////////////////
 
-    public DrawLaneGroupCTM(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
+    public LaneGroupCTM(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
 
         super(alg,lateral_offset);
 
@@ -38,7 +38,7 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup {
 
         // traverse cells
         for (int i = 0; i < lg.cells.size(); i++) {
-            DrawCell draw_cell = new DrawCell(midline,start_ind,lateral_offset,euclid_cell_length_m,width,color);
+            Cell draw_cell = new Cell(midline,start_ind,lateral_offset,euclid_cell_length_m,width,color);
             draw_cells.add(draw_cell);
             start_ind += draw_cell.arrows.size()-1;
         }
@@ -80,7 +80,7 @@ public class DrawLaneGroupCTM extends AbstractDrawLanegroup {
         output.animation.macro.LaneGroupInfo lg_info = (output.animation.macro.LaneGroupInfo) laneGroupInfo;
         for(int i=0;i<lg_info.cell_info.size();i++){
             CellInfo cellinfo = lg_info.cell_info.get(i);
-            DrawCell drawCell = draw_cells.get(i);
+            Cell drawCell = draw_cells.get(i);
             double veh = cellinfo.get_total_vehicles();
             RGB rgb = colormap.get_color(veh,max_vehicles);
             Color color = new Color(rgb.red,rgb.green,rgb.blue,1.0);

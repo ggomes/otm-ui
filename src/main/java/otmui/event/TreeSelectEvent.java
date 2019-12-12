@@ -3,10 +3,13 @@ package otmui.event;
 import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
+import javafx.scene.control.TreeItem;
+
 import javafx.scene.input.MouseEvent;
 
 public class TreeSelectEvent extends Event {
 
+    public TreeItem treeitem;
     public MouseEvent event;
 
     public static final EventType<TreeSelectEvent> TREE_ANY = new EventType<>(Event.ANY, "TREE_ANY");
@@ -21,8 +24,9 @@ public class TreeSelectEvent extends Event {
     public static final EventType<TreeSelectEvent> CLICK2_CONTROLLER = new EventType<>(TREE_ANY, "CLICK2_CONTROLLER");
     public static final EventType<TreeSelectEvent> CLICK2_SENSOR = new EventType<>(TREE_ANY, "CLICK2_SENSOR");
 
-    public TreeSelectEvent(EventType<TreeSelectEvent> type, MouseEvent event) {
+    public TreeSelectEvent(EventType<TreeSelectEvent> type, TreeItem treeitem, MouseEvent event) {
         super(type);
+        this.treeitem = treeitem;
         this.event = event;
     }
 
@@ -36,8 +40,8 @@ public class TreeSelectEvent extends Event {
         return (EventType<? extends TreeSelectEvent>) super.getEventType();
     }
 
-    public Object getSelected(){
-        return event.getSource();
-    }
+//    public Object getSelected(){
+//        return event.getSource();
+//    }
 
 }

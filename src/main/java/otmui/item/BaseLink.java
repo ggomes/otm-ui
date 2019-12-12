@@ -13,15 +13,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractLink extends AbstractItem {
+public abstract class BaseLink extends AbstractItem {
 
     public static float epsilon = 0.5f; // meters
     protected static Color color_highlight = Color.RED;
 
     public common.Link link;
-    public List<AbstractDrawLanegroup> draw_lanegroups;
-    public AbstractNode startNode;
-    public AbstractNode endNode;
+    public List<LaneGroup> draw_lanegroups;
     public double max_vehicles;
 
     abstract List<Double> get_additional_midline_points();
@@ -30,11 +28,10 @@ public abstract class AbstractLink extends AbstractItem {
     // construction
     /////////////////////////////////////////////////
 
-    public AbstractLink(common.Link link, AbstractNode startNode, AbstractNode endNode, float lane_width, float link_offset, GlobalParameters.RoadColorScheme roadColorScheme) throws OTMException {
+    public BaseLink(common.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme roadColorScheme) throws OTMException {
+        super(link.getId());
+
         this.link = link;
-        this.id = link.getId();
-        this.startNode = startNode;
-        this.endNode = endNode;
         this.max_vehicles = link.get_max_vehicles();
         this.draw_lanegroups = new ArrayList<>();
 
@@ -132,7 +129,7 @@ public abstract class AbstractLink extends AbstractItem {
             float lateral_offset = lane_width*(lg.start_lane_dn-1);
             float long_offset = lg.side== Side.middle ? 0 : link.length-lg.length;
 
-            AbstractDrawLanegroup draw_lg = create_draw_lanegroup(lg,midline,lateral_offset,long_offset,lane_width, road2euclid,color);
+            LaneGroup draw_lg = create_draw_lanegroup(lg,midline,lateral_offset,long_offset,lane_width, road2euclid,color);
             draw_lanegroups.add(draw_lg);
             getChildren().addAll(draw_lg.get_polygons());
         }
@@ -151,7 +148,17 @@ public abstract class AbstractLink extends AbstractItem {
 
     }
 
-    abstract AbstractDrawLanegroup create_draw_lanegroup(BaseLaneGroup lg,List<Arrow> midline,float lateral_offset,float long_offset, double lane_width,double road2euclid,Color color) throws OTMException ;
+    abstract LaneGroup create_draw_lanegroup(BaseLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException ;
+
+    @Override
+    public String getPrefix() {
+        return "link";
+    }
+
+    @Override
+    public String getName() {
+        return String.format("link %d",id);
+    }
 
     /////////////////////////////////////////////////
     // paint
@@ -175,26 +182,6 @@ public abstract class AbstractLink extends AbstractItem {
     @Override
     public void unhighlight() {
         draw_lanegroups.forEach(x -> x.unhighlight());
-    }
-
-    /////////////////////////////////////////////////
-    // get
-    /////////////////////////////////////////////////
-
-    public Double getStartPosX(){
-        return startNode.xpos;
-    }
-
-    public Double getStartPosY(){
-        return startNode.ypos;
-    }
-
-    public Double getEndPosX(){
-        return endNode.xpos;
-    }
-
-    public Double getEndPosY(){
-        return endNode.ypos;
     }
 
 }

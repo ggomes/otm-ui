@@ -4,15 +4,14 @@ import actuator.AbstractActuator;
 import api.info.DemandInfo;
 import api.info.SplitInfo;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import otmui.ItemPool;
 import otmui.MainApp;
-import otmui.Maps;
+import otmui.TypeId;
 import otmui.event.GraphSelectEvent;
 import otmui.event.TreeSelectEvent;
-import otmui.item.AbstractLink;
-import otmui.item.AbstractNode;
-import otmui.item.DrawSensor;
+import otmui.item.BaseLink;
+import otmui.item.BaseNode;
+import otmui.item.BaseSensor;
 import otmui.view.*;
 import commodity.Subnetwork;
 import control.AbstractController;
@@ -78,29 +77,28 @@ public class DataPaneController implements Initializable {
     /////////////////////////////////////////////////
 
     private void graphSecondClickLink(GraphSelectEvent e){
-        AbstractLink drawLink = (AbstractLink) e.getSelected();
+        BaseLink drawLink = (BaseLink) e.getSelected();
         common.Link link = myApp.otm.scenario.network.links.get(drawLink.id);
         showLinkData(link);
         e.consume();
     }
 
-
     public void graphSecondClickNode(GraphSelectEvent e){
-        AbstractNode drawNode = (AbstractNode) e.getSelected();
+        BaseNode drawNode = (BaseNode) e.getSelected();
         common.Node node = myApp.otm.scenario.network.nodes.get(drawNode.id);
         myApp.datapaneController.showNodeData(node);
         e.consume();
     }
 
     public void graphSecondClickSensor(GraphSelectEvent e){
-        DrawSensor drawSensor = (DrawSensor) e.getSelected();
+        BaseSensor drawSensor = (BaseSensor) e.getSelected();
         AbstractSensor sensor = myApp.otm.scenario.sensors.get(drawSensor.id);
         myApp.datapaneController.showSensorData(sensor);
         e.consume();
     }
 
     public void graphSecondClickActuator(GraphSelectEvent e){
-        AbstractNode drawActuator = (AbstractNode) e.getSelected();
+        BaseNode drawActuator = (BaseNode) e.getSelected();
         AbstractActuator actuator = myApp.otm.scenario.actuators.get(drawActuator.id);
         myApp.datapaneController.showActuatorData(actuator);
         e.consume();
@@ -108,51 +106,50 @@ public class DataPaneController implements Initializable {
 
 
     public void treeSecondClickLink(TreeSelectEvent e){
-        Long linkid = Maps.name2linkid.getFromFirst(getItemName(e));
-        common.Link link = myApp.otm.scenario.network.links.get(linkid);
-        showLinkData(link);
+        TypeId typeid = myApp.itempool.getTypeId((String)e.treeitem.getValue());
+        showLinkData(myApp.otm.scenario.network.links.get(typeid.id));
 //        e.consume();
     }
 
     public void treeSecondClickCommodity(TreeSelectEvent e){
-        long id = Maps.name2commodityid.getFromFirst(getItemName(e));
-        showCommodityData(myApp.otm.scenario.commodities.get(id));
+        TypeId typeid = myApp.itempool.getTypeId((String)e.treeitem.getValue());
+        showCommodityData(myApp.otm.scenario.commodities.get(typeid.id));
 //        e.consume();
     }
 
     public void treeSecondClickSubnetwork(TreeSelectEvent e){
-        long id = Maps.name2subnetworkid.getFromFirst(getItemName(e));
-        showSubnewtorkData(myApp.otm.scenario.subnetworks.get(id));
+        TypeId typeid = myApp.itempool.getTypeId((String)e.treeitem.getValue());
+        showSubnewtorkData(myApp.otm.scenario.subnetworks.get(typeid.id));
 //        e.consume();
     }
 
     public void treeSecondClickDemand(TreeSelectEvent e){
-        long id = Maps.name2demandid.getFromFirst(getItemName(e));
-        showDemandData(id,myApp.demands.get(id));
+//        TypeId typeid = myApp.itempool.getTypeId((String)e.treeitem.getValue());
+//        showDemandData(id,myApp.demands.get(typeid.id));
 //        e.consume();
     }
 
     public void treeSecondClickSplit(TreeSelectEvent e){
-        long id = Maps.name2splitid.getFromFirst(getItemName(e));
-        showSplitData(id,myApp.splits.get(id));
+//        long id = Maps.name2id_split(getItemName(e));
+//        showSplitData(id,myApp.splits.get(id));
 //        e.consume();
     }
 
     public void treeSecondClickActuator(TreeSelectEvent e){
-        long id = Maps.name2actuatorid.getFromFirst(getItemName(e));
-        showActuatorData(myApp.otm.scenario.actuators.get(id));
+        TypeId typeid = myApp.itempool.getTypeId((String)e.treeitem.getValue());
+        showActuatorData(myApp.otm.scenario.actuators.get(typeid.id));
 //        e.consume();
     }
 
     public void treeSecondClickController(TreeSelectEvent e){
-        long id = Maps.name2controllerid.getFromFirst(getItemName(e));
-        showControllerData(myApp.otm.scenario.controllers.get(id));
+        TypeId typeid = myApp.itempool.getTypeId((String)e.treeitem.getValue());
+        showControllerData(myApp.otm.scenario.controllers.get(typeid.id));
 //        e.consume();
     }
 
     public void treeSecondClickSensor(TreeSelectEvent e){
-        long id = Maps.name2sensorid.getFromFirst(getItemName(e));
-        showSensorData(myApp.otm.scenario.sensors.get(id));
+        TypeId typeid = myApp.itempool.getTypeId((String)e.treeitem.getValue());
+        showSensorData(myApp.otm.scenario.sensors.get(typeid.id));
 //        e.consume();
     }
 
@@ -249,8 +246,6 @@ public class DataPaneController implements Initializable {
     }
 
     private static String getItemName(TreeSelectEvent e){
-        TreeView treeView = (TreeView) e.getSelected();
-        TreeItem item = (TreeItem) treeView.getSelectionModel().getSelectedItem();
-        return (String)item.getValue();
+        return (String)e.treeitem.getValue();
     }
 }

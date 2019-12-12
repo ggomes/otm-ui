@@ -4,16 +4,19 @@ import api.OTMdev;
 import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
+import otmui.ItemPool;
 
 public class NewScenarioEvent extends Event {
 
-    public OTMdev otmdev;
+    public OTMdev otm;
+    public ItemPool itempool;
 
-    public static final EventType<NewScenarioEvent> SCENARIO_LOADED_OTM = new EventType<>(Event.ANY, "SCENARIO_LOADED_OTM");
+    public static final EventType<NewScenarioEvent> SCENARIO_LOADED = new EventType<>(Event.ANY, "SCENARIO_LOADED");
 
-    public NewScenarioEvent(OTMdev otmdev) {
-        super(SCENARIO_LOADED_OTM);
-        this.otmdev = otmdev;
+    public NewScenarioEvent(OTMdev otm,ItemPool itempool) {
+        super(SCENARIO_LOADED);
+        this.otm = otm;
+        this.itempool = itempool;
     }
 
     @Override

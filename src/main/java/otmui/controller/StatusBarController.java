@@ -2,6 +2,7 @@ package otmui.controller;
 
 import api.OTMdev;
 import javafx.scene.Scene;
+import otmui.ItemPool;
 import otmui.MainApp;
 import otmui.event.NewScenarioEvent;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -38,10 +39,10 @@ public class StatusBarController implements Initializable {
         this.myApp = myApp;
 
         Scene scene = myApp.stage.getScene();
-        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED_OTM, e->loadScenario(e.otmdev) );
+        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.itempool) );
     }
 
-    public void loadScenario(OTMdev otmdev){
+    public void loadScenario(ItemPool itempool){
         this.statusBar.setText("Scenario loaded.");
     }
 
@@ -62,7 +63,7 @@ public class StatusBarController implements Initializable {
         statusBar.textProperty().unbind();
     }
 
-    public void setText(Map<Class,Set<AbstractItem>> selection){
+    public void setText(Map<String,Set<AbstractItem>> selection){
         String str = "links {" +
                 OTMUtils.comma_format(selection.get("link").stream().map(x->x.id).collect(toList())) +
                 "} , nodes {" +

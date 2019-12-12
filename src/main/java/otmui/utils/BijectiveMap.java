@@ -1,6 +1,7 @@
 package otmui.utils;
 
 import java.util.HashMap;
+import java.util.Set;
 
 public class BijectiveMap<A,B> {
 
@@ -14,11 +15,11 @@ public class BijectiveMap<A,B> {
         }
     }
 
-    public B getFromFirst(A a){
+    public B AtoB(A a){
         return AtoB.get(a);
     }
 
-    public A getFromSecond(B b){
+    public A BtoA(B b){
         return BtoA.get(b);
     }
 
@@ -30,7 +31,6 @@ public class BijectiveMap<A,B> {
         BtoA.remove(b);
     }
 
-
     public void removeForSecond(B b){
         if(!BtoA.containsKey(b))
             return;
@@ -39,4 +39,11 @@ public class BijectiveMap<A,B> {
         BtoA.remove(b);
     }
 
+    public Set<B> getBs(){
+        return BtoA.keySet();
+    }
+
+    public Set<A> getAs(){
+        return AtoB.keySet();
+    }
 }

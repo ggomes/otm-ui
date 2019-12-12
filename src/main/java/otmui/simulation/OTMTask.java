@@ -1,7 +1,6 @@
 package otmui.simulation;
 
 import api.OTMdev;
-import javafx.application.Platform;
 import otmui.GlobalParameters;
 import otmui.controller.GraphPaneController;
 import otmui.controller.MenuController;
@@ -9,8 +8,6 @@ import otmui.controller.StatusBarController;
 import otmui.graph.color.AbstractColormap;
 import error.OTMException;
 import javafx.concurrent.Task;
-import output.animation.AnimationInfo;
-import runner.OTM;
 
 public class OTMTask extends Task {
 
@@ -31,7 +28,7 @@ public class OTMTask extends Task {
         this.duration = params.duration.floatValue();
         this.sim_dt = params.sim_dt.floatValue();
         this.sim_delay = params.sim_delay.longValue();
-        this.colormap = params.get_colormap();
+        this.colormap = params.road_colormap();
         this.menuController = menuController;
         this.graphPaneController = graphPaneController;
         this.statusBarController = statusBarController;

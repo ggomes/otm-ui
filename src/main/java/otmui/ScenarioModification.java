@@ -94,9 +94,6 @@ public class ScenarioModification {
 
         // TODO no sensors
 
-        // remove from naming map
-        Maps.name2linkid.removeForSecond(id);
-
         // remove from the network
         end_node.in_links.remove(id);
         start_node.out_links.remove(id);

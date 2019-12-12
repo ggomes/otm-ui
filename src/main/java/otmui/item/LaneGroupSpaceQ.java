@@ -9,11 +9,11 @@ import output.animation.AbstractLaneGroupInfo;
 
 import java.util.List;
 
-public class DrawLanegroupSpaceQ extends AbstractDrawLanegroup {
+public class LaneGroupSpaceQ extends LaneGroup {
 
-    public DrawLanegroupSpaceQ(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
+    public LaneGroupSpaceQ(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
         super(alg,lateral_offset);
-        draw_cells.add(new DrawCell(midline,0,lateral_offset,alg.length * road2euclid,alg.num_lanes *lane_width,color));
+        draw_cells.add(new Cell(midline,0,lateral_offset,alg.length * road2euclid,alg.num_lanes *lane_width,color));
     }
 
     @Override

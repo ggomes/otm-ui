@@ -1,12 +1,11 @@
 package otmui.item;
 
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
-public class StopSign extends AbstractActuator {
+public class StopSign extends BaseActuator {
 
     public StopSign(Long id, Float xpos, Float ypos, float r, double stroke_width) {
-        super( id,xpos,ypos);
+        super(id,xpos,ypos);
 
         this.xpos -= r;
         this.ypos -= r;
@@ -52,18 +51,6 @@ public class StopSign extends AbstractActuator {
                 -rcos67p5, -rsin67p5,
                 rcos67p5, -rsin67p5,
                 rcos22p5, -rsin22p5 });
-
-
-    }
-
-    @Override
-    public void highlight() {
-        shape.setFill(Color.DARKMAGENTA);
-    }
-
-    @Override
-    public void unhighlight() {
-        shape.setFill(Color.DARKRED);
     }
 
 }

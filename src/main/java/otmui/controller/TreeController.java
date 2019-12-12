@@ -6,9 +6,9 @@ import java.util.*;
 import actuator.AbstractActuator;
 import api.OTMdev;
 import javafx.scene.Scene;
-import otmui.ElementType;
+import otmui.ItemPool;
+import otmui.ItemType;
 import otmui.MainApp;
-import otmui.Maps;
 import otmui.event.DeleteElementEvent;
 import otmui.event.NewElementEvent;
 import otmui.event.NewScenarioEvent;
@@ -53,7 +53,7 @@ public class TreeController implements Initializable {
     public void attach_event_listeners(MainApp myApp){
         this.myApp = myApp;
         Scene scene = myApp.stage.getScene();
-        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED_OTM, e->loadScenario(e.otmdev) );
+        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.otm) );
         scene.addEventFilter(NewElementEvent.NEW_NODE, e->add_node(e.item));
         scene.addEventFilter(DeleteElementEvent.REMOVE_LINK, e->remove_link((common.Link)e.item));
     }
@@ -62,38 +62,38 @@ public class TreeController implements Initializable {
     // event triggered
     /////////////////////////////////////////////////
 
-    private void loadScenario(OTMdev otmdev){
+    private void loadScenario(OTMdev otm){
 
         // populate the tree
         TreeItem<String> rootItem = new TreeItem<>("scenario");
         rootItem.setExpanded(false);
 
         // commodities
-        comms_tree = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.COMMODITY));
+        comms_tree = new TreeItem<>(ItemPool.itemNames.AtoB(ItemType.commodity));
         rootItem.getChildren().add(comms_tree);
-        for (commodity.Commodity comm : otmdev.scenario.commodities.values())
-            comms_tree.getChildren().add(new TreeItem<>(Maps.name2commodityid.getFromSecond(comm.getId())));
+        for (commodity.Commodity comm : otm.scenario.commodities.values())
+            comms_tree.getChildren().add(new TreeItem<>(ItemPool.getName(comm)));
 
         // links
-        links_tree = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.LINK));
+        links_tree = new TreeItem<>(ItemPool.itemNames.AtoB(ItemType.link));
         rootItem.getChildren().add(links_tree);
         List<common.Link> links = new ArrayList<>();
-        links.addAll(otmdev.scenario.network.links.values());
+        links.addAll(otm.scenario.network.links.values());
         // TODO Collections.sort(links);
-        for (common.Link l : links)
-            links_tree.getChildren().add(new TreeItem<>(Maps.name2linkid.getFromSecond(l.getId())));
+        for (common.Link link : links)
+            links_tree.getChildren().add(new TreeItem<>(ItemPool.getName(link)));
 
         // subnetwork
-        subnets_tree = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.SUBNETWORK));
+        subnets_tree = new TreeItem<>(ItemPool.itemNames.AtoB(ItemType.subnetwork));
         rootItem.getChildren().add(subnets_tree);
-        for (Subnetwork s : otmdev.scenario.subnetworks.values())
-            subnets_tree.getChildren().add(new TreeItem<>(Maps.name2subnetworkid.getFromSecond(s.getId())));
+        for (Subnetwork subnet : otm.scenario.subnetworks.values())
+            subnets_tree.getChildren().add(new TreeItem<>(ItemPool.getName(subnet)));
 
         // demands
-        demands_tree = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.DEMAND));
+        demands_tree = new TreeItem<>(ItemPool.itemNames.AtoB(ItemType.demand));
         rootItem.getChildren().add(demands_tree);
-        for (AbstractDemandProfile profile : otmdev.scenario.data_demands.values())
-            demands_tree.getChildren().add(new TreeItem<>(Maps.name2demandid.getFromSecond(profile.source.link.getId())));
+        for (AbstractDemandProfile profile : otm.scenario.data_demands.values())
+            demands_tree.getChildren().add(new TreeItem<>(ItemPool.getName(profile)));
 
         // TODO splitsForNode
 //        spt = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.SPLIT));
@@ -102,22 +102,22 @@ public class TreeController implements Initializable {
 //            spt.getChildren().add(new TreeItem<>(Maps.name2splitid.getFromSecond(s.getId())));
 
         // actuators
-        actuators_tree = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.ACTUATOR));
+        actuators_tree = new TreeItem<>(ItemPool.itemNames.AtoB(ItemType.actuator));
         rootItem.getChildren().add(actuators_tree);
-        for (AbstractActuator a : otmdev.scenario.actuators.values())
-            actuators_tree.getChildren().add(new TreeItem<>(Maps.name2actuatorid.getFromSecond(a.getId())));
+        for (AbstractActuator act : otm.scenario.actuators.values())
+            actuators_tree.getChildren().add(new TreeItem<>(ItemPool.getName(act)));
 
         // controllers
-        controllers_tree = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.CONTROLLER));
+        controllers_tree = new TreeItem<>(ItemPool.itemNames.AtoB(ItemType.controller));
         rootItem.getChildren().add(controllers_tree);
-        for(AbstractController c : otmdev.scenario.controllers.values())
-            controllers_tree.getChildren().add(new TreeItem<>(Maps.name2controllerid.getFromSecond(c.getId())));
+        for(AbstractController cntr : otm.scenario.controllers.values())
+            controllers_tree.getChildren().add(new TreeItem<>(ItemPool.getName(cntr)));
 
         // sensors
-        sensors_tree = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.SENSOR));
+        sensors_tree = new TreeItem<>(ItemPool.itemNames.AtoB(ItemType.sensor));
         rootItem.getChildren().add(sensors_tree);
-        for (AbstractSensor s : otmdev.scenario.sensors.values())
-            sensors_tree.getChildren().add(new TreeItem<>(Maps.name2sensorid.getFromSecond(s.id)));
+        for (AbstractSensor sens : otm.scenario.sensors.values())
+            sensors_tree.getChildren().add(new TreeItem<>(ItemPool.getName(sens)));
 
         scenariotree.setRoot(rootItem);
 
@@ -134,11 +134,11 @@ public class TreeController implements Initializable {
 
 
     public void add_link(common.Link link){
-        links_tree.getChildren().add(new TreeItem<>(Maps.name2linkid.getFromSecond(link.getId())));
+        links_tree.getChildren().add(new TreeItem<>(ItemPool.getName(link)));
     }
 
     public void remove_link(common.Link link){
-        TreeItem item = new TreeItem<>(Maps.name2linkid.getFromSecond(link.getId()));
+        TreeItem item = new TreeItem<>(ItemPool.getName(link));
         links_tree.getChildren().remove(item);
     }
 
@@ -161,43 +161,43 @@ public class TreeController implements Initializable {
             return;
 
         int clickcount = mouseEvent.getClickCount();
+        TreeItem item = (TreeItem) getTreeView().getSelectionModel().getSelectedItem();
 
         // fire event for first click
         if(clickcount==1)
-            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK1,mouseEvent));
+            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK1,item,mouseEvent));
 
         if(clickcount==2){
-            TreeItem item = (TreeItem) myApp.treeController.getTreeView().getSelectionModel().getSelectedItem();
             if(item==null)
                 return;
             TreeItem parent = item.getParent();
             if(parent!=null) {
-                ElementType elementType = Maps.elementName.getFromSecond((String) parent.getValue());
-                if(elementType!=null)
-                    switch (elementType) {
-                        case LINK:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_LINK,mouseEvent));
+                ItemType itemType = ItemPool.itemNames.BtoA((String) parent.getValue());
+                if(itemType !=null)
+                    switch (itemType) {
+                        case link:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_LINK,item,mouseEvent));
                             break;
-                        case COMMODITY:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_COMMODITY,mouseEvent));
+                        case commodity:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_COMMODITY,item,mouseEvent));
                             break;
-                        case SUBNETWORK:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SUBNETWORK,mouseEvent));
+                        case subnetwork:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SUBNETWORK,item,mouseEvent));
                             break;
-                        case SPLIT:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SPLIT,mouseEvent));
+                        case split:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SPLIT,item,mouseEvent));
                             break;
-                        case DEMAND:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_DEMAND,mouseEvent));
+                        case demand:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_DEMAND,item,mouseEvent));
                             break;
-                        case ACTUATOR:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_ACTUATOR,mouseEvent));
+                        case actuator:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_ACTUATOR,item,mouseEvent));
                             break;
-                        case CONTROLLER:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_CONTROLLER,mouseEvent));
+                        case controller:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_CONTROLLER,item,mouseEvent));
                             break;
-                        case SENSOR:
-                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SENSOR,mouseEvent));
+                        case sensor:
+                            Event.fireEvent(mouseEvent.getTarget(),new TreeSelectEvent(TreeSelectEvent.CLICK2_SENSOR,item,mouseEvent));
                             break;
 
                         default:
@@ -210,7 +210,7 @@ public class TreeController implements Initializable {
 
     }
 
-    public void highlight(Map<Class,Set<AbstractItem>> selection){
+    public void highlight(Map<String,Set<AbstractItem>> selection){
 
 //        for(Map.Entry<Class,Set<AbstractDrawItem>> e : selection.entrySet()){
 //            Class clazz = e.getKey();

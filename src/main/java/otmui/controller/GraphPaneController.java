@@ -1,14 +1,10 @@
 package otmui.controller;
 
-import api.OTMdev;
 import error.OTMException;
 import javafx.scene.Scene;
-import otmui.GlobalParameters;
-import otmui.MainApp;
-import otmui.ScenarioModification;
+import otmui.*;
 import otmui.event.*;
 import otmui.graph.GraphContainer;
-import otmui.graph.Graph;
 import otmui.graph.color.AbstractColormap;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -52,205 +48,160 @@ public class GraphPaneController implements Initializable {
 
         Scene scene = myApp.stage.getScene();
 
-        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED_OTM, e->loadScenario(e.otmdev) );
+        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.itempool) );
+
         scene.addEventFilter(DeleteElementEvent.REMOVE_LINK, e->remove_link((common.Link)e.item));
         scene.addEventFilter(DeleteElementEvent.REMOVE_NODE, e->remove_node((common.Node)e.item));
 
-        scene.addEventFilter(ParameterChange.DRAWLINKSHAPES, e->paintLinkShapes());
-        scene.addEventFilter(ParameterChange.DRAWLINKCOLORS, e->paintLinkColors());
-        scene.addEventFilter(ParameterChange.DRAWNODESHAPES, e->paintNodeShapes());
-//        scene.addEventFilter(ParameterChange.DRAWNODECOLORS, e->paintNodeColors());
-        scene.addEventFilter(ParameterChange.DRAWACTUATORS,e->paintActuators());
+        scene.addEventFilter(ParameterChange.DRAWLINKSHAPES,
+                e->paintLinkShapes(e.itempool.items.get(ItemType.link).values(),e.params));
+        scene.addEventFilter(ParameterChange.DRAWLINKCOLORS,
+                e->paintLinkColors(e.itempool.items.get(ItemType.link).values(),e.params));
+        scene.addEventFilter(ParameterChange.DRAWNODESHAPES,
+                e->paintNodeShapes(e.itempool.items.get(ItemType.node).values(),e.params));
+//        scene.addEventFilter(ParameterChange.DRAWNODECOLORS,
+//                e->paintNodeColors(e.itempool.items.get(ItemType.node).values(),e.params));
+        scene.addEventFilter(ParameterChange.DRAWACTUATORS,
+                e->paintActuators(e.itempool.items.get(ItemType.actuator).values(),e.params));
 
     }
 
-    public void loadScenario(OTMdev otmdev) {
+    public void loadScenario(ItemPool itempool) {
 
-        try {
+       // put all items into the pane
+        graphContainer.set_items(itempool);
 
-            // convert units
-            if (!otmdev.scenario.network.node_positions_in_meters) {
-                convert_to_meters(otmdev);
-            }
+        // set visibility
+//            if(!view_nodes)
+//                itempool.items.get(ItemType.node).forEach(x -> x.set_visible(false));
+//
+//            if(!view_actuators)
+//                itempool.items.get(ItemType.actuator).forEach(x -> x.set_visible(false));
 
-           // create the graph, add to the container
-            Graph graph = new Graph(otmdev,myApp.params);
-            graphContainer.set_graph(graph);
-
-            // set visibility
-            graph.getNodes().forEach(x -> x.set_visible(graph.view_nodes));
-            graph.getActuators().forEach(x -> x.set_visible(graph.view_actuators));
-
-            // enable click of drawNodes, and recenter on the canvas
-            for (AbstractNode drawNode : graph.getNodes()) {
-                drawNode.setOnMouseClicked(mouseEvent -> {
-                    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                        switch(mouseEvent.getClickCount()) {
-                            case 1:
-                                Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
-                                break;
-                            case 2:
-                                Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_NODE, mouseEvent));
-                                break;
-                        }
+        // enable click of nodes, and recenter on the canvas
+        for (AbstractItem node : itempool.items.get(ItemType.node).values()) {
+            node.setOnMouseClicked(mouseEvent -> {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    switch(mouseEvent.getClickCount()) {
+                        case 1:
+                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
+                            break;
+                        case 2:
+                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_NODE, mouseEvent));
+                            break;
                     }
-                });
-            }
-
-            // enable click of drawLink
-            for (AbstractLink drawLink : graph.getLinks()) {
-                drawLink.setOnMouseClicked(mouseEvent -> {
-                    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                        switch(mouseEvent.getClickCount()){
-                            case 1:
-                                Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
-                                break;
-                            case 2:
-                                Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_LINK, mouseEvent));
-                                break;
-                        }
-                    }
-                });
-            }
-
-            // enable click of drawActuator
-            for (AbstractActuator drawActuator : graph.getActuators()) {
-                drawActuator.setOnMouseClicked(mouseEvent -> {
-                    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                        switch(mouseEvent.getClickCount()){
-                            case 1:
-                                Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
-                                break;
-                            case 2:
-                                Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_ACTUATOR, mouseEvent));
-                                break;
-                        }
-                    }
-                });
-            }
-
-            // enable click of drawSensor
-            for (DrawSensor drawSensor : graph.getSensors()) {
-                drawSensor.setOnMouseClicked(mouseEvent -> {
-                    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                        switch(mouseEvent.getClickCount()){
-                            case 1:
-                                Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
-                                break;
-                            case 2:
-                                Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_SENSOR, mouseEvent));
-                                break;
-                        }
-                    }
-                });
-            }
-
-        } catch (OTMException e) {
-            e.printStackTrace();
+                }
+            });
         }
 
-    }
-
-    public void reset(){
-        reset_link_color();
-    }
-
-    private static void convert_to_meters(OTMdev otmdev) {
-
-        Collection<common.Node> nodes = otmdev.scenario.network.nodes.values();
-        Collection<common.Link> links = otmdev.scenario.network.links.values();
-
-        double R = 6378137.0;  // Radius of Earth in meters
-        double conv = Math.PI / 180.0;
-        double clat = nodes.stream().mapToDouble(n -> n.ycoord).average().getAsDouble()* conv;
-        double clon = nodes.stream().mapToDouble(n -> n.xcoord).average().getAsDouble()* conv;
-        double cos2 = Math.pow(Math.cos(clat),2);
-
-        for(common.Node node : nodes){
-            double lon = node.xcoord * conv;
-            double lat = node.ycoord * conv;
-            double dx = Math.acos(1-cos2*(1-Math.cos(lon-clon)))*R;
-            node.xcoord = (float) (lon<clon ? -dx : dx);
-            node.ycoord = (float) ( (lat - clat) * R );
+        // enable click of links
+        for (AbstractItem link : itempool.items.get(ItemType.link).values()) {
+            link.setOnMouseClicked(mouseEvent -> {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    switch(mouseEvent.getClickCount()){
+                        case 1:
+                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
+                            break;
+                        case 2:
+                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_LINK, mouseEvent));
+                            break;
+                    }
+                }
+            });
         }
 
-        for(common.Link link : links){
-            for(common.Point point : link.shape){
-                double lon = point.x * conv;
-                double lat = point.y* conv;
-                double dx = Math.acos(1-cos2*(1-Math.cos(lon-clon)))*R;
-                point.x = (float) (lon<clon ? -dx : dx);
-                point.y = (float) ( (lat - clat) * R );
-            }
+        // enable click of drawActuator
+        for (AbstractItem actuator : itempool.items.get(ItemType.actuator).values()) {
+            actuator.setOnMouseClicked(mouseEvent -> {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    switch(mouseEvent.getClickCount()){
+                        case 1:
+                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
+                            break;
+                        case 2:
+                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_ACTUATOR, mouseEvent));
+                            break;
+                    }
+                }
+            });
         }
 
-        otmdev.scenario.network.node_positions_in_meters = true;
+        // enable click of drawSensor
+        for (AbstractItem sensor : itempool.items.get(ItemType.sensor).values()) {
+            sensor.setOnMouseClicked(mouseEvent -> {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    switch(mouseEvent.getClickCount()){
+                        case 1:
+                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
+                            break;
+                        case 2:
+                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_SENSOR, mouseEvent));
+                            break;
+                    }
+                }
+            });
+        }
+
+
     }
+
+//    public void reset(){
+//        reset_link_color();
+//    }
 
     /////////////////////////////////////////////////
     // drawing
     /////////////////////////////////////////////////
 
-    public void paintLinkShapes(Set<Long> link_ids){
-        Graph graph = graphContainer.get_graph();
-        graph.getLinks().stream()
-                .filter(l->link_ids.contains(l))
-                .forEach(x -> x.paintShape(graph.link_offset,graph.lane_width_meters,graph.road_color_scheme));
+    public void paintLinkShapes(Collection<AbstractItem> links,GlobalParameters params){
+        links.forEach(x -> ((BaseLink)x).paintShape(params.link_offset(),params.lane_width_meters(),params.road_color_scheme()));
     }
 
-    public void paintLinkShapes() {
-        Graph graph = graphContainer.get_graph();
-        float new_width = myApp.params.lane_width_meters.floatValue();
-        float new_offset = myApp.params.link_offset.floatValue();
-        GlobalParameters.RoadColorScheme new_color_scheme = (GlobalParameters.RoadColorScheme) myApp.params.road_color_scheme.getValue();
-        if (Math.abs(new_width-graph.lane_width_meters)>0.1f
-                || Math.abs(new_offset-graph.link_offset)>0.1f
-                || !new_color_scheme.equals(graph.road_color_scheme) ) {
-            graph.getLinks().forEach(x -> x.paintShape(new_offset,new_width,new_color_scheme));
-            graph.lane_width_meters = new_width;
-            graph.link_offset = new_offset;
-            graph.road_color_scheme = new_color_scheme;
-        }
-    }
+//    public void paintLinkShapes(Set<AbstractItem> links,GlobalParameters params) {
+//        float new_width = myApp.params.lane_width_meters.floatValue();
+//        float new_offset = myApp.params.link_offset.floatValue();
+//        GlobalParameters.RoadColorScheme new_color_scheme = (GlobalParameters.RoadColorScheme) myApp.params.road_color_scheme.getValue();
+//        if (Math.abs(new_width-params.lane_width_meters)>0.1f
+//                || Math.abs(new_offset-params.link_offset)>0.1f
+//                || !new_color_scheme.equals(params.road_color_scheme) ) {
+//            graph.getLinks().forEach(x -> x.paintShape(new_offset,new_width,new_color_scheme));
+//            graph.lane_width_meters = new_width;
+//            graph.link_offset = new_offset;
+//            graph.road_color_scheme = new_color_scheme;
+//        }
+//    }
 
-    public void paintLinkColors() {
-        Graph graph = graphContainer.get_graph();
+    public void paintLinkColors(Collection<AbstractItem> links,GlobalParameters params) {
         GlobalParameters.RoadColorScheme new_color_map = (GlobalParameters.RoadColorScheme) myApp.params.road_color_scheme.getValue();
-        if(!new_color_map.equals(graph.road_color_scheme)){
-            graph.getLinks().forEach(x -> x.paintColor(new_color_map));
-            graph.road_color_scheme = new_color_map;
+        if(!new_color_map.equals(params.road_color_scheme)){
+            links.forEach(x -> ((BaseLink)x).paintColor(new_color_map));
+//            params.road_color_scheme = new_color_map;
         }
     }
 
-    public void paintNodeShapes() {
-
-        Graph graph = graphContainer.get_graph();
-
+    public void paintNodeShapes(Collection<AbstractItem> nodes,GlobalParameters params) {
         // set node size
         float new_size = myApp.params.node_size.floatValue();
-        if (Math.abs(new_size-graph.node_size)>0.1f) {
-            graph.getNodes().forEach(x -> x.set_size(new_size));
-            graph.node_size = new_size;
-        }
+//        if (Math.abs(new_size-params.node_size)>0.1f) {
+            nodes.forEach(x -> ((AbstractPointItem) x).set_size(new_size));
+//            graph.node_size = new_size;
+//        }
 
         // set node visible
         boolean new_view_nodes = myApp.params.view_nodes.getValue();
-        if(new_view_nodes!=graph.view_nodes) {
-            graph.getNodes().forEach(x -> x.set_visible(new_view_nodes));
-            graph.view_nodes = new_view_nodes;
-        }
+//        if(new_view_nodes!=graph.view_nodes) {
+            nodes.forEach(x -> ((AbstractPointItem) x).set_visible(new_view_nodes));
+//            graph.view_nodes = new_view_nodes;
+//        }
     }
 
-    public void paintActuators() {
-
-        Graph graph = graphContainer.get_graph();
-
+    public void paintActuators(Collection<AbstractItem> actuators,GlobalParameters params) {
         // set node visible
-        boolean new_view_actuators = myApp.params.view_actuators.getValue();
-        if(new_view_actuators!=graph.view_actuators) {
-            graph.getActuators().forEach(x -> x.set_visible(new_view_actuators));
-            graph.view_actuators = new_view_actuators;
-        }
+//        boolean new_view_actuators = myApp.params.view_actuators.getValue();
+//        if(new_view_actuators!=params.view_actuators) {
+            actuators.forEach(x -> ((AbstractPointItem) x).set_visible(params.view_actuators()));
+//            params.view_actuators = new_view_actuators;
+//        }
 
     }
 
@@ -351,88 +302,38 @@ public class GraphPaneController implements Initializable {
     /////////////////////////////////////////////////
 
     public void remove_link(common.Link link){
-        if(graphContainer.get_graph().drawlinks.containsKey(link.getId())){
-            AbstractLink drawLink = graphContainer.get_graph().drawlinks.get(link.getId());
-            graphContainer.pane.getChildren().remove(drawLink);
-            graphContainer.get_graph().drawlinks.remove(drawLink);
-        }
+//        if(graphContainer.get_graph().drawlinks.containsKey(link.getId())){
+//            BaseLink drawLink = graphContainer.get_graph().drawlinks.get(link.getId());
+//            graphContainer.pane.getChildren().remove(drawLink);
+//            graphContainer.get_graph().drawlinks.remove(drawLink);
+//        }
     }
 
     public void remove_node(common.Node node){
-        if(graphContainer.get_graph().drawnodes.containsKey(node.getId())){
-            AbstractNode drawNode = graphContainer.get_graph().drawnodes.get(node.getId());
-            graphContainer.pane.getChildren().remove(drawNode);
-            graphContainer.get_graph().drawnodes.remove(node.getId());
-        }
+//        if(graphContainer.get_graph().drawnodes.containsKey(node.getId())){
+//            BaseNode drawNode = graphContainer.get_graph().drawnodes.get(node.getId());
+//            graphContainer.pane.getChildren().remove(drawNode);
+//            graphContainer.get_graph().drawnodes.remove(node.getId());
+//        }
     }
 
     /////////////////////////////////////////////////
     // highlighting
     /////////////////////////////////////////////////
 
-    public void highlightNode(AbstractNode drawNode){
-
-        System.out.println("Highlight drawnode " + drawNode.getId());
-
-
-        drawNode.highlight();
+    public void unhighlight(Map<String,Set<AbstractItem>> items){
+        items.get(ItemType.node).forEach(item->item.unhighlight());
+        items.get(ItemType.link).forEach(item->item.unhighlight());
+        items.get(ItemType.actuator).forEach(item->item.unhighlight());
+        items.get(ItemType.sensor).forEach(item->item.unhighlight());
     }
 
-    public void unhighlightNode(AbstractNode drawNode){
-        drawNode.unhighlight();
-    }
-
-    public void highlightLink(AbstractLink drawLink){
-        drawLink.highlight();
-    }
-
-    public void unhighlightLink(AbstractLink drawLink){
-        drawLink.unhighlight();
-    }
-
-    public void highlightSensor(DrawSensor drawSensor){
-        drawSensor.highlight();
-    }
-
-    public void unhighlightSensor(DrawSensor drawSensor){
-        drawSensor.unhighlight();
-    }
-
-    public void highlightActuator(AbstractActuator drawActuator){
-        drawActuator.highlight();
-    }
-
-    public void unhighlightActuator(AbstractActuator drawActuator){
-        drawActuator.unhighlight();
-    }
-
-    public void unhighlightAll(){
-        Graph graph = graphContainer.get_graph();
-        if(graph.getLinks()!=null)
-            graph.getLinks().forEach(x-> unhighlightLink(x));
-        if(graph.getNodes()!=null)
-            graph.getNodes().forEach(x-> unhighlightNode(x));
-        if(graph.getSensors()!=null)
-            graph.getSensors().forEach(x-> unhighlightSensor(x));
-        if(graph.getActuators()!=null)
-            graph.getActuators().forEach(x-> unhighlightActuator(x));
-    }
-
-//    public void highlight(Set<AbstractDrawLink> selectLinks, Set<AbstractDrawNode> selectNodes, Set<DrawSensor> selectSensors,Set<AbstractDrawActuator> selectActuators){
-//        unhighlightAll();
-//        selectLinks.forEach(x-> highlightLink(x));
-//        selectNodes.forEach(x-> highlightNode(x));
-//        selectSensors.forEach(x-> highlightSensor(x));
-//        selectActuators.forEach(x-> highlightActuator(x));
-//    }
-    public void highlight(Map<Class,Set<AbstractItem>> selection){
-        unhighlightAll();
-        for(Set<AbstractItem> X : selection.values())
-            X.forEach(x-> x.highlight());
-//        selectLinks.forEach(x-> highlightLink(x));
-//        selectNodes.forEach(x-> highlightNode(x));
-//        selectSensors.forEach(x-> highlightSensor(x));
-//        selectActuators.forEach(x-> highlightActuator(x));
+    public void highlight(Map<String,Set<AbstractItem>> items){
+        unhighlight(items);
+        items.get(ItemType.node).forEach(item->item.highlight());
+        items.get(ItemType.link).forEach(item->item.highlight());
+        items.get(ItemType.actuator).forEach(item->item.highlight());
+        items.get(ItemType.sensor).forEach(item->item.highlight());
     }
 
     /////////////////////////////////////////////////
@@ -493,26 +394,26 @@ public class GraphPaneController implements Initializable {
     // animation
     /////////////////////////////////////////////////
 
-    public void reset_link_color(){
-        for(AbstractLink drawLink : graphContainer.get_graph().drawlinks.values())
-            for (AbstractDrawLanegroup drawLanegroup : drawLink.draw_lanegroups)
-                drawLanegroup.unhighlight();
-    }
-
-    public void draw_link_state(AnimationInfo info,AbstractColormap colormap){
-
-        if(graphContainer==null)
-            return;
-        if(graphContainer.get_graph()==null)
-            return;
-
-        for(AbstractLink drawLink : graphContainer.get_graph().drawlinks.values()) {
-            AbstractLinkInfo linkInfo = info.link_info.get(drawLink.id);
-            for (AbstractDrawLanegroup drawLanegroup : drawLink.draw_lanegroups) {
-                drawLanegroup.draw_state(linkInfo.lanegroup_info.get(drawLanegroup.id), colormap);
-            }
-        }
-
-    }
+//    public void reset_link_color(){
+//        for(BaseLink drawLink : graphContainer.get_graph().drawlinks.values())
+//            for (LaneGroup drawLanegroup : drawLink.draw_lanegroups)
+//                drawLanegroup.unhighlight();
+//    }
+//
+//    public void draw_link_state(AnimationInfo info,AbstractColormap colormap){
+//
+//        if(graphContainer==null)
+//            return;
+//        if(graphContainer.get_graph()==null)
+//            return;
+//
+//        for(BaseLink drawLink : graphContainer.get_graph().drawlinks.values()) {
+//            AbstractLinkInfo linkInfo = info.link_info.get(drawLink.id);
+//            for (LaneGroup drawLanegroup : drawLink.draw_lanegroups) {
+//                drawLanegroup.draw_state(linkInfo.lanegroup_info.get(drawLanegroup.id), colormap);
+//            }
+//        }
+//
+//    }
 
 }

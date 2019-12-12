@@ -9,15 +9,15 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinkSpaceQ extends AbstractLink {
+public class LinkSpaceQ extends BaseLink {
 
-    public LinkSpaceQ(common.Link link, AbstractNode startNode, AbstractNode endNode, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme) throws OTMException {
-        super(link, startNode, endNode, lane_width, link_offset, road_color_scheme);
+    public LinkSpaceQ(common.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme) throws OTMException {
+        super(link, lane_width, link_offset, road_color_scheme);
     }
 
     @Override
-    public AbstractDrawLanegroup create_draw_lanegroup(BaseLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
-        return new DrawLanegroupSpaceQ(lg,midline,lateral_offset,long_offset,lane_width,road2euclid,color);
+    public LaneGroup create_draw_lanegroup(BaseLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
+        return new LaneGroupSpaceQ(lg,midline,lateral_offset,long_offset,lane_width,road2euclid,color);
     }
 
     @Override

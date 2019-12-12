@@ -3,29 +3,22 @@ package otmui.item;
 import error.OTMException;
 import otmui.utils.Arrow;
 import otmui.utils.Vector;
-import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Shape;
 import sensor.AbstractSensor;
 import sensor.FixedSensor;
 
-public class DrawSensor extends Group {
+public class BaseSensor extends AbstractPointItem {
 
-    public Long id;
     public Arrow geom;
-    public Shape shape;
 
-    protected static Color color1 = Color.DODGERBLUE;
-    protected static Color color2 = Color.RED;
+    public BaseSensor(){};
 
-    public DrawSensor() {
-        this.id = null;
-    }
+    public BaseSensor(AbstractSensor sensor, float lane_width, float link_offset) throws OTMException {
 
-    public DrawSensor(AbstractSensor sensor, float lane_width, float link_offset) throws OTMException {
-
-        this.id = sensor.id;
+        super(sensor.id,null,null);
+        color1 = Color.DODGERBLUE;
+        color2 = Color.RED;
 
         if(!(sensor instanceof FixedSensor))
             return;
@@ -73,32 +66,14 @@ public class DrawSensor extends Group {
         unhighlight();
     }
 
-    public void setView(Shape shape) {
-        this.shape = shape;
-        getChildren().clear();
-        getChildren().add(shape);
+    @Override
+    public String getPrefix() {
+        return "sensor";
     }
 
-    public double getXPos(){
-        return geom.start.x;
-    }
-
-    public double getYPos(){
-        return geom.start.y;
-    }
-
-    /** *****************
-     * Change color
-     ******************** */
-
-    public void highlight() {
-        if(shape!=null)
-            shape.setFill(color2);
-    }
-
-    public void unhighlight() {
-        if(shape!=null)
-            shape.setFill(color1);
+    @Override
+    public String getName() {
+        return String.format("sensor %d",id);
     }
 
     /** Starting from upstream node, traverse the link a distance x and return the resulting point.
@@ -141,4 +116,10 @@ public class DrawSensor extends Group {
 
         return P;
     }
+
+    @Override
+    public void set_size(float mysize) {
+        System.err.println("Sensor:set_size is not implemented");
+    }
+
 }

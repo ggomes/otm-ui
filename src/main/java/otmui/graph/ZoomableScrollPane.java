@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.transform.Scale;
+import otmui.ItemPool;
 
 public class ZoomableScrollPane extends ScrollPane {
 
@@ -59,9 +60,9 @@ public class ZoomableScrollPane extends ScrollPane {
         zoomTo(scaleValue*delta);
     }
 
-    public void zoomToFit(Graph graph) {
-        double scaleX = 0.95*getViewportBounds().getWidth() / graph.getWidth();
-        double scaleY = 0.95*getViewportBounds().getHeight() / graph.getHeight();
+    public void zoomToFit(ItemPool itempool) {
+        double scaleX = 0.95*getViewportBounds().getWidth() / itempool.getWidth();
+        double scaleY = 0.95*getViewportBounds().getHeight() / itempool.getHeight();
         zoomTo(Math.min(scaleX, scaleY));
     }
 

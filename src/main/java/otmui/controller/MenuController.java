@@ -2,11 +2,15 @@ package otmui.controller;
 
 import api.OTM;
 import api.OTMdev;
+import common.Node;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
+import otmui.GlobalParameters;
+import otmui.ItemPool;
 import otmui.MainApp;
-import otmui.Maps;
 import otmui.event.NewScenarioEvent;
 import otmui.event.ResetScenarioEvent;
+import otmui.item.*;
 import otmui.simulation.OTMTask;
 import otmui.view.ParametersWindow;
 import otmui.view.PlotRequestWindow;
@@ -20,9 +24,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import sensor.AbstractSensor;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class MenuController implements Initializable {
@@ -211,19 +219,58 @@ public class MenuController implements Initializable {
             throw new OTMException(e);
         }
 
+        // convert units
+        if (!myApp.otm.scenario.network.node_positions_in_meters)
+            convert_to_meters(myApp.otm);
+
         // get demand and split data
         myApp.demands = myApp.otm.otm.scenario.get_demands();
         myApp.splits = myApp.otm.otm.scenario.get_splits();
 
-        // Populate naming maps
-        Maps.populate(myApp.otm);
+        myApp.itempool = new ItemPool(myApp.otm,myApp.params);
 
-        // Fire new scenario event
+        // enable stuff
         enablePlots();
         enableParameters();
         enableRun();
-        menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(myApp.otm));
+
+        // Fire new scenario event
+        menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(myApp.otm,myApp.itempool));
 
     }
+
+
+    private static void convert_to_meters(OTMdev otm) {
+
+        Collection<Node> nodes = otm.scenario.network.nodes.values();
+        Collection<common.Link> links = otm.scenario.network.links.values();
+
+        double R = 6378137.0;  // Radius of Earth in meters
+        double conv = Math.PI / 180.0;
+        double clat = nodes.stream().mapToDouble(n -> n.ycoord).average().getAsDouble()* conv;
+        double clon = nodes.stream().mapToDouble(n -> n.xcoord).average().getAsDouble()* conv;
+        double cos2 = Math.pow(Math.cos(clat),2);
+
+        for(common.Node node : nodes){
+            double lon = node.xcoord * conv;
+            double lat = node.ycoord * conv;
+            double dx = Math.acos(1-cos2*(1-Math.cos(lon-clon)))*R;
+            node.xcoord = (float) (lon<clon ? -dx : dx);
+            node.ycoord = (float) ( (lat - clat) * R );
+        }
+
+        for(common.Link link : links){
+            for(common.Point point : link.shape){
+                double lon = point.x * conv;
+                double lat = point.y* conv;
+                double dx = Math.acos(1-cos2*(1-Math.cos(lon-clon)))*R;
+                point.x = (float) (lon<clon ? -dx : dx);
+                point.y = (float) ( (lat - clat) * R );
+            }
+        }
+
+        otm.scenario.network.node_positions_in_meters = true;
+    }
+
 
 }

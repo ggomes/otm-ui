@@ -5,12 +5,11 @@ import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
+import otmui.ItemPool;
+import otmui.ItemType;
 import otmui.controller.GraphPaneController;
-import otmui.item.AbstractNode;
 
 public class GraphContainer {
-
-    private Graph graph;
 
     // containers from highest to lowest
     public ZoomableScrollPane scrollPane;
@@ -68,36 +67,13 @@ public class GraphContainer {
         return scrollPane.getScaleValue();
     }
 
-    public void set_graph(Graph graph){
-        this.graph = graph;
+    public void set_items(ItemPool itempool){
         pane.getChildren().clear();
-        pane.getChildren().addAll(graph.getLinks());
-        pane.getChildren().addAll(graph.getNodes());
-        pane.getChildren().addAll(graph.getSensors());
-        pane.getChildren().addAll(graph.getActuators());
-        scrollPane.zoomToFit(graph);
+        pane.getChildren().addAll(itempool.items.get(ItemType.node).values());
+        pane.getChildren().addAll(itempool.items.get(ItemType.link).values());
+        pane.getChildren().addAll(itempool.items.get(ItemType.sensor).values());
+        pane.getChildren().addAll(itempool.items.get(ItemType.actuator).values());
+        scrollPane.zoomToFit(itempool);
     }
 
-    public Graph get_graph(){
-        return graph;
-    }
-
-
-    /////////////////////////////////////////////////
-    // setters
-    /////////////////////////////////////////////////
-
-    public void add_node(common.Node node){
-        AbstractNode drawNode = graph.makeDrawNode(node);
-//        node.drawNode = drawNode;
-        graph.drawnodes.put( drawNode.id, drawNode);
-        pane.getChildren().add(drawNode);
-    }
-
-//    public void add_link(Link link) throws OTMException {
-//        AbstractDrawLink drawLink = graph.makeDrawLink(link, lane_width_meters, link_offset, road_color_scheme, nodes);
-//        link.drawLink = drawLink;
-//        graph.links.put(drawLink.id, drawLink);
-//        pane.getChildren().add(drawLink);
-//    }
 }

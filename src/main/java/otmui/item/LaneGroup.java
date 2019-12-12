@@ -16,19 +16,19 @@ import java.util.stream.IntStream;
 import static java.util.Comparator.comparingDouble;
 import static java.util.stream.Collectors.toList;
 
-public abstract class AbstractDrawLanegroup {
+public abstract class LaneGroup {
 
     public Long id;
     public int lanes;
     public float lateral_offset;
-    public List<DrawCell> draw_cells = new ArrayList<>();
+    public List<Cell> draw_cells = new ArrayList<>();
 
     abstract public void unhighlight();
     abstract public void highlight(Color color);
     abstract public void set_temporary_color(Color color);
     abstract public void draw_state(AbstractLaneGroupInfo laneGroupInfo, AbstractColormap colormap);
 
-    public AbstractDrawLanegroup(BaseLaneGroup lg,float lateral_offset) {
+    public LaneGroup(BaseLaneGroup lg, float lateral_offset) {
         this.lanes = lg.num_lanes;
         this.id = lg.id;
         this.lateral_offset = lateral_offset;

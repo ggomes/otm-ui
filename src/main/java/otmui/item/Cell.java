@@ -8,17 +8,17 @@ import otmui.utils.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrawCell {
+public class Cell {
 
     public List<Arrow> arrows;
     public Polygon polygon;
     public Color mycolor;
 
-    public DrawCell(List<Arrow> midline, int ind, double lateral_offset, double length, double width,Color color){
+    public Cell(List<Arrow> midline, int ind, double lateral_offset, double length, double width, Color color){
 
         arrows = new ArrayList<>();
         double remaining = length;
-        while(ind<midline.size() && remaining>-AbstractLink.epsilon) {
+        while(ind<midline.size() && remaining>-BaseLink.epsilon) {
             Arrow a = midline.get(ind++);
             arrows.add(a);
             remaining -= a.distance_to_next;

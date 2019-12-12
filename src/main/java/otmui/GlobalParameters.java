@@ -29,20 +29,65 @@ public class GlobalParameters {
     public SimpleFloatProperty max_density_vpkpl    = new SimpleFloatProperty(null,"max_density_vpkpl",100f);   // [vpkpl] used for displaying MN states
 
     public GlobalParameters(Scene scene){
-        start_time.addListener(         e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
-        sim_dt.addListener(             e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
-        duration.addListener(           e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
-        sim_delay.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
-        link_offset.addListener(        e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
-        lane_width_meters.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
-        node_size.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODESHAPES)));
-        road_color_scheme.addListener(e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKCOLORS)));
-        max_density_vpkpl.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
-        view_nodes.addListener(         e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODESHAPES)));
-        view_actuators.addListener(     e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWACTUATORS)));
+//        start_time.addListener(         e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
+//        sim_dt.addListener(             e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
+//        duration.addListener(           e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
+//        sim_delay.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
+//        link_offset.addListener(        e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
+//        lane_width_meters.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
+//        node_size.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODESHAPES)));
+//        road_color_scheme.addListener(e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKCOLORS)));
+//        max_density_vpkpl.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
+//        view_nodes.addListener(         e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODESHAPES)));
+//        view_actuators.addListener(     e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWACTUATORS)));
     }
 
-    public AbstractColormap get_colormap(){
+    public float start_time(){
+        return start_time.floatValue();
+    }
+
+    public float sim_dt(){
+        return sim_dt.floatValue();
+    }
+
+    public float duration(){
+        return duration.floatValue();
+    }
+
+    public float sim_delay(){
+        return sim_delay.floatValue();
+    }
+
+    public float link_offset(){
+        return link_offset.floatValue();
+    }
+
+    public float lane_width_meters(){
+        return lane_width_meters.floatValue();
+    }
+
+    public float node_size(){
+        return node_size.floatValue();
+    }
+
+    public boolean view_nodes(){
+        return view_nodes.getValue();
+    }
+
+    public boolean view_actuators(){
+        return view_actuators.getValue();
+    }
+
+    public float max_density_vpkpl(){
+        return max_density_vpkpl.floatValue();
+    }
+
+
+    public RoadColorScheme road_color_scheme(){
+        return (RoadColorScheme) road_color_scheme.getValue();
+    }
+
+    public AbstractColormap road_colormap(){
         return new MatlabColormap(
                 this.max_density_vpkpl.floatValue() ,
                 (RoadColorScheme) this.road_color_scheme.getValue());

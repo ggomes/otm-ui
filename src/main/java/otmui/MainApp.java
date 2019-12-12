@@ -15,6 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
+import otmui.item.AbstractItem;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,16 +26,20 @@ import java.util.Set;
 
 public class MainApp extends Application {
 
+    // OTM holds the runnable scenario
     public OTMdev otm;  // runnable OTM scenario.
+
+    // app data
     public Map<Long,Set<DemandInfo>> demands;
     public Map<Long,Set<SplitInfo>> splits;
+    public ItemPool itempool;
 
     public Stage stage;
-
     public SelectionManager selectionManager;
+
+
     public MenuController menuController;
     public StatusBarController statusbarController;
-
     public TreeController treeController;
     public GraphPaneController graphpaneController;
     public DataPaneController datapaneController;
@@ -46,12 +51,6 @@ public class MainApp extends Application {
     /////////////////////////////////////////////////
 
     public static void main(String[] args) {
-        /**
-         * The main() method is ignored in correctly deployed JavaFX application.
-         * main() serves only as fallback in case the application can not be
-         * launched through deployment artifacts, e.g., in IDEs with limited FX
-         * support. NetBeans ignores main().
-         */
         launch(args);
     }
 
