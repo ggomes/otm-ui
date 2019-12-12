@@ -1,4 +1,4 @@
-package otmui.graph.item;
+package otmui.item;
 
 import models.BaseLaneGroup;
 import otmui.graph.color.AbstractColormap;
@@ -9,7 +9,7 @@ import output.animation.AbstractLaneGroupInfo;
 
 import java.util.List;
 
-public class DrawLanegroupSpaceQ extends AbstractDrawLanegroup  {
+public class DrawLanegroupSpaceQ extends AbstractDrawLanegroup {
 
     public DrawLanegroupSpaceQ(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
         super(alg,lateral_offset);

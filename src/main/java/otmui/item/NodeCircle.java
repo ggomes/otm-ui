@@ -1,12 +1,12 @@
-package otmui.graph.item;
+package otmui.item;
 
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
-public class DrawNodeCircle extends AbstractDrawNode {
+public class NodeCircle extends AbstractNode {
 
-    public DrawNodeCircle(Long id, Float xpos, Float ypos, float node_size, Paint fill, double stroke_width) {
+    public NodeCircle(Long id, Float xpos, Float ypos, float node_size, Paint fill, double stroke_width) {
         super( id,xpos,ypos);
 
         this.xpos -= node_size;
@@ -30,6 +30,8 @@ public class DrawNodeCircle extends AbstractDrawNode {
 
     @Override
     public void unhighlight() {
+
+        System.out.println("UNHIGHLIGHT node " + this.id);
         shape.setFill(Color.DODGERBLUE);
     }
 

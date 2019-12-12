@@ -1,9 +1,8 @@
-package otmui.graph.item;
+package otmui.item;
 
 import models.BaseLaneGroup;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import otmui.GlobalParameters;
 import otmui.graph.color.AbstractColormap;
 import otmui.utils.Arrow;
 import output.animation.AbstractLaneGroupInfo;

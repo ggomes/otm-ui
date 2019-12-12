@@ -1,10 +1,7 @@
-package otmui.graph.item;
+package otmui.item;
 
-import common.Link;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import otmui.GlobalParameters;
-import otmui.graph.color.AbstractColormap;
 import otmui.utils.Arrow;
 import otmui.utils.Vector;
 
@@ -21,7 +18,7 @@ public class DrawCell {
 
         arrows = new ArrayList<>();
         double remaining = length;
-        while(ind<midline.size() && remaining>-AbstractDrawLink.epsilon) {
+        while(ind<midline.size() && remaining>-AbstractLink.epsilon) {
             Arrow a = midline.get(ind++);
             arrows.add(a);
             remaining -= a.distance_to_next;

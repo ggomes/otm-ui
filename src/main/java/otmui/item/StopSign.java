@@ -1,12 +1,11 @@
-package otmui.graph.item;
+package otmui.item;
 
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 
-public class DrawStopSign extends AbstractDrawNode  {
+public class StopSign extends AbstractActuator {
 
-    public DrawStopSign(Long id, Float xpos, Float ypos, float r, double stroke_width) {
+    public StopSign(Long id, Float xpos, Float ypos, float r, double stroke_width) {
         super( id,xpos,ypos);
 
         this.xpos -= r;

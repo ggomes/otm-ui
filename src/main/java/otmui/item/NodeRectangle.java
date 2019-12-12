@@ -1,11 +1,11 @@
-package otmui.graph.item;
+package otmui.item;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class DrawNodeRectangle extends AbstractDrawNode {
+public class NodeRectangle extends AbstractNode {
 
-    public DrawNodeRectangle(Long id, Float xpos, Float ypos, float size) {
+    public NodeRectangle(Long id, Float xpos, Float ypos, float size) {
         super( id,xpos,ypos);
         Rectangle view = new Rectangle( size,size);
         view.setStroke(Color.DODGERBLUE);

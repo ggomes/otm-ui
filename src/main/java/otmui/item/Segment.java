@@ -1,4 +1,4 @@
-package otmui.graph.item;
+package otmui.item;
 
 import otmui.utils.Arrow;
 import otmui.utils.Vector;

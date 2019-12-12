@@ -1,4 +1,4 @@
-package otmui.graph.item;
+package otmui.item;
 
 import error.OTMException;
 import javafx.scene.paint.Color;
@@ -9,10 +9,9 @@ import otmui.utils.Arrow;
 import output.animation.AbstractLaneGroupInfo;
 import output.animation.macro.CellInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class DrawLaneGroupCTM extends AbstractDrawLanegroup  {
+public class DrawLaneGroupCTM extends AbstractDrawLanegroup {
 
     public double max_vehicles_per_cell;
     public double euclid_cell_length_m;

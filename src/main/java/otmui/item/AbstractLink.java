@@ -1,11 +1,10 @@
-package otmui.graph.item;
+package otmui.item;
 
 import geometry.Side;
 import otmui.GlobalParameters;
 import otmui.graph.color.AbstractColormap;
 import models.BaseLaneGroup;
 import error.OTMException;
-import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import otmui.utils.Arrow;
 import otmui.utils.Vector;
@@ -14,16 +13,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractDrawLink extends Group {
+public abstract class AbstractLink extends AbstractItem {
 
     public static float epsilon = 0.5f; // meters
     protected static Color color_highlight = Color.RED;
 
     public common.Link link;
-    public Long id;
     public List<AbstractDrawLanegroup> draw_lanegroups;
-    public AbstractDrawNode startNode;
-    public AbstractDrawNode endNode;
+    public AbstractNode startNode;
+    public AbstractNode endNode;
     public double max_vehicles;
 
     abstract List<Double> get_additional_midline_points();
@@ -32,7 +30,7 @@ public abstract class AbstractDrawLink extends Group {
     // construction
     /////////////////////////////////////////////////
 
-    public AbstractDrawLink(common.Link link, AbstractDrawNode startNode, AbstractDrawNode endNode, float lane_width, float link_offset, GlobalParameters.RoadColorScheme roadColorScheme) throws OTMException {
+    public AbstractLink(common.Link link, AbstractNode startNode, AbstractNode endNode, float lane_width, float link_offset, GlobalParameters.RoadColorScheme roadColorScheme) throws OTMException {
         this.link = link;
         this.id = link.getId();
         this.startNode = startNode;
@@ -169,10 +167,12 @@ public abstract class AbstractDrawLink extends Group {
         draw_lanegroups.forEach(x -> x.paintColor(color));
     }
 
+    @Override
     public void highlight() {
         draw_lanegroups.forEach(x -> x.highlight(color_highlight));
     }
 
+    @Override
     public void unhighlight() {
         draw_lanegroups.forEach(x -> x.unhighlight());
     }

@@ -1,4 +1,4 @@
-package otmui.graph.item;
+package otmui.item;
 
 import error.OTMException;
 import otmui.utils.Arrow;

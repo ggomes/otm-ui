@@ -1,4 +1,4 @@
-package otmui.graph.item;
+package otmui.item;
 
 import otmui.GlobalParameters;
 import models.BaseLaneGroup;
@@ -9,9 +9,9 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrawLinkSpaceQ extends AbstractDrawLink  {
+public class LinkSpaceQ extends AbstractLink {
 
-    public DrawLinkSpaceQ(common.Link link, AbstractDrawNode startNode, AbstractDrawNode endNode, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme) throws OTMException {
+    public LinkSpaceQ(common.Link link, AbstractNode startNode, AbstractNode endNode, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme) throws OTMException {
         super(link, startNode, endNode, lane_width, link_offset, road_color_scheme);
     }
 

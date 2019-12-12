@@ -1,27 +1,22 @@
-package otmui.graph.item;
+package otmui.item;
 
-import javafx.scene.Group;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
-public abstract class AbstractDrawNode extends Group {
+public abstract class AbstractNode extends AbstractItem {
 
     public enum DrawNodeShape { RECTANGLE, CIRCLE, OCTAGON }
 
-    public Long id;
     public Shape shape;
     public Double xpos;
     public Double ypos;
 
-    public AbstractDrawNode(Long _id, Float _xpos, Float _ypos) {
+    public AbstractNode(Long _id, Float _xpos, Float _ypos) {
         this.id = _id==null ? 0 : _id;
         this.xpos = _xpos==null ? 0d : _xpos.doubleValue();
         this.ypos = _ypos==null ? 0d : _ypos.doubleValue();
     }
 
     public abstract void set_size(float mysize);
-    public abstract void highlight();
-    public abstract void unhighlight();
 
     public void set_visible(boolean visible){
         this.shape.setVisible(visible);
