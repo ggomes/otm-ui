@@ -60,11 +60,10 @@ public class ZoomableScrollPane extends ScrollPane {
         zoomTo(scaleValue*delta);
     }
 
-    public void zoomToFit(Data itempool) {
-        System.out.println("COMMENTED: zoomToFit");
-//        double scaleX = 0.95*getViewportBounds().getWidth() / itempool.getWidth();
-//        double scaleY = 0.95*getViewportBounds().getHeight() / itempool.getHeight();
-//        zoomTo(Math.min(scaleX, scaleY));
+    public void zoomToFit(Data data) {
+        double scaleX = 0.95*getViewportBounds().getWidth() / data.getWidth();
+        double scaleY = 0.95*getViewportBounds().getHeight() / data.getHeight();
+        zoomTo(Math.min(scaleX, scaleY));
     }
 
     private class ZoomHandler implements EventHandler<ScrollEvent> {

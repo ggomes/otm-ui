@@ -33,7 +33,7 @@ public class StatusBarController {
         this.myApp = myApp;
 
         Scene scene = myApp.stage.getScene();
-        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.itempool) );
+        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.data) );
     }
 
     public void loadScenario(Data itempool){
@@ -58,13 +58,13 @@ public class StatusBarController {
     }
 
     public void setText(Map<ItemType,Set<AbstractItem>> selection){
-        String str = "links {" +
+        String str = "link {" +
                 OTMUtils.comma_format(selection.get(ItemType.link).stream().map(x->x.id).collect(toList())) +
-                "} , nodes {" +
+                "} , node {" +
                 OTMUtils.comma_format(selection.get(ItemType.node).stream().map(x->x.id).collect(toList())) +
-                "} , sensors {" +
+                "} , sensor {" +
                 OTMUtils.comma_format(selection.get(ItemType.sensor).stream().map(x->x.id).collect(toList())) +
-                "}, actuators {" +
+                "}, actuator {" +
                 OTMUtils.comma_format(selection.get(ItemType.actuator).stream().map(x->x.id).collect(toList())) +
                 "}";
         this.statusBar.setText(str);

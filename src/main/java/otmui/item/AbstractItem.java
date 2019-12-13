@@ -1,6 +1,5 @@
 package otmui.item;
 
-import javafx.scene.Group;
 import otmui.ItemType;
 
 public abstract class AbstractItem {

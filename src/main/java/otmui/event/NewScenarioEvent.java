@@ -9,14 +9,14 @@ import otmui.Data;
 public class NewScenarioEvent extends Event {
 
     public OTMdev otm;
-    public Data itempool;
+    public Data data;
 
     public static final EventType<NewScenarioEvent> SCENARIO_LOADED = new EventType<>(Event.ANY, "SCENARIO_LOADED");
 
-    public NewScenarioEvent(OTMdev otm, Data itempool) {
+    public NewScenarioEvent(OTMdev otm, Data data) {
         super(SCENARIO_LOADED);
         this.otm = otm;
-        this.itempool = itempool;
+        this.data = data;
     }
 
     @Override

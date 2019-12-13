@@ -8,7 +8,7 @@ import otmui.Data;
 
 public class ParameterChange extends Event {
 
-    public Data itempool;
+    public Data data;
     public GlobalParameters params;
 
     public static final EventType<ParameterChange> SIMULATION = new EventType<>(Event.ANY, "Simulation");
@@ -19,9 +19,9 @@ public class ParameterChange extends Event {
     public static final EventType<ParameterChange> DRAWNODECOLORS = new EventType<>(Event.ANY, "Draw node colors");
     public static final EventType<ParameterChange> DRAWACTUATORS = new EventType<>(Event.ANY, "Draw actuators");
 
-    public ParameterChange(EventType<? extends Event> eventType, Data itempool, GlobalParameters params) {
+    public ParameterChange(EventType<? extends Event> eventType, Data data, GlobalParameters params) {
         super(eventType);
-        this.itempool = itempool;
+        this.data = data;
         this.params = params;
     }
 

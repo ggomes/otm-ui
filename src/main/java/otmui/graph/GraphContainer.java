@@ -11,7 +11,6 @@ import otmui.controller.GraphPaneController;
 import otmui.item.AbstractGraphItem;
 
 import java.util.Collection;
-import java.util.Set;
 
 public class GraphContainer {
 
@@ -71,13 +70,10 @@ public class GraphContainer {
         return scrollPane.getScaleValue();
     }
 
-    public void set_items(Data itempool){
+    public void set_items(Data data){
         pane.getChildren().clear();
-        pane.getChildren().addAll((Collection) itempool.items.get(ItemType.node).values());
-        pane.getChildren().addAll((Collection) itempool.items.get(ItemType.link).values());
-        pane.getChildren().addAll((Collection) itempool.items.get(ItemType.sensor).values());
-        pane.getChildren().addAll((Collection) itempool.items.get(ItemType.actuator).values());
-        scrollPane.zoomToFit(itempool);
+        pane.getChildren().addAll(data.getShapes());
+        scrollPane.zoomToFit(data);
     }
 
 }

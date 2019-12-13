@@ -2,8 +2,6 @@ package otmui.controller;
 
 import java.util.*;
 
-import actuator.AbstractActuator;
-import api.OTMdev;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import otmui.Data;
@@ -11,15 +9,12 @@ import otmui.ItemType;
 import otmui.MainApp;
 import otmui.event.*;
 import otmui.item.AbstractItem;
-import commodity.Subnetwork;
-import control.AbstractController;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import sensor.AbstractSensor;
 
 public class TreeController {
 
@@ -40,108 +35,129 @@ public class TreeController {
         scenariotree.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         Scene scene = myApp.stage.getScene();
-        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.otm) );
+        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.data) );
         scene.addEventFilter(NewElementEvent.NEW_NODE, e->add_node(e.item));
-        scene.addEventFilter(DeleteElementEvent.REMOVE_LINK, e->remove_link((common.Link)e.item));
+//        scene.addEventFilter(DeleteElementEvent.REMOVE_LINK, e->remove_link((common.Link)e.item));
     }
 
     /////////////////////////////////////////////////
     // event handlers
     /////////////////////////////////////////////////
 
-    private void loadScenario(OTMdev otm){
+    private void loadScenario(Data data){
         tree = new HashMap<>();
 
         // populate the tree
         TreeItem<String> rootItem = new TreeItem<>("scenario");
         rootItem.setExpanded(false);
 
-        // commodities
-        TreeItem<String> comms_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.commodity));
-        Map<Long,TreeItem<String>> comms_map = new HashMap<>();
-        tree.put(ItemType.commodity,comms_map);
-        rootItem.getChildren().add(comms_tree);
-        for (commodity.Commodity comm : otm.scenario.commodities.values()) {
-            TreeItem item  =new TreeItem<>(Data.getName(comm));
-            comms_map.put(comm.getId(),item);
-            comms_tree.getChildren().add(item);
-        }
+////////////////////////
+        for(ItemType type : ItemType.values()){
 
-        // links
-        TreeItem<String> links_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.link));
-        Map<Long,TreeItem<String>> links_map = new HashMap<>();
-        tree.put(ItemType.link,links_map);
-        rootItem.getChildren().add(links_tree);
-//        List<common.Link> links = new ArrayList<>();
-//        links.addAll(otm.scenario.network.links.values());
-        // TODO Collections.sort(links);
-        for (common.Link link : otm.scenario.network.links.values()) {
-            TreeItem item  =new TreeItem<>(Data.getName(link));
-            links_map.put(link.getId(),item);
-            links_tree.getChildren().add(item);
-        }
+            if(!data.items.containsKey(type))
+                continue;
 
-        // subnetwork
-        TreeItem<String> subnets_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.subnetwork));
-        Map<Long,TreeItem<String>> subnets_map = new HashMap<>();
-        tree.put(ItemType.subnetwork,subnets_map);
-        rootItem.getChildren().add(subnets_tree);
-        for (Subnetwork subnet : otm.scenario.subnetworks.values()) {
-            TreeItem item  =new TreeItem<>(Data.getName(subnet));
-            subnets_map.put(subnet.getId(),item);
-            subnets_tree.getChildren().add(item);
-        }
+            // dont put nodes in the tree
+            if(type.equals(ItemType.node))
+                continue;
 
-        // demands
-//        TreeItem<String> demands_tree = new TreeItem<>(ItemPool.itemNames.AtoB(ItemType.demand));
-//        Map<Long,TreeItem<String>> demands_map = new HashMap<>();
-//        tree.put(ItemType.demand,demands_map);
-//        rootItem.getChildren().add(demands_tree);
-//        for (AbstractDemandProfile profile : otm.scenario.data_demands.values()) {
-//            TreeItem item  =new TreeItem<>(ItemPool.getName(profile));
-//            demands_map.put(profile.source.link.getId(),item);
-//            demands_tree.getChildren().add(item);
+            TreeItem<String> treebranch = new TreeItem<>(Data.itemNames.AtoB(type));
+            Map<Long,TreeItem<String>> leaves = new HashMap<>();
+            tree.put(type,leaves);
+            rootItem.getChildren().add(treebranch);
+
+            for (AbstractItem x : data.items.get(type).values()) {
+                TreeItem item = new TreeItem<>(x.getName());
+                leaves.put(x.id, item);
+                treebranch.getChildren().add(item);
+            }
+        }
+        ////////////////////////
+
+
+//        // commodities
+//        TreeItem<String> comms_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.commodity));
+//        Map<Long,TreeItem<String>> comms_map = new HashMap<>();
+//        tree.put(ItemType.commodity,comms_map);
+//        rootItem.getChildren().add(comms_tree);
+//        for (AbstractItem comm : data.items.get(ItemType.commodity).values()) {
+//            TreeItem item  = new TreeItem<>(comm.getName());
+//            comms_map.put(comm.id,item);
+//            comms_tree.getChildren().add(item);
 //        }
-
-        // TODO splitsForNode
-//        spt = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.SPLIT));
-//        tree.put(ItemType.,);
-//        rootItem.getChildren().add(spt);
-//        for (SplitsForNode s : scenario.getSplits())
-//            spt.getChildren().add(new TreeItem<>(Maps.name2splitid.getFromSecond(s.getId())));
-
-        // actuators
-        TreeItem<String> actuators_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.actuator));
-        Map<Long,TreeItem<String>> actuators_map = new HashMap<>();
-        tree.put(ItemType.actuator,actuators_map);
-        rootItem.getChildren().add(actuators_tree);
-        for (AbstractActuator act : otm.scenario.actuators.values()) {
-            TreeItem item  =new TreeItem<>(Data.getName(act));
-            actuators_map.put(act.getId(),item);
-            actuators_tree.getChildren().add(new TreeItem<>(Data.getName(act)));
-        }
-
-        // controllers
-        TreeItem<String> controllers_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.controller));
-        Map<Long,TreeItem<String>> controllers_map = new HashMap<>();
-        tree.put(ItemType.controller,controllers_map);
-        rootItem.getChildren().add(controllers_tree);
-        for(AbstractController cntr : otm.scenario.controllers.values()) {
-            TreeItem item  =new TreeItem<>(Data.getName(cntr));
-            controllers_map.put(cntr.getId(),item);
-            controllers_tree.getChildren().add(new TreeItem<>(Data.getName(cntr)));
-        }
-
-        // sensors
-        TreeItem<String> sensors_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.sensor));
-        Map<Long,TreeItem<String>> sensors_map = new HashMap<>();
-        tree.put(ItemType.sensor,sensors_map);
-        rootItem.getChildren().add(sensors_tree);
-        for (AbstractSensor sens : otm.scenario.sensors.values()) {
-            TreeItem item = new TreeItem<>(Data.getName(sens));
-            sensors_map.put(sens.getId(), item);
-            sensors_tree.getChildren().add(new TreeItem<>(Data.getName(sens)));
-        }
+//
+//        // links
+//        TreeItem<String> links_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.link));
+//        Map<Long,TreeItem<String>> links_map = new HashMap<>();
+//        tree.put(ItemType.link,links_map);
+//        rootItem.getChildren().add(links_tree);
+//        for (AbstractItem link : data.items.get(ItemType.link).values()) {
+//            TreeItem item  =new TreeItem<>(link.getName());
+//            links_map.put(link.id,item);
+//            links_tree.getChildren().add(item);
+//        }
+//
+//        // subnetwork
+//        TreeItem<String> subnets_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.subnetwork));
+//        Map<Long,TreeItem<String>> subnets_map = new HashMap<>();
+//        tree.put(ItemType.subnetwork,subnets_map);
+//        rootItem.getChildren().add(subnets_tree);
+//        for (AbstractItem subnet : data.items.get(ItemType.subnetwork).values()) {
+//            TreeItem item  =new TreeItem<>(Data.getName(subnet));
+//            subnets_map.put(subnet.id,item);
+//            subnets_tree.getChildren().add(item);
+//        }
+//
+//        // demands
+////        TreeItem<String> demands_tree = new TreeItem<>(ItemPool.itemNames.AtoB(ItemType.demand));
+////        Map<Long,TreeItem<String>> demands_map = new HashMap<>();
+////        tree.put(ItemType.demand,demands_map);
+////        rootItem.getChildren().add(demands_tree);
+////        for (AbstractDemandProfile profile : otm.scenario.data_demands.values()) {
+////            TreeItem item  =new TreeItem<>(ItemPool.getName(profile));
+////            demands_map.put(profile.source.link.getId(),item);
+////            demands_tree.getChildren().add(item);
+////        }
+//
+//        // TODO splitsForNode
+////        spt = new TreeItem<>(Maps.elementName.getFromFirst(ElementType.SPLIT));
+////        tree.put(ItemType.,);
+////        rootItem.getChildren().add(spt);
+////        for (SplitsForNode s : scenario.getSplits())
+////            spt.getChildren().add(new TreeItem<>(Maps.name2splitid.getFromSecond(s.getId())));
+//
+//        // actuators
+//        TreeItem<String> actuators_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.actuator));
+//        Map<Long,TreeItem<String>> actuators_map = new HashMap<>();
+//        tree.put(ItemType.actuator,actuators_map);
+//        rootItem.getChildren().add(actuators_tree);
+//        for (AbstractActuator act : otm.scenario.actuators.values()) {
+//            TreeItem item  =new TreeItem<>(Data.getName(act));
+//            actuators_map.put(act.getId(),item);
+//            actuators_tree.getChildren().add(new TreeItem<>(Data.getName(act)));
+//        }
+//
+//        // controllers
+//        TreeItem<String> controllers_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.controller));
+//        Map<Long,TreeItem<String>> controllers_map = new HashMap<>();
+//        tree.put(ItemType.controller,controllers_map);
+//        rootItem.getChildren().add(controllers_tree);
+//        for(AbstractController cntr : otm.scenario.controllers.values()) {
+//            TreeItem item  =new TreeItem<>(Data.getName(cntr));
+//            controllers_map.put(cntr.getId(),item);
+//            controllers_tree.getChildren().add(new TreeItem<>(Data.getName(cntr)));
+//        }
+//
+//        // sensors
+//        TreeItem<String> sensors_tree = new TreeItem<>(Data.itemNames.AtoB(ItemType.sensor));
+//        Map<Long,TreeItem<String>> sensors_map = new HashMap<>();
+//        tree.put(ItemType.sensor,sensors_map);
+//        rootItem.getChildren().add(sensors_tree);
+//        for (AbstractSensor sens : otm.scenario.sensors.values()) {
+//            TreeItem item = new TreeItem<>(Data.getName(sens));
+//            sensors_map.put(sens.getId(), item);
+//            sensors_tree.getChildren().add(new TreeItem<>(Data.getName(sens)));
+//        }
 
         scenariotree.setRoot(rootItem);
 
@@ -218,14 +234,14 @@ public class TreeController {
     }
 
 
-    public void add_link(common.Link link){
-//        links_tree.getChildren().add(new TreeItem<>(ItemPool.getName(link)));
-    }
+//    public void add_link(common.Link link){
+////        links_tree.getChildren().add(new TreeItem<>(ItemPool.getName(link)));
+//    }
 
-    public void remove_link(common.Link link){
-        TreeItem item = new TreeItem<>(Data.getName(link));
-//        links_tree.getChildren().remove(item);
-    }
+//    public void remove_link(common.Link link){
+//        TreeItem item = new TreeItem<>(link.get);
+////        links_tree.getChildren().remove(item);
+//    }
 
     /////////////////////////////////////////////////
     // focusing and hihglighting

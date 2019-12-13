@@ -41,12 +41,8 @@ public abstract class AbstractGraphItem extends AbstractItem {
 
     public void setShape(Shape shape){
         shapegroup.getChildren().clear();
-        addShape(shape);
-    }
-
-    public void addShape(Shape shape) {
         shapegroup.getChildren().add(shape);
-        shapegroup.relocate(xpos,ypos);
+        shape.relocate(xpos,ypos);
     }
 
     public void addShapes(Set<Shape> shapes) {

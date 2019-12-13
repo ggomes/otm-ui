@@ -41,7 +41,7 @@ public class GraphPaneController {
         // events
         Scene scene = myApp.stage.getScene();
 
-        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.itempool) );
+        scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.data) );
 
 //        scene.addEventFilter(DeleteElementEvent.REMOVE_LINK, e->remove_link((common.Link)e.item));
 //        scene.addEventFilter(DeleteElementEvent.REMOVE_NODE, e->remove_node((common.Node)e.item));
@@ -54,10 +54,10 @@ public class GraphPaneController {
 
     }
 
-    public void loadScenario(Data itempool) {
+    public void loadScenario(Data data) {
 
        // put all items into the pane
-        graphContainer.set_items(itempool);
+        graphContainer.set_items(data);
 
         // set visibility
 //            if(!view_nodes)
@@ -67,7 +67,7 @@ public class GraphPaneController {
 //                itempool.items.get(ItemType.actuator).forEach(x -> x.set_visible(false));
 
         // enable click of nodes, and recenter on the canvas
-        for (AbstractItem node : itempool.items.get(ItemType.node).values()) {
+        for (AbstractItem node : data.items.get(ItemType.node).values()) {
             ((AbstractGraphItem)node).shapegroup.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     switch(mouseEvent.getClickCount()) {
@@ -83,7 +83,7 @@ public class GraphPaneController {
         }
 
         // enable click of links
-        for (AbstractItem link : itempool.items.get(ItemType.link).values()) {
+        for (AbstractItem link : data.items.get(ItemType.link).values()) {
             ((AbstractGraphItem)link).shapegroup.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     switch(mouseEvent.getClickCount()){
@@ -99,7 +99,7 @@ public class GraphPaneController {
         }
 
         // enable click of drawActuator
-        for (AbstractItem actuator : itempool.items.get(ItemType.actuator).values()) {
+        for (AbstractItem actuator : data.items.get(ItemType.actuator).values()) {
             ((AbstractGraphItem)actuator).shapegroup.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     switch(mouseEvent.getClickCount()){
@@ -115,7 +115,7 @@ public class GraphPaneController {
         }
 
         // enable click of drawSensor
-        for (AbstractItem sensor : itempool.items.get(ItemType.sensor).values()) {
+        for (AbstractItem sensor : data.items.get(ItemType.sensor).values()) {
             ((AbstractGraphItem)sensor).shapegroup.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     switch(mouseEvent.getClickCount()){
@@ -267,8 +267,6 @@ public class GraphPaneController {
             for(common.Node node : nodes)
                 ScenarioModification.delete_node(myApp,node);
 
-//        // delete nodes from ui
-//        Graph graph = graphContainer.get_graph();
 //
 //        graphContainer.pane.getChildren().removeAll(nodes.stream().map(n->n.drawNode).collect(Collectors.toSet()));
 
@@ -289,49 +287,39 @@ public class GraphPaneController {
     // modifiication
     /////////////////////////////////////////////////
 
-    public void remove_link(common.Link link){
+//    public void remove_link(common.Link link){
 //        if(graphContainer.get_graph().drawlinks.containsKey(link.getId())){
 //            BaseLink drawLink = graphContainer.get_graph().drawlinks.get(link.getId());
 //            graphContainer.pane.getChildren().remove(drawLink);
 //            graphContainer.get_graph().drawlinks.remove(drawLink);
 //        }
-    }
+//    }
 
-    public void remove_node(common.Node node){
+//    public void remove_node(common.Node node){
 //        if(graphContainer.get_graph().drawnodes.containsKey(node.getId())){
 //            BaseNode drawNode = graphContainer.get_graph().drawnodes.get(node.getId());
 //            graphContainer.pane.getChildren().remove(drawNode);
 //            graphContainer.get_graph().drawnodes.remove(node.getId());
 //        }
-    }
+//    }
 
     /////////////////////////////////////////////////
     // highlighting
     /////////////////////////////////////////////////
 
     public void unhighlightAll(){
-        System.out.println("COMMENTED: unhighlightAll");
-
-//        myApp.data.items.values().forEach(s->s.values().forEach(x->x.unhighlight()));
-    }
-
-    public void unhighlight(Map<ItemType,Set<AbstractItem>> items){
-        System.out.println("COMMENTED: unhighlight");
-
-//        items.get(ItemType.node).forEach(item->item.unhighlight());
-//        items.get(ItemType.link).forEach(item->item.unhighlight());
-//        items.get(ItemType.actuator).forEach(item->item.unhighlight());
-//        items.get(ItemType.sensor).forEach(item->item.unhighlight());
+        myApp.data.items.get(ItemType.node).values().forEach(x->((AbstractGraphItem)x).unhighlight());
+        myApp.data.items.get(ItemType.link).values().forEach(x->((AbstractGraphItem)x).unhighlight());
+        myApp.data.items.get(ItemType.actuator).values().forEach(x->((AbstractGraphItem)x).unhighlight());
+        myApp.data.items.get(ItemType.sensor).values().forEach(x->((AbstractGraphItem)x).unhighlight());
     }
 
     public void highlight(Map<ItemType,Set<AbstractItem>> items){
-        System.out.println("COMMENTED: highlight");
-
-//        unhighlightAll();
-//        items.get(ItemType.node).forEach(item->item.highlight());
-//        items.get(ItemType.link).forEach(item->item.highlight());
-//        items.get(ItemType.actuator).forEach(item->item.highlight());
-//        items.get(ItemType.sensor).forEach(item->item.highlight());
+        unhighlightAll();
+        items.get(ItemType.node).forEach(x->((AbstractGraphItem)x).highlight());
+        items.get(ItemType.link).forEach(x->((AbstractGraphItem)x).highlight());
+        items.get(ItemType.actuator).forEach(x->((AbstractGraphItem)x).highlight());
+        items.get(ItemType.sensor).forEach(x->((AbstractGraphItem)x).highlight());
     }
 
     /////////////////////////////////////////////////

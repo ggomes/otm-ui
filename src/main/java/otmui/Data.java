@@ -1,51 +1,45 @@
 package otmui;
 
-import actuator.AbstractActuator;
 import api.OTMdev;
-import api.info.DemandInfo;
-import api.info.SplitInfo;
-import commodity.Subnetwork;
-import control.AbstractController;
+import commodity.Path;
 import error.OTMException;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
+import keys.DemandType;
+import keys.KeyCommodityDemandTypeId;
 import otmui.item.*;
 import otmui.utils.BijectiveMap;
 import profiles.AbstractDemandProfile;
 import sensor.AbstractSensor;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static java.util.stream.Collectors.toSet;
 
 public class Data {
 
     public static BijectiveMap<ItemType, String> itemNames = new BijectiveMap();
 
     static {
-        itemNames.put(ItemType.link, "links");
-        itemNames.put(ItemType.commodity, "vehicle types");
-        itemNames.put(ItemType.subnetwork, "subnetworks");
-        itemNames.put(ItemType.demand, "demands");
-        itemNames.put(ItemType.split, "splits");
-        itemNames.put(ItemType.actuator, "actuators");
-        itemNames.put(ItemType.controller, "controllers");
-        itemNames.put(ItemType.sensor, "sensors");
+        itemNames.put(ItemType.node, "node");
+        itemNames.put(ItemType.link, "link");
+        itemNames.put(ItemType.commodity, "type");
+        itemNames.put(ItemType.subnetwork, "subnetwork");
+        itemNames.put(ItemType.demand, "demand");
+        itemNames.put(ItemType.split, "split");
+        itemNames.put(ItemType.actuator, "actuator");
+        itemNames.put(ItemType.controller, "controller");
+        itemNames.put(ItemType.sensor, "sensor");
     }
-
-    public Map<Long, Set<DemandInfo>> demands;
-    public Map<Long,Set<SplitInfo>> splits;
 
     // items contains, for each item type (link, node, etc), a map id->object
     public Map<ItemType, Map<Long,AbstractItem>> items;
 
-    ///////////////
+    /////////////////////////////////////////////////
     // construction
-    ///////////////
+    /////////////////////////////////////////////////
 
     public Data(OTMdev otm, GlobalParameters params) throws OTMException {
-
-        demands = otm.otm.scenario.get_demands();
-        splits = otm.otm.scenario.get_splits();
 
         float node_size = params.node_size.floatValue();
         float lane_width_meters = params.lane_width_meters.getValue();
@@ -54,29 +48,101 @@ public class Data {
 
         items = new HashMap<>();
 
-        // create nodes
-        Map<Long, AbstractItem> nodes = new HashMap<>();
-        items.put(ItemType.node,nodes);
-        for(common.Node node : otm.scenario.network.nodes.values())
-            nodes.put(node.getId(), makeDrawNode(node,node_size));
-
-        // create links
+        // links
         Map<Long, AbstractItem> links = new HashMap<>();
         items.put(ItemType.link,links);
         for(common.Link link : otm.scenario.network.links.values())
             links.put(link.getId(), makeDrawLink(link, lane_width_meters, link_offset, road_color_scheme));
 
-        // create actuators
+        // nodes
+        Map<Long, AbstractItem> nodes = new HashMap<>();
+        items.put(ItemType.node,nodes);
+        for(common.Node node : otm.scenario.network.nodes.values())
+            nodes.put(node.getId(), makeDrawNode(node,node_size));
+
+        // actuators
         Map<Long, AbstractItem> actuators = new HashMap<>();
         items.put(ItemType.actuator,actuators);
         for (actuator.AbstractActuator actuator : otm.scenario.actuators.values())
             actuators.put(actuator.getId(),makeDrawActuator(otm,actuator,((float)node_size)*0.7f));
 
-        // create sensors
+        // sensors
         Map<Long, AbstractItem> sensors = new HashMap<>();
         items.put(ItemType.sensor,sensors);
         for (AbstractSensor sensor : otm.scenario.sensors.values())
             sensors.put(sensor.getId(),makeDrawSensor(sensor, lane_width_meters, link_offset));
+
+        // controllers
+        Map<Long, AbstractItem> controllers = new HashMap<>();
+        items.put(ItemType.controller,controllers);
+        for (control.AbstractController ctrl : otm.scenario.controllers.values())
+            controllers.put(ctrl.getId(),new otmui.item.Controller(ctrl));
+
+        // commodities
+        Map<Long, AbstractItem> commodities = new HashMap<>();
+        items.put(ItemType.commodity,commodities);
+        for (commodity.Commodity comm : otm.scenario.commodities.values())
+            commodities.put(comm.getId(),new otmui.item.Commodity(comm));
+
+        // subnetworks
+        Map<Long, AbstractItem> subnetworks = new HashMap<>();
+        items.put(ItemType.subnetwork,subnetworks);
+        for (commodity.Subnetwork subnet : otm.scenario.subnetworks.values())
+            subnetworks.put(subnet.getId(),new otmui.item.Subnetwork(subnet));
+
+        // demands
+        for (Map.Entry<KeyCommodityDemandTypeId, AbstractDemandProfile> e : otm.scenario.data_demands.entrySet()){
+
+            long link_or_subnetwork_id = e.getKey().link_or_subnetwork_id;
+            DemandType demandType = e.getKey().demandType;
+
+            Long link_id;
+            if(demandType.equals(DemandType.pathfull)){
+                commodity.Subnetwork subnetwork = otm.scenario.subnetworks.get(link_or_subnetwork_id);
+                link_id = subnetwork.is_path ? ((Path)subnetwork).ordered_links.get(0).getId() : null;
+            } else
+                link_id = link_or_subnetwork_id;
+
+            if(link_id==null)
+                continue;
+
+            ((Link)items.get(ItemType.link).get(link_id)).add_demand(e.getKey().commodity_id,e.getValue());
+        }
+
+        // splits
+        for (common.Node cnode : otm.scenario.network.nodes.values())
+            if(cnode.splits!=null)
+                ((otmui.item.Node) items.get(ItemType.node).get(cnode.getId())).splits = cnode.splits;
+
+    }
+
+    /////////////////////////////////////////////////
+    // get
+    /////////////////////////////////////////////////
+
+    public Collection<Shape> getShapes(){
+        Set<Shape> allshapes = new HashSet<>();
+        allshapes.addAll(items.get(ItemType.node).values().stream()
+                .flatMap(x->((AbstractGraphItem)x).shapegroup.getChildren().stream())
+                .map(x->(Shape)x)
+                .collect(toSet()) );
+
+        allshapes.addAll(items.get(ItemType.link).values().stream()
+                .flatMap(x->((AbstractGraphItem)x).shapegroup.getChildren().stream())
+                .map(x->(Shape)x)
+                .collect(toSet()) );
+
+        allshapes.addAll(items.get(ItemType.actuator).values().stream()
+                .flatMap(x->((AbstractGraphItem)x).shapegroup.getChildren().stream())
+                .map(x->(Shape)x)
+                .collect(toSet()) );
+
+        allshapes.addAll(items.get(ItemType.sensor).values().stream()
+                .flatMap(x->((AbstractGraphItem)x).shapegroup.getChildren().stream())
+                .map(x->(Shape)x)
+                .collect(toSet()) );
+
+        return allshapes;
     }
 
     /////////////////////////////////////////////////
@@ -139,13 +205,6 @@ public class Data {
         return new FixedSensor(sensor, lane_width, link_offset);
     }
 
-//    public void clear() {
-//        drawnodes = new HashMap<>(); // <id,item>
-//        drawlinks = new HashMap<>(); // <id,item>
-//        drawactuators = new HashMap<>(); // <id,item>
-//        drawsensors = new HashMap<>(); // <id,item>
-//    }
-
     ///////////////
     // get Name
     ///////////////
@@ -154,33 +213,33 @@ public class Data {
         return String.format("%s %d", item.getName(), item.id);
     }
 
-    public static String getName(commodity.Commodity item) {
-        return String.format("%s %d", itemNames.AtoB(ItemType.commodity), item.getId());
-    }
-
-    public static String getName(common.Link item) {
-        return String.format("%s %d", itemNames.AtoB(ItemType.link), item.getId());
-    }
-
-    public static String getName(Subnetwork item) {
-        return String.format("%s %d", itemNames.AtoB(ItemType.subnetwork), item.getId());
-    }
-
-    public static String getName(AbstractDemandProfile item) {
-        return String.format("%s %d", itemNames.AtoB(ItemType.demand), item.source.link.getId());
-    }
-
-    public static String getName(AbstractActuator item) {
-        return String.format("%s %d", itemNames.AtoB(ItemType.actuator), item.getId());
-    }
-
-    public static String getName(AbstractController item) {
-        return String.format("%s %d", itemNames.AtoB(ItemType.controller), item.getId());
-    }
-
-    public static String getName(AbstractSensor item) {
-        return String.format("%s %d", itemNames.AtoB(ItemType.sensor), item.getId());
-    }
+//    public static String getName(commodity.Commodity item) {
+//        return String.format("%s %d", itemNames.AtoB(ItemType.commodity), item.getId());
+//    }
+//
+//    public static String getName(common.Link item) {
+//        return String.format("%s %d", itemNames.AtoB(ItemType.link), item.getId());
+//    }
+//
+//    public static String getName(Subnetwork item) {
+//        return String.format("%s %d", itemNames.AtoB(ItemType.subnetwork), item.getId());
+//    }
+//
+//    public static String getName(AbstractDemandProfile item) {
+//        return String.format("%s %d", itemNames.AtoB(ItemType.demand), item.source.link.getId());
+//    }
+//
+//    public static String getName(AbstractActuator item) {
+//        return String.format("%s %d", itemNames.AtoB(ItemType.actuator), item.getId());
+//    }
+//
+//    public static String getName(AbstractController item) {
+//        return String.format("%s %d", itemNames.AtoB(ItemType.controller), item.getId());
+//    }
+//
+//    public static String getName(AbstractSensor item) {
+//        return String.format("%s %d", itemNames.AtoB(ItemType.sensor), item.getId());
+//    }
 
     public TypeId getTypeId(String itemName) {
         return new TypeId(itemName);
@@ -197,40 +256,31 @@ public class Data {
     /////////////////////////////////
 
     public Double getMinX(){
-        System.out.println("COMMENTED: getMinX");
-        return 0d;
-
-//        return items.get(ItemType.node).values().stream()
-//                .mapToDouble(n->((AbstractPointItem)n).xpos)
-//                .min()
-//                .getAsDouble();
+        return items.get(ItemType.node).values().stream()
+                .mapToDouble(n->((AbstractGraphItem)n).xpos)
+                .min()
+                .getAsDouble();
     }
 
     public Double getMinY(){
-        System.out.println("COMMENTED: getMinY");
-        return 0d;
-//        return items.get(ItemType.node).values().stream()
-//                .mapToDouble(n->((AbstractPointItem)n).ypos)
-//                .min()
-//                .getAsDouble();
+        return items.get(ItemType.node).values().stream()
+                .mapToDouble(n->((AbstractGraphItem)n).ypos)
+                .min()
+                .getAsDouble();
     }
 
     public Double getMaxX(){
-        System.out.println("COMMENTED: getMaxX");
-        return 0d;
-//        return items.get(ItemType.node).values().stream()
-//                .mapToDouble(n->((AbstractPointItem)n).xpos)
-//                .max()
-//                .getAsDouble();
+        return items.get(ItemType.node).values().stream()
+                .mapToDouble(n->((AbstractGraphItem)n).xpos)
+                .max()
+                .getAsDouble();
     }
 
     public Double getMaxY(){
-        System.out.println("COMMENTED: getMaxY");
-        return 0d;
-//        return items.get(ItemType.node).values().stream()
-//                .mapToDouble(n->((AbstractPointItem)n).ypos)
-//                .max()
-//                .getAsDouble();
+        return items.get(ItemType.node).values().stream()
+                .mapToDouble(n->((AbstractGraphItem)n).ypos)
+                .max()
+                .getAsDouble();
     }
 
     public Double getWidth(){
