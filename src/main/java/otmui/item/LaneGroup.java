@@ -1,5 +1,6 @@
 package otmui.item;
 
+import javafx.scene.shape.Shape;
 import models.BaseLaneGroup;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -42,7 +43,7 @@ public abstract class LaneGroup {
         draw_cells.forEach(x->x.paintColor(color));
     }
 
-    public Set<Polygon> get_polygons(){
+    public Set<Shape> get_polygons(){
         return draw_cells.stream().map(x->x.polygon).collect(Collectors.toSet());
     }
 

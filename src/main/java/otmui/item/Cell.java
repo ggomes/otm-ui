@@ -18,7 +18,7 @@ public class Cell {
 
         arrows = new ArrayList<>();
         double remaining = length;
-        while(ind<midline.size() && remaining>-BaseLink.epsilon) {
+        while(ind<midline.size() && remaining>-Link.epsilon) {
             Arrow a = midline.get(ind++);
             arrows.add(a);
             remaining -= a.distance_to_next;

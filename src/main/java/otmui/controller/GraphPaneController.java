@@ -5,22 +5,17 @@ import javafx.scene.Scene;
 import otmui.*;
 import otmui.event.*;
 import otmui.graph.GraphContainer;
-import otmui.graph.color.AbstractColormap;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import otmui.item.*;
-import output.animation.AbstractLinkInfo;
-import output.animation.AnimationInfo;
 
-import java.net.URL;
 import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
 
-public class GraphPaneController implements Initializable {
+public class GraphPaneController {
 
     public MainApp myApp;
     public GraphContainer graphContainer;
@@ -32,8 +27,9 @@ public class GraphPaneController implements Initializable {
     // construction
     /////////////////////////////////////////////////
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(MainApp myApp){
+        this.myApp = myApp;
+
         graphContainer = new GraphContainer(this);
         graphLayout.getChildren().add(graphContainer.scrollPane);
 
@@ -41,32 +37,24 @@ public class GraphPaneController implements Initializable {
         AnchorPane.setTopAnchor(graphContainer.scrollPane,0d);
         AnchorPane.setLeftAnchor(graphContainer.scrollPane,0d);
         AnchorPane.setRightAnchor(graphContainer.scrollPane,0d);
-    }
 
-    public void attach_event_listeners(MainApp myApp){
-        this.myApp = myApp;
-
+        // events
         Scene scene = myApp.stage.getScene();
 
         scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.itempool) );
 
-        scene.addEventFilter(DeleteElementEvent.REMOVE_LINK, e->remove_link((common.Link)e.item));
-        scene.addEventFilter(DeleteElementEvent.REMOVE_NODE, e->remove_node((common.Node)e.item));
-
-        scene.addEventFilter(ParameterChange.DRAWLINKSHAPES,
-                e->paintLinkShapes(e.itempool.items.get(ItemType.link).values(),e.params));
-        scene.addEventFilter(ParameterChange.DRAWLINKCOLORS,
-                e->paintLinkColors(e.itempool.items.get(ItemType.link).values(),e.params));
-        scene.addEventFilter(ParameterChange.DRAWNODESHAPES,
-                e->paintNodeShapes(e.itempool.items.get(ItemType.node).values(),e.params));
-//        scene.addEventFilter(ParameterChange.DRAWNODECOLORS,
-//                e->paintNodeColors(e.itempool.items.get(ItemType.node).values(),e.params));
-        scene.addEventFilter(ParameterChange.DRAWACTUATORS,
-                e->paintActuators(e.itempool.items.get(ItemType.actuator).values(),e.params));
+//        scene.addEventFilter(DeleteElementEvent.REMOVE_LINK, e->remove_link((common.Link)e.item));
+//        scene.addEventFilter(DeleteElementEvent.REMOVE_NODE, e->remove_node((common.Node)e.item));
+//
+//        scene.addEventFilter(ParameterChange.DRAWLINKSHAPES, e->paintLinkShapes(e.itempool.items.get(ItemType.link).values(),e.params));
+//        scene.addEventFilter(ParameterChange.DRAWLINKCOLORS, e->paintLinkColors(e.itempool.items.get(ItemType.link).values(),e.params));
+//        scene.addEventFilter(ParameterChange.DRAWNODESHAPES, e->paintNodeShapes(e.itempool.items.get(ItemType.node).values(),e.params));
+////        scene.addEventFilter(ParameterChange.DRAWNODECOLORS,                e->paintNodeColors(e.itempool.items.get(ItemType.node).values(),e.params));
+//        scene.addEventFilter(ParameterChange.DRAWACTUATORS, e->paintActuators(e.itempool.items.get(ItemType.actuator).values(),e.params));
 
     }
 
-    public void loadScenario(ItemPool itempool) {
+    public void loadScenario(Data itempool) {
 
        // put all items into the pane
         graphContainer.set_items(itempool);
@@ -80,7 +68,7 @@ public class GraphPaneController implements Initializable {
 
         // enable click of nodes, and recenter on the canvas
         for (AbstractItem node : itempool.items.get(ItemType.node).values()) {
-            node.setOnMouseClicked(mouseEvent -> {
+            ((AbstractGraphItem)node).shapegroup.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     switch(mouseEvent.getClickCount()) {
                         case 1:
@@ -96,7 +84,7 @@ public class GraphPaneController implements Initializable {
 
         // enable click of links
         for (AbstractItem link : itempool.items.get(ItemType.link).values()) {
-            link.setOnMouseClicked(mouseEvent -> {
+            ((AbstractGraphItem)link).shapegroup.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     switch(mouseEvent.getClickCount()){
                         case 1:
@@ -112,7 +100,7 @@ public class GraphPaneController implements Initializable {
 
         // enable click of drawActuator
         for (AbstractItem actuator : itempool.items.get(ItemType.actuator).values()) {
-            actuator.setOnMouseClicked(mouseEvent -> {
+            ((AbstractGraphItem)actuator).shapegroup.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     switch(mouseEvent.getClickCount()){
                         case 1:
@@ -128,7 +116,7 @@ public class GraphPaneController implements Initializable {
 
         // enable click of drawSensor
         for (AbstractItem sensor : itempool.items.get(ItemType.sensor).values()) {
-            sensor.setOnMouseClicked(mouseEvent -> {
+            ((AbstractGraphItem)sensor).shapegroup.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     switch(mouseEvent.getClickCount()){
                         case 1:
@@ -154,7 +142,7 @@ public class GraphPaneController implements Initializable {
     /////////////////////////////////////////////////
 
     public void paintLinkShapes(Collection<AbstractItem> links,GlobalParameters params){
-        links.forEach(x -> ((BaseLink)x).paintShape(params.link_offset(),params.lane_width_meters(),params.road_color_scheme()));
+        links.forEach(x -> ((Link)x).paintShape(params.link_offset(),params.lane_width_meters(),params.road_color_scheme()));
     }
 
 //    public void paintLinkShapes(Set<AbstractItem> links,GlobalParameters params) {
@@ -174,36 +162,36 @@ public class GraphPaneController implements Initializable {
     public void paintLinkColors(Collection<AbstractItem> links,GlobalParameters params) {
         GlobalParameters.RoadColorScheme new_color_map = (GlobalParameters.RoadColorScheme) myApp.params.road_color_scheme.getValue();
         if(!new_color_map.equals(params.road_color_scheme)){
-            links.forEach(x -> ((BaseLink)x).paintColor(new_color_map));
+            links.forEach(x -> ((Link)x).paintColor(new_color_map));
 //            params.road_color_scheme = new_color_map;
         }
     }
 
-    public void paintNodeShapes(Collection<AbstractItem> nodes,GlobalParameters params) {
-        // set node size
-        float new_size = myApp.params.node_size.floatValue();
-//        if (Math.abs(new_size-params.node_size)>0.1f) {
-            nodes.forEach(x -> ((AbstractPointItem) x).set_size(new_size));
-//            graph.node_size = new_size;
-//        }
+//    public void paintNodeShapes(Collection<AbstractItem> nodes,GlobalParameters params) {
+//        // set node size
+//        float new_size = myApp.params.node_size.floatValue();
+////        if (Math.abs(new_size-params.node_size)>0.1f) {
+//            nodes.forEach(x -> ((AbstractPointItem) x).set_size(new_size));
+////            graph.node_size = new_size;
+////        }
+//
+//        // set node visible
+//        boolean new_view_nodes = myApp.params.view_nodes.getValue();
+////        if(new_view_nodes!=graph.view_nodes) {
+//            nodes.forEach(x -> ((AbstractPointItem) x).set_visible(new_view_nodes));
+////            graph.view_nodes = new_view_nodes;
+////        }
+//    }
 
-        // set node visible
-        boolean new_view_nodes = myApp.params.view_nodes.getValue();
-//        if(new_view_nodes!=graph.view_nodes) {
-            nodes.forEach(x -> ((AbstractPointItem) x).set_visible(new_view_nodes));
-//            graph.view_nodes = new_view_nodes;
-//        }
-    }
-
-    public void paintActuators(Collection<AbstractItem> actuators,GlobalParameters params) {
-        // set node visible
-//        boolean new_view_actuators = myApp.params.view_actuators.getValue();
-//        if(new_view_actuators!=params.view_actuators) {
-            actuators.forEach(x -> ((AbstractPointItem) x).set_visible(params.view_actuators()));
-//            params.view_actuators = new_view_actuators;
-//        }
-
-    }
+//    public void paintActuators(Collection<AbstractItem> actuators,GlobalParameters params) {
+//        // set node visible
+////        boolean new_view_actuators = myApp.params.view_actuators.getValue();
+////        if(new_view_actuators!=params.view_actuators) {
+//            actuators.forEach(x -> ((AbstractPointItem) x).set_visible(params.view_actuators()));
+////            params.view_actuators = new_view_actuators;
+////        }
+//
+//    }
 
     /////////////////////////////////////////////////
     // context menu
@@ -321,19 +309,29 @@ public class GraphPaneController implements Initializable {
     // highlighting
     /////////////////////////////////////////////////
 
-    public void unhighlight(Map<String,Set<AbstractItem>> items){
-        items.get(ItemType.node).forEach(item->item.unhighlight());
-        items.get(ItemType.link).forEach(item->item.unhighlight());
-        items.get(ItemType.actuator).forEach(item->item.unhighlight());
-        items.get(ItemType.sensor).forEach(item->item.unhighlight());
+    public void unhighlightAll(){
+        System.out.println("COMMENTED: unhighlightAll");
+
+//        myApp.data.items.values().forEach(s->s.values().forEach(x->x.unhighlight()));
     }
 
-    public void highlight(Map<String,Set<AbstractItem>> items){
-        unhighlight(items);
-        items.get(ItemType.node).forEach(item->item.highlight());
-        items.get(ItemType.link).forEach(item->item.highlight());
-        items.get(ItemType.actuator).forEach(item->item.highlight());
-        items.get(ItemType.sensor).forEach(item->item.highlight());
+    public void unhighlight(Map<ItemType,Set<AbstractItem>> items){
+        System.out.println("COMMENTED: unhighlight");
+
+//        items.get(ItemType.node).forEach(item->item.unhighlight());
+//        items.get(ItemType.link).forEach(item->item.unhighlight());
+//        items.get(ItemType.actuator).forEach(item->item.unhighlight());
+//        items.get(ItemType.sensor).forEach(item->item.unhighlight());
+    }
+
+    public void highlight(Map<ItemType,Set<AbstractItem>> items){
+        System.out.println("COMMENTED: highlight");
+
+//        unhighlightAll();
+//        items.get(ItemType.node).forEach(item->item.highlight());
+//        items.get(ItemType.link).forEach(item->item.highlight());
+//        items.get(ItemType.actuator).forEach(item->item.highlight());
+//        items.get(ItemType.sensor).forEach(item->item.highlight());
     }
 
     /////////////////////////////////////////////////
@@ -341,6 +339,8 @@ public class GraphPaneController implements Initializable {
     /////////////////////////////////////////////////
 
     public void focusGraphOnSelection(){
+        System.out.println("COMMENTED: focusGraphOnSelection");
+
 //
 //        Set<Double> allX = new HashSet<>();
 //        Set<Double> allY = new HashSet<>();

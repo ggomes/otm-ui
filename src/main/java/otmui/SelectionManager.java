@@ -1,39 +1,50 @@
 package otmui;
 
+import actuator.AbstractActuator;
+import commodity.Subnetwork;
+import control.AbstractController;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.TreeItem;
 import otmui.event.FormSelectEvent;
 import otmui.event.GraphSelectEvent;
-import otmui.event.TreeSelectEvent;
+import otmui.event.TreeDoubleClickEvent;
+import otmui.event.TreeSingleClickEvent;
 import commodity.Commodity;
-import javafx.scene.control.TreeItem;
 import otmui.item.*;
+import sensor.AbstractSensor;
 
 import java.util.*;
 
 public class SelectionManager {
 
     public MainApp myApp;
-    public Map<String,Set<AbstractItem>> selection;
+    public Map<ItemType,Set<AbstractItem>> selection;
 
-    public SelectionManager() {
-        selection = new HashMap<>();
-        for(String name : ItemPool.itemNames.getBs())
-            selection.put(name,new HashSet<>());
-    }
+    public SelectionManager(MainApp myApp) {
 
-    public void attach_event_listeners(MainApp myApp){
         this.myApp = myApp;
 
+        clear_selection();
+
+        // event listeners
         Scene scene = myApp.stage.getScene();
-        scene.addEventFilter(GraphSelectEvent.CLICK1, e->graphFirstClick(e));
-        scene.addEventFilter(TreeSelectEvent.CLICK1, e->treeFirstClick(e));
+        scene.addEventFilter(GraphSelectEvent.CLICK1, e-> graphSingleClick(e));
+        scene.addEventFilter(TreeSingleClickEvent.TREE_SINGLE, e-> treeSingleClick(e));
+        scene.addEventFilter(TreeDoubleClickEvent.TREE_DOUBLE, e->treeDoubleClick(e));
         scene.addEventFilter(FormSelectEvent.CLICK1, e->formFirstClick(e));
     }
 
-    public void graphFirstClick(GraphSelectEvent e){
+    private void clear_selection(){
+        selection = new HashMap<>();
+        for(ItemType type : myApp.data.items.keySet())
+            selection.put(type,new HashSet<>());
+    }
+
+    public void graphSingleClick(GraphSelectEvent e){
 
         AbstractItem item = (AbstractItem) e.getSelected();
-        Set<AbstractItem> selectionPool = selection.get(item.getClass());
+        Set<AbstractItem> selectionPool = selection.get(item.getType());
 
         boolean selected = selectionPool.contains(item);
         boolean shift_pressed = e.event.isShiftDown();
@@ -54,147 +65,127 @@ public class SelectionManager {
         e.consume();
     }
 
-    public void treeFirstClick(TreeSelectEvent e){
+    public void treeSingleClick(TreeSingleClickEvent e){
 
-        if(e.treeitem ==null)
+        if(e.items ==null)
             return;
 
-        if(!e.treeitem.isLeaf())
-            return;
+        clear_selection();
 
-        TreeItem parent = e.treeitem.getParent();
-        TypeId typeId = myApp.itempool.getTypeId((String) parent.getValue());
-        AbstractItem item = myApp.itempool.getItem(typeId);
-        Set<AbstractItem> selectionPool = selection.get(typeId.type);
-
-        boolean selected = selectionPool.contains(item);
-        boolean shift_pressed = e.event.isShiftDown();
-        if(selected)
-            if(shift_pressed)
-                selectionPool.remove(item);
-            else
-                clearSelection();
-        else
-        if(shift_pressed)
-            selectionPool.add(item);
-        else
-            clearSelection();
-        selectionPool.add(item);
+        ObservableList<TreeItem> treeitems = e.items;
+        for(TreeItem treeitem : treeitems){
+            if(!treeitem.isLeaf())
+                continue;
+            TypeId typeId = myApp.data.getTypeId((String) treeitem.getValue());
+            AbstractItem item = myApp.data.getItem(typeId);
+            selection.get(typeId.type).add(item);
+        }
 
         highlightSelection();
 
         e.consume();
     }
 
-//    public void treeFirstClick(TreeSelectEvent e){
-////        ObservableList<TreeItem> items = myApp.treeController.getTreeView().getSelectionModel().getSelectedItems();
-//        Set<BaseLink> drawLinks = new HashSet<>();
-//        Set<BaseNode> drawNodes = new HashSet<>();
-//        Set<BaseSensor> sensors = new HashSet<>();
-//        Set<BaseActuator> drawActuators = new HashSet<>();
+    public void treeDoubleClick(TreeDoubleClickEvent e) {
+
+        clear_selection();
+
+        if(!e.item.isLeaf())
+            return;
+
+        TypeId typeId = myApp.data.getTypeId((String) e.item.getValue());
+        AbstractItem item = myApp.data.getItem(typeId);
+        selection.get(typeId.type).add(item);
+
+        highlightSelection();
+
+        switch(typeId.type){
+            case node:
+                common.Node node = myApp.otm.scenario.network.nodes.get(typeId.id);
+                myApp.formController.showNodeData(node);
+                break;
+
+            case link:
+                common.Link link = myApp.otm.scenario.network.links.get(typeId.id);
+                myApp.formController.showLinkData(link);
+                break;
+
+            case sensor:
+                AbstractSensor sensor = myApp.otm.scenario.sensors.get(typeId.id);
+                myApp.formController.showSensorData(sensor);
+                break;
+
+            case actuator:
+                AbstractActuator actuator = myApp.otm.scenario.actuators.get(typeId.id);
+                myApp.formController.showActuatorData(actuator);
+                break;
+
+            case controller:
+                AbstractController controller = myApp.otm.scenario.controllers.get(typeId.id);
+                myApp.formController.showControllerData( controller);
+                break;
+
+            case commodity:
+                commodity.Commodity commodity = myApp.otm.scenario.commodities.get(typeId.id);
+                myApp.formController.showCommodityData(commodity);
+                break;
+
+            case subnetwork:
+                Subnetwork subnetwork = myApp.otm.scenario.subnetworks.get(typeId.id);
+                myApp.formController.showSubnewtorkData(subnetwork);
+                break;
+
+//            case demand:
+//                long link_id,
+//                Set<DemandInfo > demands
+//                myApp.formController.showDemandData( link_id,demands);
+//                break;
 //
-//        runner.Scenario scenario = myApp.otm.scenario;
-//        Graph graph = myApp.graphpaneController.graphContainer.get_graph();
-//
-//        // get all drawLinks and drawNodes that have been selected
-//        Long id, target_id;
-//        for(TreeItem item : items){
-//            if(item==null)
-//                continue;
-//            TreeItem parent = item.getParent();
-//            if(parent==null)
-//                continue;
-//            ElementType elementType = Maps.elementName.getFromSecond((String) parent.getValue());
-//            if(elementType!=null)
-//                switch(elementType){
-//
-//                    case LINK:
-//                        id = Maps.name2linkid.getFromFirst((String)item.getValue());
-//                        if(graph.drawnodes.containsKey(id))
-//                            drawLinks.add(graph.drawlinks.get(id));
-//                        break;
-//
-//                    case SUBNETWORK:
-//                        id = Maps.name2subnetworkid.getFromFirst((String)item.getValue());
-//                        Subnetwork subnetwork = scenario.subnetworks.get(id);
-//                        drawLinks.addAll(subnetwork
-//                                .get_link_ids().stream()
-//                                .map(x->graph.drawlinks.get(x))
-//                                .filter(Objects::nonNull)
-//                                .collect(Collectors.toSet())
-//                        );
-//                        break;
-//
-////                    case DEMAND:
-////                        id = Maps.name2demandid.getFromFirst((String)item.getValue());
-////                        AbstractDemandProfile profile = scenario.data_demands.get(id).source.link.getId();
-////                        Link linkd = scenario.getLinkWithId(demandsForLink.link_id);
-////                        if(linkd!=null && linkd.drawLink !=null)
-////                            drawLinks.add(linkd.drawLink);
-////                        break;
-////
-////                    case SPLIT:
-////                        id = Maps.name2splitid.getFromFirst((String)item.getValue());
-////                        SplitsForNode splitsForNode = scenario.getSplitWithId(id);
-////                        Node nodex = scenario.getNodeWithId(splitsForNode.node_id);
-////                        if(nodex!=null && nodex.drawNode !=null)
-////                            drawNodes.add(nodex.drawNode);
-////                        break;
-//
-//                    case ACTUATOR:
-//                        id = Maps.name2actuatorid.getFromFirst((String)item.getValue());
-//                        actuator.AbstractActuator actuator = scenario.actuators.get(id);
-//                        target_id = actuator.target.getId();
-//                        if(actuator.target instanceof common.Node) {
-//                            if(graph.drawnodes.containsKey(target_id))
-//                                drawNodes.add(graph.drawnodes.get(target_id));
-//                        }
-//                        if(actuator.target instanceof common.Link){
-//                            if(graph.drawlinks.containsKey(target_id))
-//                                drawLinks.add(graph.drawlinks.get(target_id));
-//                        }
-//                        break;
-//
-//                    case CONTROLLER:
-//                        id = Maps.name2controllerid.getFromFirst((String)item.getValue());
-//                        AbstractController controller = scenario.controllers.get(id);
-//                        for(actuator.AbstractActuator bact : controller.actuators.values()) {
-//                            actuator.AbstractActuator act = scenario.actuators.get(bact.id);
-//                            if (act == null)
-//                                continue;
-//                            target_id = act.target.getId();
-//                            if (bact.target instanceof common.Node)
-//                                drawNodes.add(graph.drawnodes.get(target_id));
-//                            if(bact.target instanceof common.Link)
-//                                drawLinks.add(graph.drawlinks.get(target_id));
-//                        }
-//                        break;
-//
-//                    case SENSOR:
-//                        id = Maps.name2sensorid.getFromFirst((String)item.getValue());
-//                        sensors.add(graph.drawsensors.get(id));
-//                        break;
-//                }
-//        }
-//
-////        // set selection
-////        selectedLinks = drawLinks;
-////        selectedNodes = drawNodes;
-////        selectedSensors = drawSensors;
-////        selectedActuators = drawActuators;
-//
-//        // send selection to the graph
-//        highlightSelection();
-//
-//    }
+//            case split:
+//                long node_id,Set<SplitInfo > splits
+//                myApp.formController.showSplitData( node_id,splits);
+//                break;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void formFirstClick(FormSelectEvent e){
 
-//        Object item = e.getItem();
-//
-//        // always clear
-//        clearSelection();
-//
+        clear_selection();
+
+
+        Object item = e.getItem();
+
+        System.out.println(item.getClass());
+
+
+//        TypeId typeId = myApp.itempool.getTypeId((String) e.item.getValue());
+//        AbstractItem item = myApp.itempool.getItem(typeId);
+//        selection.get(typeId.type).add(item);
+
+//        highlightSelection();
+
+
+
 //        if(item instanceof AbstractDrawNode)
 //            selectedNodes.add((AbstractDrawNode) item);
 //
@@ -206,13 +197,12 @@ public class SelectionManager {
 //
 //        if(item instanceof AbstractDrawActuator)
 //            selectedActuators.add((AbstractDrawActuator) item);
-//
-//        highlightSelection();
-//
-//        e.consume();
+
+        highlightSelection();
+
+        e.consume();
 
     }
-
 
     public void formFirstClickSubnetwork(Long itemId){
 //        clearSelection();
@@ -267,26 +257,18 @@ public class SelectionManager {
     /////////////////////////////////////////////////
 
     private void clearSelection(){
-        for(Set<AbstractItem> X : selection.values()){
-            X.forEach(x->x.unhighlight());
-            X.clear();
-        }
+        System.out.println("COMMENTED: clearSelection");
 
-
-//        selectedNodes.forEach(x->x.unhighlight());
-//        selectedNodes.clear();
-//        selectedLinks.forEach(x->x.unhighlight());
-//        selectedLinks.clear();
-//        selectedSensors.forEach(x->x.unhighlight());
-//        selectedSensors.clear();
-//        selectedActuators.forEach(x->x.unhighlight());
-//        selectedActuators.clear();
+//        for(Set<AbstractItem> X : selection.values()){
+//            X.forEach(x->x.unhighlight());
+//            X.clear();
+//        }
 
         myApp.treeController.clearSelection();
     }
 
     private void highlightSelection(){
-        myApp.graphpaneController.highlight(selection);
+        myApp.graphController.highlight(selection);
         myApp.treeController.highlight(selection);
         myApp.statusbarController.setText(selection);
     }

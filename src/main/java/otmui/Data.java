@@ -2,6 +2,8 @@ package otmui;
 
 import actuator.AbstractActuator;
 import api.OTMdev;
+import api.info.DemandInfo;
+import api.info.SplitInfo;
 import commodity.Subnetwork;
 import control.AbstractController;
 import error.OTMException;
@@ -13,8 +15,9 @@ import sensor.AbstractSensor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-public class ItemPool {
+public class Data {
 
     public static BijectiveMap<ItemType, String> itemNames = new BijectiveMap();
 
@@ -29,14 +32,20 @@ public class ItemPool {
         itemNames.put(ItemType.sensor, "sensors");
     }
 
+    public Map<Long, Set<DemandInfo>> demands;
+    public Map<Long,Set<SplitInfo>> splits;
+
     // items contains, for each item type (link, node, etc), a map id->object
-    public Map<ItemType, Map<Long, AbstractItem>> items;
+    public Map<ItemType, Map<Long,AbstractItem>> items;
 
     ///////////////
     // construction
     ///////////////
 
-    public ItemPool(OTMdev otm, GlobalParameters params) throws OTMException {
+    public Data(OTMdev otm, GlobalParameters params) throws OTMException {
+
+        demands = otm.otm.scenario.get_demands();
+        splits = otm.otm.scenario.get_splits();
 
         float node_size = params.node_size.floatValue();
         float lane_width_meters = params.lane_width_meters.getValue();
@@ -74,15 +83,15 @@ public class ItemPool {
     // makers
     /////////////////////////////////////////////////
 
-    public static BaseNode makeDrawNode(common.Node node, float radius) {
+    public static Node makeDrawNode(common.Node node, float radius) {
         return node==null ?
-                new BaseNode(-1L,0f,0f,radius, Color.BLACK, 0f) :
-                new BaseNode(node.getId(),node.xcoord,-node.ycoord,radius, Color.DODGERBLUE, 0f);
+                new Node(null,0f,0f,radius, Color.BLACK, 0f) :
+                new Node(node,node.xcoord,-node.ycoord,radius, Color.DODGERBLUE, 0f);
     }
 
-    public static BaseLink makeDrawLink(common.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme) throws OTMException {
+    public static Link makeDrawLink(common.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme) throws OTMException {
 
-        BaseLink drawLink;
+        Link drawLink;
         switch(link.model.getClass().getSimpleName()){
 
             case "BaseModel":
@@ -108,25 +117,26 @@ public class ItemPool {
         return drawLink;
     }
 
-    public static BaseActuator makeDrawActuator(OTMdev otmdev, actuator.AbstractActuator actuator, float size) {
+    public static Actuator makeDrawActuator(OTMdev otmdev, actuator.AbstractActuator actuator, float size) {
 
         if (actuator==null)
-            return new StopSign(-1L,0f,0f,size, 0f);
+            return new StopSign(null,0f,0f,size, 0f);
 
         common.Node node = otmdev.scenario.network.nodes.get(actuator.target.getId());
 
         switch (actuator.getType()) {
             case signal:
-                return new StopSign(actuator.getId(), node.xcoord, -node.ycoord, size, 4f);
+                return new StopSign(actuator, node.xcoord, -node.ycoord, size, 4f);
             case stop:
-                return new StopSign(actuator.getId(), node.xcoord, -node.ycoord, size, 0f );
+                return new StopSign(actuator, node.xcoord, -node.ycoord, size, 0f );
             default:
-                return new StopSign(actuator.getId(), node.xcoord, -node.ycoord, size, 1f);
+                return new StopSign(actuator, node.xcoord, -node.ycoord, size, 1f);
         }
     }
 
-    public static BaseSensor makeDrawSensor(AbstractSensor sensor, float lane_width, float link_offset) throws OTMException {
-        return sensor==null ? new BaseSensor() : new BaseSensor(sensor, lane_width, link_offset);
+    public static FixedSensor makeDrawSensor(AbstractSensor sensor, float lane_width, float link_offset) throws OTMException {
+//        return sensor==null ? new BaseSensor() : new BaseSensor(sensor, lane_width, link_offset);
+        return new FixedSensor(sensor, lane_width, link_offset);
     }
 
 //    public void clear() {
@@ -187,31 +197,40 @@ public class ItemPool {
     /////////////////////////////////
 
     public Double getMinX(){
-        return items.get(ItemType.node).values().stream()
-                .mapToDouble(n->((AbstractPointItem)n).xpos)
-                .min()
-                .getAsDouble();
+        System.out.println("COMMENTED: getMinX");
+        return 0d;
+
+//        return items.get(ItemType.node).values().stream()
+//                .mapToDouble(n->((AbstractPointItem)n).xpos)
+//                .min()
+//                .getAsDouble();
     }
 
     public Double getMinY(){
-        return items.get(ItemType.node).values().stream()
-                .mapToDouble(n->((AbstractPointItem)n).ypos)
-                .min()
-                .getAsDouble();
+        System.out.println("COMMENTED: getMinY");
+        return 0d;
+//        return items.get(ItemType.node).values().stream()
+//                .mapToDouble(n->((AbstractPointItem)n).ypos)
+//                .min()
+//                .getAsDouble();
     }
 
     public Double getMaxX(){
-        return items.get(ItemType.node).values().stream()
-                .mapToDouble(n->((AbstractPointItem)n).xpos)
-                .max()
-                .getAsDouble();
+        System.out.println("COMMENTED: getMaxX");
+        return 0d;
+//        return items.get(ItemType.node).values().stream()
+//                .mapToDouble(n->((AbstractPointItem)n).xpos)
+//                .max()
+//                .getAsDouble();
     }
 
     public Double getMaxY(){
-        return items.get(ItemType.node).values().stream()
-                .mapToDouble(n->((AbstractPointItem)n).ypos)
-                .max()
-                .getAsDouble();
+        System.out.println("COMMENTED: getMaxY");
+        return 0d;
+//        return items.get(ItemType.node).values().stream()
+//                .mapToDouble(n->((AbstractPointItem)n).ypos)
+//                .max()
+//                .getAsDouble();
     }
 
     public Double getWidth(){

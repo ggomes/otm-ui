@@ -1,29 +1,25 @@
 package otmui.item;
 
 import error.OTMException;
+import otmui.ItemType;
 import otmui.utils.Arrow;
 import otmui.utils.Vector;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import sensor.AbstractSensor;
-import sensor.FixedSensor;
 
-public class BaseSensor extends AbstractPointItem {
+public class FixedSensor extends AbstractGraphItem {
 
     public Arrow geom;
 
-    public BaseSensor(){};
+    public FixedSensor(AbstractSensor sensor, float lane_width, float link_offset) throws OTMException {
 
-    public BaseSensor(AbstractSensor sensor, float lane_width, float link_offset) throws OTMException {
+        super(sensor.getId(), Float.NaN, Float.NaN, Color.DODGERBLUE, Color.RED);
 
-        super(sensor.id,null,null);
-        color1 = Color.DODGERBLUE;
-        color2 = Color.RED;
-
-        if(!(sensor instanceof FixedSensor))
+        if(!(sensor instanceof sensor.FixedSensor))
             return;
 
-        FixedSensor fsensor = (FixedSensor) sensor;
+        sensor.FixedSensor fsensor = (sensor.FixedSensor) sensor;
 
         this.geom = traverse_distance(fsensor.get_link(),fsensor.get_position());
 
@@ -61,14 +57,14 @@ public class BaseSensor extends AbstractPointItem {
 
         polygon.setStrokeWidth(0d);
         polygon.setFill(Color.DODGERBLUE);
-        setView(polygon);
+        setShape(polygon);
 
         unhighlight();
     }
 
     @Override
-    public String getPrefix() {
-        return "sensor";
+    public ItemType getType() {
+        return ItemType.sensor;
     }
 
     @Override
@@ -115,11 +111,6 @@ public class BaseSensor extends AbstractPointItem {
         }
 
         return P;
-    }
-
-    @Override
-    public void set_size(float mysize) {
-        System.err.println("Sensor:set_size is not implemented");
     }
 
 }

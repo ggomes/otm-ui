@@ -1,8 +1,9 @@
 package otmui.item;
 
 import javafx.scene.Group;
+import otmui.ItemType;
 
-public abstract class AbstractItem extends Group {
+public abstract class AbstractItem {
 
     public final long id;
 
@@ -14,9 +15,7 @@ public abstract class AbstractItem extends Group {
         this.id = id;
     }
 
-    public abstract String getPrefix();
     public abstract String getName();
-    public abstract void highlight();
-    public abstract void unhighlight();
+    public abstract ItemType getType();
 
 }

@@ -3,14 +3,11 @@ package otmui.controller;
 import api.OTM;
 import api.OTMdev;
 import common.Node;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import otmui.GlobalParameters;
-import otmui.ItemPool;
+import otmui.Data;
 import otmui.MainApp;
 import otmui.event.NewScenarioEvent;
 import otmui.event.ResetScenarioEvent;
-import otmui.item.*;
 import otmui.simulation.OTMTask;
 import otmui.view.ParametersWindow;
 import otmui.view.PlotRequestWindow;
@@ -24,13 +21,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import sensor.AbstractSensor;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class MenuController implements Initializable {
@@ -121,7 +115,7 @@ public class MenuController implements Initializable {
 
     @FXML
     private void menuRun(ActionEvent event) {
-        OTMTask otm_task = new OTMTask(myApp.otm,myApp.params,myApp.menuController,myApp.graphpaneController,myApp.statusbarController);
+        OTMTask otm_task = new OTMTask(myApp.otm,myApp.params,myApp.menuController,myApp.graphController,myApp.statusbarController);
         myApp.statusbarController.bind_progress(otm_task.progressProperty());
         myApp.statusbarController.bind_text(otm_task.messageProperty());
         new Thread(otm_task).start();
@@ -145,12 +139,12 @@ public class MenuController implements Initializable {
 
     @FXML
     private void menuZoomIn(ActionEvent event) {
-        myApp.graphpaneController.graphContainer.scrollPane.zoomIn();
+        myApp.graphController.graphContainer.scrollPane.zoomIn();
     }
 
     @FXML
     private void menuZoomOut(ActionEvent event) {
-        myApp.graphpaneController.graphContainer.scrollPane.zoomOut();
+        myApp.graphController.graphContainer.scrollPane.zoomOut();
     }
 
     @FXML
@@ -223,11 +217,7 @@ public class MenuController implements Initializable {
         if (!myApp.otm.scenario.network.node_positions_in_meters)
             convert_to_meters(myApp.otm);
 
-        // get demand and split data
-        myApp.demands = myApp.otm.otm.scenario.get_demands();
-        myApp.splits = myApp.otm.otm.scenario.get_splits();
-
-        myApp.itempool = new ItemPool(myApp.otm,myApp.params);
+        myApp.data = new Data(myApp.otm,myApp.params);
 
         // enable stuff
         enablePlots();
@@ -235,7 +225,7 @@ public class MenuController implements Initializable {
         enableRun();
 
         // Fire new scenario event
-        menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(myApp.otm,myApp.itempool));
+        menubar.getScene().getRoot().fireEvent(new NewScenarioEvent(myApp.otm,myApp.data));
 
     }
 

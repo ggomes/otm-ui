@@ -1,7 +1,9 @@
 package otmui.item;
 
 import geometry.Side;
+import javafx.scene.Group;
 import otmui.GlobalParameters;
+import otmui.ItemType;
 import otmui.graph.color.AbstractColormap;
 import models.BaseLaneGroup;
 import error.OTMException;
@@ -13,12 +15,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class BaseLink extends AbstractItem {
+public abstract class Link extends AbstractGraphItem {
 
     public static float epsilon = 0.5f; // meters
-    protected static Color color_highlight = Color.RED;
-
     public common.Link link;
+
     public List<LaneGroup> draw_lanegroups;
     public double max_vehicles;
 
@@ -28,8 +29,8 @@ public abstract class BaseLink extends AbstractItem {
     // construction
     /////////////////////////////////////////////////
 
-    public BaseLink(common.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme roadColorScheme) throws OTMException {
-        super(link.getId());
+    public Link(common.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme roadColorScheme) throws OTMException {
+        super(link.getId(), Float.NaN, Float.NaN, Color.DODGERBLUE, Color.RED);
 
         this.link = link;
         this.max_vehicles = link.get_max_vehicles();
@@ -131,7 +132,7 @@ public abstract class BaseLink extends AbstractItem {
 
             LaneGroup draw_lg = create_draw_lanegroup(lg,midline,lateral_offset,long_offset,lane_width, road2euclid,color);
             draw_lanegroups.add(draw_lg);
-            getChildren().addAll(draw_lg.get_polygons());
+            addShapes(draw_lg.get_polygons());
         }
 
 //        if(link.bLink.lanegroup_flwside_in!=null)
@@ -151,8 +152,8 @@ public abstract class BaseLink extends AbstractItem {
     abstract LaneGroup create_draw_lanegroup(BaseLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException ;
 
     @Override
-    public String getPrefix() {
-        return "link";
+    public ItemType getType() {
+        return ItemType.link;
     }
 
     @Override
@@ -176,7 +177,7 @@ public abstract class BaseLink extends AbstractItem {
 
     @Override
     public void highlight() {
-        draw_lanegroups.forEach(x -> x.highlight(color_highlight));
+        draw_lanegroups.forEach(x -> x.highlight(color2));
     }
 
     @Override

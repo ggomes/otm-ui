@@ -11,7 +11,7 @@ import otmui.utils.Arrow;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinkCTM extends BaseLink {
+public class LinkCTM extends Link {
 
     public LinkCTM(common.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme) throws OTMException {
         super(link, lane_width, link_offset, road_color_scheme);

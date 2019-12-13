@@ -5,9 +5,13 @@ import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
-import otmui.ItemPool;
+import otmui.Data;
 import otmui.ItemType;
 import otmui.controller.GraphPaneController;
+import otmui.item.AbstractGraphItem;
+
+import java.util.Collection;
+import java.util.Set;
 
 public class GraphContainer {
 
@@ -67,12 +71,12 @@ public class GraphContainer {
         return scrollPane.getScaleValue();
     }
 
-    public void set_items(ItemPool itempool){
+    public void set_items(Data itempool){
         pane.getChildren().clear();
-        pane.getChildren().addAll(itempool.items.get(ItemType.node).values());
-        pane.getChildren().addAll(itempool.items.get(ItemType.link).values());
-        pane.getChildren().addAll(itempool.items.get(ItemType.sensor).values());
-        pane.getChildren().addAll(itempool.items.get(ItemType.actuator).values());
+        pane.getChildren().addAll((Collection) itempool.items.get(ItemType.node).values());
+        pane.getChildren().addAll((Collection) itempool.items.get(ItemType.link).values());
+        pane.getChildren().addAll((Collection) itempool.items.get(ItemType.sensor).values());
+        pane.getChildren().addAll((Collection) itempool.items.get(ItemType.actuator).values());
         scrollPane.zoomToFit(itempool);
     }
 

@@ -1,25 +1,22 @@
 package otmui.controller;
 
-import api.OTMdev;
 import javafx.scene.Scene;
-import otmui.ItemPool;
+import otmui.Data;
+import otmui.ItemType;
 import otmui.MainApp;
 import otmui.event.NewScenarioEvent;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.Initializable;
 import org.controlsfx.control.StatusBar;
 import otmui.item.AbstractItem;
 import utils.OTMUtils;
 
-import java.net.URL;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
-public class StatusBarController implements Initializable {
+public class StatusBarController {
 
     public StatusBar statusBar;
     private MainApp myApp;
@@ -32,17 +29,14 @@ public class StatusBarController implements Initializable {
         this.statusBar = statusBar;
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) { }
-
-    public void attach_event_listeners(MainApp myApp) {
+    public void initialize(MainApp myApp) {
         this.myApp = myApp;
 
         Scene scene = myApp.stage.getScene();
         scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.itempool) );
     }
 
-    public void loadScenario(ItemPool itempool){
+    public void loadScenario(Data itempool){
         this.statusBar.setText("Scenario loaded.");
     }
 
@@ -63,15 +57,15 @@ public class StatusBarController implements Initializable {
         statusBar.textProperty().unbind();
     }
 
-    public void setText(Map<String,Set<AbstractItem>> selection){
+    public void setText(Map<ItemType,Set<AbstractItem>> selection){
         String str = "links {" +
-                OTMUtils.comma_format(selection.get("link").stream().map(x->x.id).collect(toList())) +
+                OTMUtils.comma_format(selection.get(ItemType.link).stream().map(x->x.id).collect(toList())) +
                 "} , nodes {" +
-                OTMUtils.comma_format(selection.get("node").stream().map(x->x.id).collect(toList())) +
+                OTMUtils.comma_format(selection.get(ItemType.node).stream().map(x->x.id).collect(toList())) +
                 "} , sensors {" +
-                OTMUtils.comma_format(selection.get("sensor").stream().map(x->x.id).collect(toList())) +
+                OTMUtils.comma_format(selection.get(ItemType.sensor).stream().map(x->x.id).collect(toList())) +
                 "}, actuators {" +
-                OTMUtils.comma_format(selection.get("actuator").stream().map(x->x.id).collect(toList())) +
+                OTMUtils.comma_format(selection.get(ItemType.actuator).stream().map(x->x.id).collect(toList())) +
                 "}";
         this.statusBar.setText(str);
     }

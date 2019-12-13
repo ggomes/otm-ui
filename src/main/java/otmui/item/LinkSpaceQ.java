@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinkSpaceQ extends BaseLink {
+public class LinkSpaceQ extends Link {
 
     public LinkSpaceQ(common.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme) throws OTMException {
         super(link, lane_width, link_offset, road_color_scheme);
