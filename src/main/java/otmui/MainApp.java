@@ -1,8 +1,6 @@
 package otmui;
 
 import api.OTMdev;
-import api.info.DemandInfo;
-import api.info.SplitInfo;
 import otmui.controller.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

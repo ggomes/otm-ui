@@ -1,5 +1,6 @@
 package otmui.controller.component;
 
+import otmui.ItemType;
 import otmui.event.FormSelectEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,61 +36,56 @@ public class LabelList extends LabelItem {
             return;
 
         Long itemId = Long.parseLong((String)item);
+        ItemType itemType = null;
         EventTarget target = mouseEvent.getTarget();
 
-//        switch(getLabel()){
-//            case "output links":
-//            case "input links":
-//            case "link":
-//                if(clickcount==1)
-//                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK1,itemId));
-//                if(clickcount==2)
-//                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2_LINK,itemId));
-//                break;
-//            case "node":
-//            case "nodes":
-//                if(clickcount==2)
-//                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2_NODE,itemId));
-//                break;
-//
-//            case "splitsForNode":
-//                if(clickcount==2)
-//                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2_SPLIT,itemId));
-//                break;
-//            case "vehicle type":
-//            case "vehicle types":
-//                if(clickcount==1)
-//                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK1,itemId));
-//                if(clickcount==2)
-//                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2_COMMODITY,itemId));
-//                break;
-//            case "actuator":
-//            case "actuators":
-//                if(clickcount==1)
-//                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK1,itemId));
-//                if(clickcount==2)
-//                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2_ACTUATOR,itemId));
-//                break;
-//            case "controller":
-//                if(clickcount==2)
-//                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2_CONTROLLER,itemId));
-//                break;
-//            case "demandsForLink":
-//            case "demands":
-//                if(clickcount==2)
-//                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2_DEMAND,itemId));
-//                break;
-//            case "subnetwork":
-//            case "subnetworks":
-//            case "route":
-//            case "routes":
-//                if(clickcount==2)
-//                    Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2_SUBNETWORK,itemId));
-//                break;
-//            default:
-//                System.err.println("Unrecognized label: " + getLabel());
-//                break;
-//        }
+        switch(getLabel()){
+            case "output links":
+            case "input links":
+            case "link":
+                itemType = ItemType.link;
+                break;
+            case "node":
+            case "nodes":
+                itemType = ItemType.node;
+                break;
+            case "splitsForNode":
+                System.out.println("WRIUG948t0");
+//                itemType = ItemType.split;
+                break;
+            case "vehicle type":
+            case "vehicle types":
+                itemType = ItemType.commodity;
+                break;
+            case "actuator":
+            case "actuators":
+                itemType = ItemType.actuator;
+                break;
+            case "controller":
+                itemType = ItemType.controller;
+                break;
+            case "demandsForLink":
+            case "demands":
+                System.out.println("609hje05ju");
+//                itemType = ItemType.demand;
+                break;
+            case "subnetwork":
+            case "subnetworks":
+            case "route":
+            case "routes":
+                itemType = ItemType.subnetwork;
+                break;
+            default:
+                System.err.println("Unrecognized label: " + getLabel());
+                break;
+        }
+
+
+        if(clickcount==1)
+            Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK1,itemType,itemId));
+        if(clickcount==2)
+            Event.fireEvent(target,new FormSelectEvent(FormSelectEvent.CLICK2,itemType,itemId));
+
 
     }
 

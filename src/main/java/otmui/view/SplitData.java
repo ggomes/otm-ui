@@ -1,11 +1,10 @@
 package otmui.view;
 
-import api.OTMdev;
 import api.info.SplitInfo;
+import otmui.Data;
+import otmui.ItemType;
 import otmui.controller.component.LabelCombobox;
-import otmui.event.FormSelectEvent;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -25,7 +24,7 @@ public class SplitData extends AbstractData {
     private LabelCombobox linkInCtrl;
     private Set<SplitInfo> splits;
 
-    public SplitData(long node_id,Set<SplitInfo> splits, OTMdev otm) {
+    public SplitData(long node_id,Set<SplitInfo> splits, Data data) {
         super();
 
         this.splits = splits;
@@ -36,7 +35,7 @@ public class SplitData extends AbstractData {
         X.add(UIFactory.createLabelButton(
                 "node",
                 String.format("%d",node_id),
-                e-> Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2, node_id))
+                e -> click2(data.items.get(ItemType.node).get(node_id))
         ).pane);
 
         // commodity selector

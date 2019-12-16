@@ -1,4 +1,4 @@
-package otmui;
+package otmui.controller;
 
 import actuator.AbstractActuator;
 import commodity.Subnetwork;
@@ -7,6 +7,9 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
+import otmui.ItemType;
+import otmui.MainApp;
+import otmui.TypeId;
 import otmui.event.*;
 import commodity.Commodity;
 import otmui.item.*;

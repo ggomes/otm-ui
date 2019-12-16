@@ -1,5 +1,6 @@
 package otmui.view;
 
+import otmui.ItemType;
 import otmui.event.FormSelectEvent;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -14,16 +15,10 @@ public class CommodityData extends AbstractData {
         ObservableList<Node> X = vbox.getChildren();
 
         // id .................
-        X.add(UIFactory.createLabelText(
-                "id",
-                commodity.getId().toString()
-        ).pane);
+        X.add(UIFactory.createLabelText("id", commodity.getId().toString()).pane);
 
         // String name;
-        X.add(UIFactory.createLabelText(
-                "name",
-                commodity.get_name()
-        ).pane);
+        X.add(UIFactory.createLabelText("name", commodity.get_name()).pane);
 
         // subnetwork
 //        List<Long> subnets = commodity.get_subnetwork_ids();
@@ -37,11 +32,6 @@ public class CommodityData extends AbstractData {
 //            System.err.println("WARNING: Loaded a commodity with not a unique subnetwork. Please check UI code.");
 //        }
 
-    }
-
-    private void DoubleClickSubnetwork(long id){
-        Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK1,id));
-        Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2,id));
     }
 
 }

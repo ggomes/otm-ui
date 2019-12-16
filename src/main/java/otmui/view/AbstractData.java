@@ -1,8 +1,12 @@
 package otmui.view;
 
+import javafx.event.Event;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import otmui.ItemType;
+import otmui.event.FormSelectEvent;
+import otmui.item.AbstractItem;
 
 public abstract class AbstractData {
 
@@ -58,4 +62,19 @@ public abstract class AbstractData {
     public ScrollPane getScrollPane(){
         return this.scrollPane;
     }
+
+
+    protected void click1(AbstractItem item){
+        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK1, item));
+    }
+
+    protected void click2(AbstractItem item){
+        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2, item));
+    }
+
+    protected void doubleClick(AbstractItem item){
+        click1(item);
+        click2(item);
+    }
+
 }

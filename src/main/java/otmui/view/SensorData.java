@@ -1,7 +1,6 @@
 package otmui.view;
 
 import javafx.collections.ObservableList;
-import sensor.AbstractSensor;
 import sensor.FixedSensor;
 
 public class SensorData extends AbstractData  {

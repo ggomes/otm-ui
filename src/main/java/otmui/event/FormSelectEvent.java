@@ -3,27 +3,27 @@ package otmui.event;
 import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
+import otmui.ItemType;
+import otmui.item.AbstractItem;
 
 public class FormSelectEvent extends Event {
 
-    public Object item;
+    public AbstractItem item;
+    public ItemType itemType;
+    public long itemid;
 
     public static final EventType<FormSelectEvent> FORM_ANY = new EventType<>(Event.ANY, "FORM_ANY");
     public static final EventType<FormSelectEvent> CLICK1 = new EventType<>(FORM_ANY, "FORM CLICK1");
     public static final EventType<FormSelectEvent> CLICK2 = new EventType<>(FORM_ANY, "FORM CLICK2");
 
+    public FormSelectEvent(EventType<FormSelectEvent> type, ItemType itemType, long itemid) {
+        super(type);
+        this.itemType = itemType;
+        this.itemid = itemid;
+    }
 
-//    public static final EventType<FormSelectEvent> CLICK2_LINK = new EventType<>(FORM_ANY, "FORM CLICK2_LINK");
-//    public static final EventType<FormSelectEvent> CLICK2_NODE = new EventType<>(FORM_ANY, "FORM CLICK2_NODE");
-//    public static final EventType<FormSelectEvent> CLICK2_SUBNETWORK = new EventType<>(FORM_ANY, "FORM CLICK2_SUBNETWORK");
-//    public static final EventType<FormSelectEvent> CLICK2_COMMODITY = new EventType<>(FORM_ANY, "FORM CLICK2_COMMODITY");
-//    public static final EventType<FormSelectEvent> CLICK2_DEMAND = new EventType<>(FORM_ANY, "FORM CLICK2_DEMAND");
-//    public static final EventType<FormSelectEvent> CLICK2_SPLIT = new EventType<>(FORM_ANY, "FORM CLICK2_SPLIT");
-//    public static final EventType<FormSelectEvent> CLICK2_ACTUATOR = new EventType<>(FORM_ANY, "FORM CLICK2_ACTUATOR");
-//    public static final EventType<FormSelectEvent> CLICK2_CONTROLLER = new EventType<>(FORM_ANY, "FORM CLICK2_CONTROLLER");
-//    public static final EventType<FormSelectEvent> CLICK2_SENSOR = new EventType<>(FORM_ANY, "FORM CLICK2_SENSOR");
 
-    public FormSelectEvent(EventType<FormSelectEvent> type, Object item) {
+    public FormSelectEvent(EventType<FormSelectEvent> type, AbstractItem item) {
         super(type);
         this.item = item;
     }
@@ -36,10 +36,6 @@ public class FormSelectEvent extends Event {
     @Override
     public EventType<? extends FormSelectEvent> getEventType() {
         return (EventType<? extends FormSelectEvent>) super.getEventType();
-    }
-
-    public Object getItem(){
-        return item;
     }
 
 }

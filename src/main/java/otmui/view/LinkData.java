@@ -1,10 +1,9 @@
 package otmui.view;
 
-import api.OTMdev;
 import models.BaseLaneGroup;
-import otmui.event.FormSelectEvent;
+import otmui.Data;
+import otmui.ItemType;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.scene.Node;
 
 import java.util.Collection;
@@ -13,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class LinkData extends AbstractData {
 
-    public LinkData(otmui.item.Link uilink){
+    public LinkData(otmui.item.Link uilink, Data data){
         super();
 
         common.Link link = uilink.link;
@@ -24,30 +23,23 @@ public class LinkData extends AbstractData {
         X.add(UIFactory.createLabelText("id",link.getId().toString()).pane);
 
         // start node .................
-        X.add(UIFactory.createLabelButton(
-                "start node",
+
+        X.add(UIFactory.createLabelButton("start node",
                 link.start_node.getId().toString(),
-                e->doubleClickNode(link.start_node)
+                e->doubleClick(data.items.get(ItemType.node).get(link.start_node.getId()))
         ).pane);
 
         // end node .................
-        X.add(UIFactory.createLabelButton(
-                "end node",
+        X.add(UIFactory.createLabelButton("end node",
                 link.end_node.getId().toString(),
-                e->doubleClickNode(link.end_node)
+                e->doubleClick(data.items.get(ItemType.node).get(link.end_node.getId()))
         ).pane);
 
         // length [LabelText] ................
-        X.add(UIFactory.createLabelText(
-                "length [km]",
-                String.format("%.0f",link.length)
-        ).pane);
+        X.add(UIFactory.createLabelText("length [km]", String.format("%.0f",link.length)).pane);
 
         // full lanes [LabelText] ................
-        X.add(UIFactory.createLabelText(
-                "full lanes",
-                String.format("%d",link.full_lanes)
-        ).pane);
+        X.add(UIFactory.createLabelText("full lanes", String.format("%d",link.full_lanes)).pane);
 
 //        // left pocket
 //        AddLanes left = link.getLeftLanes();
@@ -93,11 +85,6 @@ public class LinkData extends AbstractData {
 //            X.add(UIFactory.createLabelText("actuator", actuatorId).pane);
 //        }
 
-    }
-
-    private void doubleClickNode(common.Node node){
-        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK1,node));
-        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2,node));
     }
 
 }

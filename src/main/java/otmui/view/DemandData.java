@@ -1,11 +1,10 @@
 package otmui.view;
 
-import api.OTMdev;
 import api.info.DemandInfo;
 import api.info.Profile1DInfo;
-import otmui.event.FormSelectEvent;
+import otmui.Data;
+import otmui.ItemType;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -15,7 +14,7 @@ import java.util.Set;
 
 public class DemandData extends AbstractData {
 
-    public DemandData(long link_id,Set<DemandInfo> demands, OTMdev otm) {
+    public DemandData(long link_id,Set<DemandInfo> demands, Data data) {
         super();
 
         ObservableList<Node> X = vbox.getChildren();
@@ -24,7 +23,7 @@ public class DemandData extends AbstractData {
         X.add(UIFactory.createLabelButton(
                 "link id",
                 String.format("%d", link_id),
-                e->Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2, link_id))
+                e->click2(data.items.get(ItemType.link).get(link_id))
         ).pane);
 
         // data
@@ -38,10 +37,10 @@ public class DemandData extends AbstractData {
         xAxis.setLabel("time [hr]");
         yAxis.setLabel("flow [vph]");
         for(DemandInfo demand : demands){
-//            KeyCommodityDemandTypeId
             Long comm_id = demand.commodity_id;
+            otmui.item.Commodity comm = (otmui.item.Commodity) data.items.get(ItemType.commodity).get(comm_id);
             XYChart.Series series = new XYChart.Series();
-            series.setName(otm.scenario.commodities.get(comm_id).get_name());
+            series.setName(comm.comm.get_name());
             Profile1DInfo profile = demand.profile;
             double t = profile.getStart_time();
             double dt = profile.getDt()==0 ? 3600 : profile.getDt();
