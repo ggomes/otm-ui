@@ -6,11 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
 import otmui.Data;
-import otmui.ItemType;
 import otmui.controller.GraphPaneController;
-import otmui.item.AbstractGraphItem;
-
-import java.util.Collection;
 
 public class GraphContainer {
 

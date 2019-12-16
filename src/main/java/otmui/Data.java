@@ -18,19 +18,19 @@ import static java.util.stream.Collectors.toSet;
 
 public class Data {
 
-    public static BijectiveMap<ItemType, String> itemNames = new BijectiveMap();
-
-    static {
-        itemNames.put(ItemType.node, "node");
-        itemNames.put(ItemType.link, "link");
-        itemNames.put(ItemType.commodity, "type");
-        itemNames.put(ItemType.subnetwork, "subnetwork");
-        itemNames.put(ItemType.demand, "demand");
-        itemNames.put(ItemType.split, "split");
-        itemNames.put(ItemType.actuator, "actuator");
-        itemNames.put(ItemType.controller, "controller");
-        itemNames.put(ItemType.sensor, "sensor");
-    }
+//    public static BijectiveMap<ItemType, String> itemNames = new BijectiveMap();
+//
+//    static {
+//        itemNames.put(ItemType.node, "node");
+//        itemNames.put(ItemType.link, "link");
+//        itemNames.put(ItemType.commodity, "type");
+//        itemNames.put(ItemType.subnetwork, "subnetwork");
+//        itemNames.put(ItemType.demand, "demand");
+//        itemNames.put(ItemType.split, "split");
+//        itemNames.put(ItemType.actuator, "actuator");
+//        itemNames.put(ItemType.controller, "controller");
+//        itemNames.put(ItemType.sensor, "sensor");
+//    }
 
     // items contains, for each item type (link, node, etc), a map id->object
     public Map<ItemType, Map<Long,AbstractItem>> items;
@@ -88,7 +88,7 @@ public class Data {
         Map<Long, AbstractItem> subnetworks = new HashMap<>();
         items.put(ItemType.subnetwork,subnetworks);
         for (commodity.Subnetwork subnet : otm.scenario.subnetworks.values())
-            subnetworks.put(subnet.getId(),new otmui.item.Subnetwork(subnet));
+            subnetworks.put(subnet.getId(),new otmui.item.Subnetwork(subnet,this));
 
         // demands
         for (Map.Entry<KeyCommodityDemandTypeId, AbstractDemandProfile> e : otm.scenario.data_demands.entrySet()){
@@ -120,26 +120,24 @@ public class Data {
     // get
     /////////////////////////////////////////////////
 
-    public Collection<Shape> getShapes(){
+    public Set<Shape> getShapes(){
         Set<Shape> allshapes = new HashSet<>();
+
         allshapes.addAll(items.get(ItemType.node).values().stream()
-                .flatMap(x->((AbstractGraphItem)x).shapegroup.getChildren().stream())
-                .map(x->(Shape)x)
+                .flatMap(x->((AbstractGraphItem)x).shapegroup.stream())
                 .collect(toSet()) );
 
+
         allshapes.addAll(items.get(ItemType.link).values().stream()
-                .flatMap(x->((AbstractGraphItem)x).shapegroup.getChildren().stream())
-                .map(x->(Shape)x)
+                .flatMap(x->((AbstractGraphItem)x).shapegroup.stream())
                 .collect(toSet()) );
 
         allshapes.addAll(items.get(ItemType.actuator).values().stream()
-                .flatMap(x->((AbstractGraphItem)x).shapegroup.getChildren().stream())
-                .map(x->(Shape)x)
+                .flatMap(x->((AbstractGraphItem)x).shapegroup.stream())
                 .collect(toSet()) );
 
         allshapes.addAll(items.get(ItemType.sensor).values().stream()
-                .flatMap(x->((AbstractGraphItem)x).shapegroup.getChildren().stream())
-                .map(x->(Shape)x)
+                .flatMap(x->((AbstractGraphItem)x).shapegroup.stream())
                 .collect(toSet()) );
 
         return allshapes;
@@ -212,34 +210,6 @@ public class Data {
     public static String getName(AbstractItem item) {
         return String.format("%s %d", item.getName(), item.id);
     }
-
-//    public static String getName(commodity.Commodity item) {
-//        return String.format("%s %d", itemNames.AtoB(ItemType.commodity), item.getId());
-//    }
-//
-//    public static String getName(common.Link item) {
-//        return String.format("%s %d", itemNames.AtoB(ItemType.link), item.getId());
-//    }
-//
-//    public static String getName(Subnetwork item) {
-//        return String.format("%s %d", itemNames.AtoB(ItemType.subnetwork), item.getId());
-//    }
-//
-//    public static String getName(AbstractDemandProfile item) {
-//        return String.format("%s %d", itemNames.AtoB(ItemType.demand), item.source.link.getId());
-//    }
-//
-//    public static String getName(AbstractActuator item) {
-//        return String.format("%s %d", itemNames.AtoB(ItemType.actuator), item.getId());
-//    }
-//
-//    public static String getName(AbstractController item) {
-//        return String.format("%s %d", itemNames.AtoB(ItemType.controller), item.getId());
-//    }
-//
-//    public static String getName(AbstractSensor item) {
-//        return String.format("%s %d", itemNames.AtoB(ItemType.sensor), item.getId());
-//    }
 
     public TypeId getTypeId(String itemName) {
         return new TypeId(itemName);

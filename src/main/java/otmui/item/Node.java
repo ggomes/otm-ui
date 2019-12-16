@@ -33,11 +33,6 @@ public class Node extends AbstractGraphItem {
     }
 
 
-    @Override
-    public String getName() {
-        return String.format("node %d",id);
-    }
-
 //    @Override
 //    public void set_size(float mysize) {
 //        ((Circle) shape).setRadius(mysize);

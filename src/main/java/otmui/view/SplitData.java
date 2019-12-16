@@ -2,7 +2,7 @@ package otmui.view;
 
 import api.OTMdev;
 import api.info.SplitInfo;
-import otmui.controller.component.LabelComboboxController;
+import otmui.controller.component.LabelCombobox;
 import otmui.event.FormSelectEvent;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 public class SplitData extends AbstractData {
 
     private LineChart<Number,Number> lineChart;
-    private LabelComboboxController commodityCtrl;
-    private LabelComboboxController linkInCtrl;
+    private LabelCombobox commodityCtrl;
+    private LabelCombobox linkInCtrl;
     private Set<SplitInfo> splits;
 
     public SplitData(long node_id,Set<SplitInfo> splits, OTMdev otm) {
@@ -36,7 +36,7 @@ public class SplitData extends AbstractData {
         X.add(UIFactory.createLabelButton(
                 "node",
                 String.format("%d",node_id),
-                e-> Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_NODE, node_id))
+                e-> Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2, node_id))
         ).pane);
 
         // commodity selector
@@ -44,7 +44,7 @@ public class SplitData extends AbstractData {
                 "commodity",splits.stream()
                         .map(s->String.format("%d",s.commodity_id))
                         .collect(Collectors.toSet()));
-        commodityCtrl = (LabelComboboxController) panectrl1.ctrl;
+        commodityCtrl = (LabelCombobox) panectrl1.ctrl;
 
         X.add(panectrl1.pane);
 
@@ -54,7 +54,7 @@ public class SplitData extends AbstractData {
                 splits.stream()
                         .map(s->String.format("%d",s.link_in_id))
                         .collect(Collectors.toSet()));
-        linkInCtrl = (LabelComboboxController) panectrl2.ctrl;
+        linkInCtrl = (LabelCombobox) panectrl2.ctrl;
         X.add(panectrl2.pane);
 
         // draw button

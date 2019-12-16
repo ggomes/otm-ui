@@ -1,7 +1,5 @@
 package otmui.view;
 
-import api.OTMdev;
-import commodity.Subnetwork;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
@@ -9,9 +7,10 @@ import java.util.stream.Collectors;
 
 public class SubnetworkData extends AbstractData {
 
-    public SubnetworkData(Subnetwork subnetwork, OTMdev otm) {
+    public SubnetworkData(otmui.item.Subnetwork uisubnetwork) {
         super();
 
+        commodity.Subnetwork subnetwork = uisubnetwork.subnet;
         ObservableList<Node> X = vbox.getChildren();
 
         // id .................

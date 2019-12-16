@@ -2,6 +2,7 @@ package otmui.controller;
 
 import error.OTMException;
 import javafx.scene.Scene;
+import javafx.scene.shape.Shape;
 import otmui.*;
 import otmui.event.*;
 import otmui.graph.GraphContainer;
@@ -42,6 +43,7 @@ public class GraphPaneController {
         Scene scene = myApp.stage.getScene();
 
         scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.data) );
+        scene.addEventFilter(DoHighlightSelection.HIGHLIGHT_ANY, e->highlight(e.selection) );
 
 //        scene.addEventFilter(DeleteElementEvent.REMOVE_LINK, e->remove_link((common.Link)e.item));
 //        scene.addEventFilter(DeleteElementEvent.REMOVE_NODE, e->remove_node((common.Node)e.item));
@@ -66,71 +68,22 @@ public class GraphPaneController {
 //            if(!view_actuators)
 //                itempool.items.get(ItemType.actuator).forEach(x -> x.set_visible(false));
 
-        // enable click of nodes, and recenter on the canvas
-        for (AbstractItem node : data.items.get(ItemType.node).values()) {
-            ((AbstractGraphItem)node).shapegroup.setOnMouseClicked(mouseEvent -> {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    switch(mouseEvent.getClickCount()) {
-                        case 1:
-                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
-                            break;
-                        case 2:
-                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_NODE, mouseEvent));
-                            break;
-                    }
-                }
-            });
-        }
-
-        // enable click of links
-        for (AbstractItem link : data.items.get(ItemType.link).values()) {
-            ((AbstractGraphItem)link).shapegroup.setOnMouseClicked(mouseEvent -> {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    switch(mouseEvent.getClickCount()){
-                        case 1:
-                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
-                            break;
-                        case 2:
-                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_LINK, mouseEvent));
-                            break;
-                    }
-                }
-            });
-        }
-
-        // enable click of drawActuator
-        for (AbstractItem actuator : data.items.get(ItemType.actuator).values()) {
-            ((AbstractGraphItem)actuator).shapegroup.setOnMouseClicked(mouseEvent -> {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    switch(mouseEvent.getClickCount()){
-                        case 1:
-                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
-                            break;
-                        case 2:
-                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_ACTUATOR, mouseEvent));
-                            break;
-                    }
-                }
-            });
-        }
-
-        // enable click of drawSensor
-        for (AbstractItem sensor : data.items.get(ItemType.sensor).values()) {
-            ((AbstractGraphItem)sensor).shapegroup.setOnMouseClicked(mouseEvent -> {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    switch(mouseEvent.getClickCount()){
-                        case 1:
-                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK1, mouseEvent));
-                            break;
-                        case 2:
-                            Event.fireEvent(mouseEvent.getTarget(), new GraphSelectEvent(GraphSelectEvent.CLICK2_SENSOR, mouseEvent));
-                            break;
-                    }
-                }
-            });
-        }
-
-
+        // graph item clicks
+        for(ItemType type : Arrays.asList(ItemType.node,ItemType.link,ItemType.actuator,ItemType.sensor))
+            for (AbstractItem item : data.items.get(type).values())
+                for (Shape shape : ((AbstractGraphItem) item).shapegroup)
+                    shape.setOnMouseClicked(mouseEvent -> {
+                        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                            switch (mouseEvent.getClickCount()) {
+                                case 1:
+                                    Event.fireEvent(mouseEvent.getTarget(), new GraphClickEvent(GraphClickEvent.CLICK1, (AbstractGraphItem) item, mouseEvent));
+                                    break;
+                                case 2:
+                                    Event.fireEvent(mouseEvent.getTarget(), new GraphClickEvent(GraphClickEvent.CLICK2, (AbstractGraphItem) item, mouseEvent));
+                                    break;
+                            }
+                        }
+                    });
     }
 
 //    public void reset(){
@@ -320,6 +273,7 @@ public class GraphPaneController {
         items.get(ItemType.link).forEach(x->((AbstractGraphItem)x).highlight());
         items.get(ItemType.actuator).forEach(x->((AbstractGraphItem)x).highlight());
         items.get(ItemType.sensor).forEach(x->((AbstractGraphItem)x).highlight());
+        items.get(ItemType.subnetwork).forEach(x->((AbstractGraphItem)x).highlight());
     }
 
     /////////////////////////////////////////////////

@@ -10,6 +10,7 @@ import sensor.AbstractSensor;
 
 public class FixedSensor extends AbstractGraphItem {
 
+    public sensor.FixedSensor sensor;
     public Arrow geom;
 
     public FixedSensor(AbstractSensor sensor, float lane_width, float link_offset) throws OTMException {
@@ -19,9 +20,9 @@ public class FixedSensor extends AbstractGraphItem {
         if(!(sensor instanceof sensor.FixedSensor))
             return;
 
-        sensor.FixedSensor fsensor = (sensor.FixedSensor) sensor;
+        this.sensor = (sensor.FixedSensor) sensor;
 
-        this.geom = traverse_distance(fsensor.get_link(),fsensor.get_position());
+        this.geom = traverse_distance(this.sensor.get_link(),this.sensor.get_position());
 
         if(geom==null)
             return;
@@ -31,8 +32,8 @@ public class FixedSensor extends AbstractGraphItem {
         Vector p = geom.start;
         Vector u = geom.direction;
 
-        int start_lane = fsensor.start_lane;
-        int end_lane = fsensor.end_lane;
+        int start_lane = this.sensor.start_lane;
+        int end_lane = this.sensor.end_lane;
 
         Vector n = Vector.cross_z(u);
 
@@ -65,11 +66,6 @@ public class FixedSensor extends AbstractGraphItem {
     @Override
     public ItemType getType() {
         return ItemType.sensor;
-    }
-
-    @Override
-    public String getName() {
-        return String.format("sensor %d",id);
     }
 
     /** Starting from upstream node, traverse the link a distance x and return the resulting point.

@@ -4,12 +4,10 @@ import actuator.AbstractActuator;
 import commodity.Subnetwork;
 import control.AbstractController;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
-import otmui.event.FormSelectEvent;
-import otmui.event.GraphSelectEvent;
-import otmui.event.TreeDoubleClickEvent;
-import otmui.event.TreeSingleClickEvent;
+import otmui.event.*;
 import commodity.Commodity;
 import otmui.item.*;
 import sensor.AbstractSensor;
@@ -29,10 +27,12 @@ public class SelectionManager {
 
         // event listeners
         Scene scene = myApp.stage.getScene();
-        scene.addEventFilter(GraphSelectEvent.CLICK1, e-> graphSingleClick(e));
-        scene.addEventFilter(TreeSingleClickEvent.TREE_SINGLE, e-> treeSingleClick(e));
-        scene.addEventFilter(TreeDoubleClickEvent.TREE_DOUBLE, e->treeDoubleClick(e));
-        scene.addEventFilter(FormSelectEvent.CLICK1, e->formFirstClick(e));
+        scene.addEventFilter(GraphClickEvent.CLICK1, e-> graphClick1(e));
+        scene.addEventFilter(GraphClickEvent.CLICK2, e-> graphClick2(e));
+        scene.addEventFilter(TreeClickEvent.CLICK1, e-> treeClick1(e));
+        scene.addEventFilter(TreeClickEvent.CLICK2, e-> treeClick2(e));
+        scene.addEventFilter(FormSelectEvent.CLICK1, e-> formClick1(e));
+        scene.addEventFilter(FormSelectEvent.CLICK2, e-> formClick2(e));
     }
 
     private void clear_selection(){
@@ -41,31 +41,40 @@ public class SelectionManager {
             selection.put(type,new HashSet<>());
     }
 
-    public void graphSingleClick(GraphSelectEvent e){
+    public void graphClick1(GraphClickEvent e){
+        Set<AbstractItem> selectionPool = selection.get(e.item.getType());
 
-        AbstractItem item = (AbstractItem) e.getSelected();
-        Set<AbstractItem> selectionPool = selection.get(item.getType());
-
-        boolean selected = selectionPool.contains(item);
+        boolean selected = selectionPool.contains(e.item);
         boolean shift_pressed = e.event.isShiftDown();
         if(selected)
             if(shift_pressed)
-                selectionPool.remove(item);
+                selectionPool.remove(e.item);
             else
                 clearSelection();
         else
         if(shift_pressed)
-            selectionPool.add(item);
+            selectionPool.add(e.item);
         else
             clearSelection();
-        selectionPool.add(item);
-
-        highlightSelection();
+        selectionPool.add(e.item);
 
         e.consume();
+        Event.fireEvent(myApp.stage.getScene(),new DoHighlightSelection(DoHighlightSelection.HIGHLIGHT_ANY,selection));
     }
 
-    public void treeSingleClick(TreeSingleClickEvent e){
+    public void graphClick2(GraphClickEvent e){
+
+        clear_selection();
+
+        AbstractItem item = e.item;
+        selection.get(item.getType()).add(item);
+
+        e.consume();
+        Event.fireEvent(myApp.stage.getScene(),new DoHighlightSelection(DoHighlightSelection.HIGHLIGHT_ANY,selection));
+        Event.fireEvent(myApp.stage.getScene(),new DoOpenFormEvent(DoOpenFormEvent.OPEN,item));
+    }
+
+    public void treeClick1(TreeClickEvent e){
 
         if(e.items ==null)
             return;
@@ -77,16 +86,17 @@ public class SelectionManager {
             if(!treeitem.isLeaf())
                 continue;
             TypeId typeId = myApp.data.getTypeId((String) treeitem.getValue());
+            if(typeId.type==null)
+                continue;
             AbstractItem item = myApp.data.getItem(typeId);
             selection.get(typeId.type).add(item);
         }
 
-        highlightSelection();
-
         e.consume();
+        Event.fireEvent(myApp.stage.getScene(),new DoHighlightSelection(DoHighlightSelection.HIGHLIGHT_ANY,selection));
     }
 
-    public void treeDoubleClick(TreeDoubleClickEvent e) {
+    public void treeClick2(TreeClickEvent e) {
 
         clear_selection();
 
@@ -97,95 +107,29 @@ public class SelectionManager {
         AbstractItem item = myApp.data.getItem(typeId);
         selection.get(typeId.type).add(item);
 
-        highlightSelection();
-
-        switch(typeId.type){
-            case node:
-                common.Node node = myApp.otm.scenario.network.nodes.get(typeId.id);
-                myApp.formController.showNodeData(node);
-                break;
-
-            case link:
-                common.Link link = myApp.otm.scenario.network.links.get(typeId.id);
-                myApp.formController.showLinkData(link);
-                break;
-
-            case sensor:
-                AbstractSensor sensor = myApp.otm.scenario.sensors.get(typeId.id);
-                myApp.formController.showSensorData(sensor);
-                break;
-
-            case actuator:
-                AbstractActuator actuator = myApp.otm.scenario.actuators.get(typeId.id);
-                myApp.formController.showActuatorData(actuator);
-                break;
-
-            case controller:
-                AbstractController controller = myApp.otm.scenario.controllers.get(typeId.id);
-                myApp.formController.showControllerData( controller);
-                break;
-
-            case commodity:
-                commodity.Commodity commodity = myApp.otm.scenario.commodities.get(typeId.id);
-                myApp.formController.showCommodityData(commodity);
-                break;
-
-            case subnetwork:
-                Subnetwork subnetwork = myApp.otm.scenario.subnetworks.get(typeId.id);
-                myApp.formController.showSubnewtorkData(subnetwork);
-                break;
-
-//            case demand:
-//                long link_id,
-//                Set<DemandInfo > demands
-//                myApp.formController.showDemandData( link_id,demands);
-//                break;
-//
-//            case split:
-//                long node_id,Set<SplitInfo > splits
-//                myApp.formController.showSplitData( node_id,splits);
-//                break;
-        }
+        e.consume();
+        Event.fireEvent(myApp.stage.getScene(),new DoHighlightSelection(DoHighlightSelection.HIGHLIGHT_ANY,selection));
+        Event.fireEvent(myApp.stage.getScene(),new DoOpenFormEvent(DoOpenFormEvent.OPEN,item));
     }
 
+    public void formClick1(FormSelectEvent e){
+
+        System.out.println("SelectionManager formClick1");
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void formFirstClick(FormSelectEvent e){
-
-        clear_selection();
-
-
-        Object item = e.getItem();
-
-        System.out.println(item.getClass());
-
-
+//        clear_selection();
+//
+//
+//        Object item = e.getItem();
+//
 //        TypeId typeId = myApp.itempool.getTypeId((String) e.item.getValue());
 //        AbstractItem item = myApp.itempool.getItem(typeId);
 //        selection.get(typeId.type).add(item);
-
+//
 //        highlightSelection();
-
-
-
+//
+//
+//
 //        if(item instanceof AbstractDrawNode)
 //            selectedNodes.add((AbstractDrawNode) item);
 //
@@ -197,11 +141,14 @@ public class SelectionManager {
 //
 //        if(item instanceof AbstractDrawActuator)
 //            selectedActuators.add((AbstractDrawActuator) item);
+//
+//        e.consume();
+//        Event.fireEvent(myApp.stage.getScene(),new DoHighlightSelection(DoHighlightSelection.HIGHLIGHT_ANY,selection));
 
-        highlightSelection();
+    }
 
-        e.consume();
-
+    public void formClick2(FormSelectEvent e){
+        System.out.println("SelectionManager formClick2");
     }
 
     public void formFirstClickSubnetwork(Long itemId){
@@ -267,11 +214,11 @@ public class SelectionManager {
         myApp.treeController.clearSelection();
     }
 
-    private void highlightSelection(){
-        myApp.graphController.highlight(selection);
-        myApp.treeController.highlight(selection);
-        myApp.statusbarController.setText(selection);
-    }
+//    private void highlightSelection(){
+//        myApp.graphController.highlight(selection);
+//        myApp.treeController.highlight(selection);
+//        myApp.statusbarController.setText(selection);
+//    }
 
 
 }

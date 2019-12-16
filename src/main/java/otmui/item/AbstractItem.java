@@ -14,7 +14,10 @@ public abstract class AbstractItem {
         this.id = id;
     }
 
-    public abstract String getName();
+    public final String getName() {
+        return String.format("%s %d",getType(),id);
+    }
+
     public abstract ItemType getType();
 
 }

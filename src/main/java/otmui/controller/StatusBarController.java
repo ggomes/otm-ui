@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import otmui.Data;
 import otmui.ItemType;
 import otmui.MainApp;
+import otmui.event.DoHighlightSelection;
 import otmui.event.NewScenarioEvent;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.value.ObservableValue;
@@ -34,6 +35,8 @@ public class StatusBarController {
 
         Scene scene = myApp.stage.getScene();
         scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.data) );
+        scene.addEventFilter(DoHighlightSelection.HIGHLIGHT_ANY, e->setText(e.selection) );
+
     }
 
     public void loadScenario(Data itempool){

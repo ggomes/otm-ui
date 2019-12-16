@@ -1,23 +1,43 @@
 package otmui.item;
 
+import otmui.Data;
 import otmui.ItemType;
 
-public class Subnetwork extends AbstractItem {
+import java.util.HashSet;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
+
+public class Subnetwork extends AbstractGraphItem {
 
     public commodity.Subnetwork subnet;
-    public Subnetwork(commodity.Subnetwork subnet) {
-        super(subnet.getId());
+    public Set<Link> links;
+
+    public Subnetwork(commodity.Subnetwork subnet, Data data) {
+        super(subnet.getId(), Float.NaN, Float.NaN, null, null);
 
         this.subnet = subnet;
-    }
 
-    @Override
-    public String getName() {
-        return "subnetwork";
+        this.links = new HashSet<>();
+        this.links.addAll(subnet.links.stream()
+                .map( x -> (Link) data.items.get(ItemType.link).get(x.getId()) )
+                .collect(toSet()));
     }
 
     @Override
     public ItemType getType() {
         return ItemType.subnetwork;
     }
+
+    @Override
+    public void highlight() {
+        links.forEach(link->link.highlight());
+    }
+
+    @Override
+    public void unhighlight() {
+        links.forEach(link->link.unhighlight());
+    }
+
+
 }

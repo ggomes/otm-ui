@@ -5,7 +5,9 @@ public class TypeId {
     public long id;
     public TypeId(String itemName){
         String [] strs = itemName.split(" ");
-        type = Data.itemNames.BtoA(strs[0]);
+        if(strs.length<2)
+            return;
+        type = ItemType.valueOf(strs[0]);
         id = Long.parseLong(strs[1]);
     }
 }

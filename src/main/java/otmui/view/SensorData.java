@@ -6,10 +6,11 @@ import sensor.FixedSensor;
 
 public class SensorData extends AbstractData  {
 
-    public SensorData(AbstractSensor sensor){
+    public SensorData(otmui.item.FixedSensor uisensor){
         super();
 
-        if(!(sensor instanceof FixedSensor))
+        sensor.FixedSensor sensor = uisensor.sensor;
+        if(!(sensor instanceof sensor.FixedSensor))
             return;
 
         FixedSensor fsensor = (FixedSensor) sensor;

@@ -24,7 +24,7 @@ public class DemandData extends AbstractData {
         X.add(UIFactory.createLabelButton(
                 "link id",
                 String.format("%d", link_id),
-                e->Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_LINK, link_id))
+                e->Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2, link_id))
         ).pane);
 
         // data

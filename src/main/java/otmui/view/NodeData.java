@@ -9,9 +9,10 @@ import java.util.stream.Collectors;
 
 public class NodeData extends AbstractData {
 
-    public NodeData(common.Node node, OTMdev otm){
+    public NodeData(otmui.item.Node uinode){
         super();
 
+        common.Node node = uinode.node;
         ObservableList<javafx.scene.Node> X = vbox.getChildren();
 
         // node id ....................
@@ -45,7 +46,7 @@ public class NodeData extends AbstractData {
             X.add(UIFactory.createLabelButton(
                     "actuator",
                     String.format("%d",node.actuator.getId()),
-                    e-> Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_ACTUATOR,node.actuator.getId()))
+                    e-> Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2,node.actuator.getId()))
             ).pane);
 
     }

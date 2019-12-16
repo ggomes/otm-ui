@@ -13,8 +13,10 @@ import java.util.stream.Collectors;
 
 public class LinkData extends AbstractData {
 
-    public LinkData(common.Link link, OTMdev otm){
+    public LinkData(otmui.item.Link uilink){
         super();
+
+        common.Link link = uilink.link;
 
         ObservableList<Node> X = vbox.getChildren();
 
@@ -95,7 +97,7 @@ public class LinkData extends AbstractData {
 
     private void doubleClickNode(common.Node node){
         Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK1,node));
-        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_NODE,node));
+        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2,node));
     }
 
 }

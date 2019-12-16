@@ -8,9 +8,10 @@ import java.util.stream.Collectors;
 
 public class ControllerData extends AbstractData {
 
-    public ControllerData(AbstractController controller) {
+    public ControllerData(otmui.item.Controller uicontroller) {
         super();
 
+        control.AbstractController controller = uicontroller.controller;
         ObservableList<Node> X = vbox.getChildren();
 
         // id .................

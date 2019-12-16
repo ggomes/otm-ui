@@ -12,11 +12,6 @@ public class Commodity extends AbstractItem {
     }
 
     @Override
-    public String getName() {
-        return "type";
-    }
-
-    @Override
     public ItemType getType() {
         return ItemType.commodity;
     }

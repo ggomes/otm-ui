@@ -18,8 +18,4 @@ public abstract class Actuator extends AbstractGraphItem {
         return ItemType.actuator;
     }
 
-    @Override
-    public String getName() {
-        return String.format("actuator %d",id);
-    }
 }

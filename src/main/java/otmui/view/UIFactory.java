@@ -21,7 +21,7 @@ public class UIFactory {
 
     public static PaneCtrl createLabelText(String label, String text){
         AnchorPane pane = null;
-        LabelTextController ctrl = null;
+        LabelText ctrl = null;
         try {
             FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelText.fxml"));
             pane = loader.load();
@@ -36,7 +36,7 @@ public class UIFactory {
 
     public static PaneCtrl createLabelList(String label, Collection<String> items){
         AnchorPane pane = null;
-        LabelListController ctrl = null;
+        LabelList ctrl = null;
         try {
             FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelList.fxml"));
             pane = loader.load();
@@ -53,7 +53,7 @@ public class UIFactory {
 
     public static PaneCtrl createLabelButton(String label,String buttonLabel,EventHandler<MouseEvent> handler){
         AnchorPane pane = null;
-        LabelButtonController ctrl = null;
+        LabelButton ctrl = null;
         try {
             FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelButton.fxml"));
             pane = loader.load();
@@ -69,7 +69,7 @@ public class UIFactory {
 
     public static PaneCtrl createLabelLabel(String label1,String label2){
         AnchorPane pane = null;
-        LabelLabelController ctrl = null;
+        LabelLabel ctrl = null;
         try {
             FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelLabel.fxml"));
             pane = loader.load();
@@ -84,7 +84,7 @@ public class UIFactory {
 
     public static PaneCtrl createLabelCheckbox(String label,boolean checkbox){
         AnchorPane pane = null;
-        LabelCheckboxController ctrl = null;
+        LabelCheckbox ctrl = null;
         try {
             FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelCheckbox.fxml"));
             pane = loader.load();
@@ -99,7 +99,7 @@ public class UIFactory {
 
     public static PaneCtrl createLabelCombobox(String label,Collection<String> items){
         AnchorPane pane = null;
-        LabelComboboxController ctrl = null;
+        LabelCombobox ctrl = null;
         try {
             FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelCombobox.fxml"));
             pane = loader.load();

@@ -157,11 +157,6 @@ public abstract class Link extends AbstractGraphItem {
         return ItemType.link;
     }
 
-    @Override
-    public String getName() {
-        return String.format("link %d",id);
-    }
-
     public void add_demand(long commodity_id,AbstractDemandProfile profile){
         comm2demand.put(commodity_id,profile);
     }

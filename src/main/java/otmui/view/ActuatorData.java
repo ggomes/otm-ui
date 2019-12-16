@@ -9,9 +9,10 @@ import javafx.scene.Node;
 
 public class ActuatorData extends AbstractData {
 
-    public ActuatorData(AbstractActuator actuator) {
+    public ActuatorData(otmui.item.Actuator uiactuator) {
         super();
 
+        AbstractActuator actuator = uiactuator.actuator;
         ObservableList<Node> X = vbox.getChildren();
 
         // id .................
@@ -38,7 +39,7 @@ public class ActuatorData extends AbstractData {
             X.add(UIFactory.createLabelButton(
                     "controller",
                     actuator.myController.getId().toString(),
-                    e->Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_CONTROLLER,actuator.myController.getId()))
+                    e->Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2,actuator.myController.getId()))
             ).pane);
         }
 
@@ -47,10 +48,10 @@ public class ActuatorData extends AbstractData {
     private void showTargetData(InterfaceActuatorTarget target){
 
         if(target instanceof common.Node)
-            Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_NODE,target.getId()));
+            Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2,target.getId()));
 
         if(target instanceof common.Link)
-            Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2_LINK,target.getId()));
+            Event.fireEvent(scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2,target.getId()));
 
     }
 
