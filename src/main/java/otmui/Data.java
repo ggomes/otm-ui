@@ -76,7 +76,7 @@ public class Data {
         Map<Long, AbstractItem> controllers = new HashMap<>();
         items.put(ItemType.controller,controllers);
         for (control.AbstractController ctrl : otm.scenario.controllers.values())
-            controllers.put(ctrl.getId(),new otmui.item.Controller(ctrl));
+            controllers.put(ctrl.getId(),new otmui.item.Controller(ctrl,this));
 
         // commodities
         Map<Long, AbstractItem> commodities = new HashMap<>();

@@ -31,91 +31,34 @@ public class FormController {
     public void openForm(AbstractItem item){
         switch(item.getType()){
             case node:
-                NodeData nodeData = new NodeData((otmui.item.Node)item,myApp.data);
-                dataPane.setContent(nodeData.getScrollPane());
+                dataPane.setContent(FormFactory.nodeForm((otmui.item.Node)item,myApp.data));
                 break;
 
             case link:
-                LinkData linkData = new LinkData((otmui.item.Link)item,myApp.data);
-                dataPane.setContent(linkData.getScrollPane());
+                dataPane.setContent(FormFactory.linkForm((otmui.item.Link)item,myApp.data));
                 break;
 
             case sensor:
-                SensorData sensorData = new SensorData((otmui.item.FixedSensor)item);
-                dataPane.setContent(sensorData.getScrollPane());
+                dataPane.setContent(FormFactory.sensorForm((otmui.item.FixedSensor)item,myApp.data));
                 break;
 
             case actuator:
-                ActuatorData actuatorData = new ActuatorData((otmui.item.Actuator)item,myApp.data);
-                dataPane.setContent(actuatorData.getScrollPane());
+                dataPane.setContent(FormFactory.actuatorForm((otmui.item.Actuator)item,myApp.data));
                 break;
 
             case controller:
-                ControllerData controllerData = new ControllerData((otmui.item.Controller)item);
-                dataPane.setContent(controllerData.getScrollPane());
+                dataPane.setContent(FormFactory.controllerForm((otmui.item.Controller)item,myApp.data));
                 break;
 
             case commodity:
-                CommodityData commodityData = new CommodityData((otmui.item.Commodity)item);
-                dataPane.setContent(commodityData.getScrollPane());
+                dataPane.setContent(FormFactory.commodityForm((otmui.item.Commodity)item,myApp.data));
                 break;
 
             case subnetwork:
-                SubnetworkData subnetworkData = new SubnetworkData((otmui.item.Subnetwork)item);
-                dataPane.setContent(subnetworkData.getScrollPane());
+                dataPane.setContent(FormFactory.subnetworkForm((otmui.item.Subnetwork)item,myApp.data));
                 break;
 
         }
     }
 
-    /////////////////////////////////////////////////
-    // show
-    /////////////////////////////////////////////////
-
-//    public void formSecondClickNode(FormSelectEvent e){
-//        showNodeData(myApp.otm.scenario.network.nodes.get(e.itemId));
-//        e.consume();
-//    }
-//
-//    public void formSecondClickSubnetwork(FormSelectEvent e){
-//        showSubnewtorkData(myApp.otm.scenario.subnetworks.get(e.itemId));
-//        e.consume();
-//    }
-//
-//    public void formSecondClickDemand(FormSelectEvent e){
-//        showDemandData(e.itemId,myApp.demands.get(e.itemId));
-//        e.consume();
-//    }
-//
-//    public void formSecondClickSplit(FormSelectEvent e){
-//        showSplitData(e.itemId,myApp.splits.get(e.itemId));
-//        e.consume();
-//    }
-//
-//    public void formSecondClickCommodity(FormSelectEvent e){
-//        showCommodityData(myApp.otm.scenario.commodities.get(e.itemId));
-//        e.consume();
-//    }
-//
-//    public void formSecondClickController(FormSelectEvent e){
-//        showControllerData(myApp.otm.scenario.controllers.get(e.itemId));
-//        e.consume();
-//    }
-//
-//    public void formSecondClickSensor(FormSelectEvent e){
-//        showSensorData(myApp.otm.scenario.sensors.get(e.itemId));
-//        e.consume();
-//    }
-
-//    public void formSecondClickActuator(FormSelectEvent e){
-//        showActuatorData(myApp.otm.scenario.actuators.get(e.itemId));
-//        e.consume();
-//    }
-
-    ////////////////////////////////////////////////////////////////
-
-
-//    private static String getItemName(TreeSelectEvent e){
-//        return (String)e.treeitem.getValue();
-//    }
 }

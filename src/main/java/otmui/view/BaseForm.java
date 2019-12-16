@@ -8,13 +8,12 @@ import otmui.ItemType;
 import otmui.event.FormSelectEvent;
 import otmui.item.AbstractItem;
 
-public abstract class AbstractData {
+public class BaseForm {
 
-    protected ScrollPane scrollPane;
-    protected AnchorPane anchorPane;
-    protected VBox vbox;
+    public ScrollPane scrollPane;
+    public VBox vbox;
 
-    public AbstractData(){
+    public BaseForm(){
         scrollPane = new ScrollPane();
 
         scrollPane.setMinWidth(0d);
@@ -31,7 +30,7 @@ public abstract class AbstractData {
         AnchorPane.setBottomAnchor(scrollPane,0d);
 
         // anchorpane, add to scrollPane
-        anchorPane = new AnchorPane();
+        AnchorPane anchorPane = new AnchorPane();
         scrollPane.setContent(anchorPane);
 
         anchorPane.setMinWidth(0d);
@@ -58,23 +57,18 @@ public abstract class AbstractData {
         AnchorPane.setTopAnchor(vbox,0d);
         AnchorPane.setBottomAnchor(vbox,0d);
     }
-
-    public ScrollPane getScrollPane(){
-        return this.scrollPane;
-    }
-
-
-    protected void click1(AbstractItem item){
-        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK1, item));
-    }
-
-    protected void click2(AbstractItem item){
-        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2, item));
-    }
-
-    protected void doubleClick(AbstractItem item){
-        click1(item);
-        click2(item);
-    }
+//
+//    protected void click1(AbstractItem item){
+//        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK1, item));
+//    }
+//
+//    protected void click2(AbstractItem item){
+//        Event.fireEvent(this.scrollPane,new FormSelectEvent(FormSelectEvent.CLICK2, item));
+//    }
+//
+//    protected void doubleClick(AbstractItem item){
+//        click1(item);
+//        click2(item);
+//    }
 
 }

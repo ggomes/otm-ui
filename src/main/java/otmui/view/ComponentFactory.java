@@ -11,19 +11,21 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import otmui.item.AbstractItem;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.Set;
 
-public class UIFactory {
+public class ComponentFactory {
 
     public static PaneCtrl createLabelText(String label, String text){
         AnchorPane pane = null;
         LabelText ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelText.fxml"));
+            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelText.fxml"));
             pane = loader.load();
             ctrl = loader.getController();
             ctrl.setLabel(label);
@@ -34,17 +36,17 @@ public class UIFactory {
         return new PaneCtrl(pane,ctrl);
     }
 
-    public static PaneCtrl createLabelList(String label, Collection<String> items){
+    public static PaneCtrl createLabelList(String label, Set<AbstractItem> itemlist){
         AnchorPane pane = null;
         LabelList ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelList.fxml"));
+            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelList.fxml"));
             pane = loader.load();
 
             ctrl = loader.getController();
             ctrl.setLabel(label);
-            if(items!=null)
-                ctrl.setListItems(items);
+            if(itemlist!=null && !itemlist.isEmpty())
+                ctrl.setListItems(itemlist);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,7 +57,7 @@ public class UIFactory {
         AnchorPane pane = null;
         LabelButton ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelButton.fxml"));
+            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelButton.fxml"));
             pane = loader.load();
             ctrl = loader.getController();
             ctrl.setLabel(label);
@@ -71,7 +73,7 @@ public class UIFactory {
         AnchorPane pane = null;
         LabelLabel ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelLabel.fxml"));
+            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelLabel.fxml"));
             pane = loader.load();
             ctrl = loader.getController();
             ctrl.setLabel(label1);
@@ -86,7 +88,7 @@ public class UIFactory {
         AnchorPane pane = null;
         LabelCheckbox ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelCheckbox.fxml"));
+            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelCheckbox.fxml"));
             pane = loader.load();
             ctrl = loader.getController();
             ctrl.setLabel(label);
@@ -101,7 +103,7 @@ public class UIFactory {
         AnchorPane pane = null;
         LabelCombobox ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(UIFactory.class.getResource("/fxml/primitives/labelCombobox.fxml"));
+            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelCombobox.fxml"));
             pane = loader.load();
             ctrl = loader.getController();
             ctrl.setLabel(label);

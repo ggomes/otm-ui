@@ -11,7 +11,7 @@ import otmui.event.ResetScenarioEvent;
 import otmui.simulation.OTMTask;
 import otmui.view.ParametersWindow;
 import otmui.view.PlotRequestWindow;
-import otmui.view.UIFactory;
+import otmui.view.ComponentFactory;
 import error.OTMException;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -83,7 +83,7 @@ public class MenuController implements Initializable {
         try {
             loadFile(file.getAbsolutePath());
         } catch (OTMException ex) {
-            UIFactory.createExceptionDialog(ex).showAndWait();
+            ComponentFactory.createExceptionDialog(ex).showAndWait();
         }
     }
 

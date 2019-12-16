@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.toSet;
 public class Subnetwork extends AbstractGraphItem {
 
     public commodity.Subnetwork subnet;
-    public Set<Link> links;
+    public Set<otmui.item.Link> links;
 
     public Subnetwork(commodity.Subnetwork subnet, Data data) {
         super(subnet.getId(), Float.NaN, Float.NaN, null, null);
