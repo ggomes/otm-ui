@@ -3,7 +3,7 @@ package otmui.controller.component;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
-public class LabelTextController extends LabelItemController  {
+public class LabelText extends LabelItem {
 
     @FXML
     private TextField text;

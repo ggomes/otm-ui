@@ -7,7 +7,7 @@ import javafx.scene.control.ComboBox;
 
 import java.util.Collection;
 
-public class LabelComboboxController extends LabelItemController {
+public class LabelCombobox extends LabelItem {
 
     @FXML
     public ComboBox combobox;
