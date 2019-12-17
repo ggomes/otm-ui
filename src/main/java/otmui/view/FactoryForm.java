@@ -17,6 +17,7 @@ import otmui.ItemType;
 import otmui.controller.component.LabelCombobox;
 import otmui.event.FormSelectEvent;
 import otmui.item.AbstractItem;
+import otmui.item.Commodity;
 import profiles.Profile2D;
 
 import java.util.*;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
-public class FormFactory {
+public class FactoryForm {
 
     public static ScrollPane nodeForm(otmui.item.Node uinode, Data data){
 
@@ -34,19 +35,19 @@ public class FormFactory {
         ObservableList<javafx.scene.Node> X = form.vbox.getChildren();
 
         // node id ....................
-        X.add(ComponentFactory.createLabelText("id", String.format("%d",node.getId())).pane);
+        X.add(FactoryComponent.createLabelText("id", String.format("%d",node.getId())).pane);
 
         // input links .................
         Set<AbstractItem> in_links = node.in_links.values().stream()
                 .map(x->data.items.get(ItemType.link).get(x.getId()))
                 .collect(toSet());
-        X.add(ComponentFactory.createLabelList("input links", in_links).pane);
+        X.add(FactoryComponent.createLabelList("input links", in_links).pane);
 
         // output links ................
         Set<AbstractItem> out_links = node.out_links.values().stream()
                 .map(x->data.items.get(ItemType.link).get(x.getId()))
                 .collect(toSet());
-        X.add(ComponentFactory.createLabelList("output links",out_links).pane);
+        X.add(FactoryComponent.createLabelList("output links",out_links).pane);
 
 //        // splitsForNode .....................
 //        if(node.splitsForNode !=null)
@@ -58,7 +59,7 @@ public class FormFactory {
 
         // actuator ...................
         if(node.actuator!=null)
-            X.add(ComponentFactory.createLabelButton(
+            X.add(FactoryComponent.createLabelButton(
                     "actuator",
                     String.format("%d",node.actuator.getId()),
                     e->click2(form,data.items.get(ItemType.actuator).get(node.actuator.getId()))
@@ -76,26 +77,25 @@ public class FormFactory {
         ObservableList<Node> X = form.vbox.getChildren();
 
         // link id .................
-        X.add(ComponentFactory.createLabelText("id",link.getId().toString()).pane);
+        X.add(FactoryComponent.createLabelText("id",link.getId().toString()).pane);
 
         // start node .................
-
-        X.add(ComponentFactory.createLabelButton("start node",
+        X.add(FactoryComponent.createLabelButton("start node",
                 link.start_node.getId().toString(),
                 e->doubleClick(form,data.items.get(ItemType.node).get(link.start_node.getId()))
         ).pane);
 
         // end node .................
-        X.add(ComponentFactory.createLabelButton("end node",
+        X.add(FactoryComponent.createLabelButton("end node",
                 link.end_node.getId().toString(),
                 e->doubleClick(form,data.items.get(ItemType.node).get(link.end_node.getId()))
         ).pane);
 
         // length [LabelText] ................
-        X.add(ComponentFactory.createLabelText("length [km]", String.format("%.0f",link.length)).pane);
+        X.add(FactoryComponent.createLabelText("length [km]", String.format("%.0f",link.length)).pane);
 
         // full lanes [LabelText] ................
-        X.add(ComponentFactory.createLabelText("full lanes", String.format("%d",link.full_lanes)).pane);
+        X.add(FactoryComponent.createLabelText("full lanes", String.format("%d",link.full_lanes)).pane);
 
 //        // left pocket
 //        AddLanes left = link.getLeftLanes();
@@ -114,18 +114,18 @@ public class FormFactory {
         // DO THIS!!!
 
         // link model type
-        X.add(ComponentFactory.createLabelLabel("link type",link.model.name).pane);
+        X.add(FactoryComponent.createLabelLabel("link type",link.model.name).pane);
 
         // lanegroups
         Collection<BaseLaneGroup> lanegroups = link.lanegroups_flwdn.values();
         List<String> lanegroupIds = lanegroups.stream().map(x->String.format("%d",x.id)).collect(Collectors.toList());
-        X.add(ComponentFactory.createLabelCombobox("lanegroups",lanegroupIds).pane);
+        X.add(FactoryComponent.createLabelCombobox("lanegroups",lanegroupIds).pane);
 
         // is sink
-        X.add(ComponentFactory.createLabelCheckbox("is sink",link.is_sink).pane);
+        X.add(FactoryComponent.createLabelCheckbox("is sink",link.is_sink).pane);
 
         // is source
-        X.add(ComponentFactory.createLabelCheckbox("is source",link.is_source).pane);
+        X.add(FactoryComponent.createLabelCheckbox("is source",link.is_source).pane);
 
 //        // demandsForLink
 //        if(link.demandsForLink !=null)
@@ -155,16 +155,16 @@ public class FormFactory {
         ObservableList<javafx.scene.Node> X = form.vbox.getChildren();
 
         // sensor id ....................
-        X.add(ComponentFactory.createLabelText("id", String.format("%d",sensor.id)).pane);
+        X.add(FactoryComponent.createLabelText("id", String.format("%d",sensor.id)).pane);
 
         // link id ....................
-        X.add(ComponentFactory.createLabelText("link id", String.format("%d",sensor.get_link().getId())).pane);
+        X.add(FactoryComponent.createLabelText("link id", String.format("%d",sensor.get_link().getId())).pane);
 
         // position ....................
-        X.add(ComponentFactory.createLabelText("position [m]", String.format("%.1f",sensor.get_position())).pane);
+        X.add(FactoryComponent.createLabelText("position [m]", String.format("%.1f",sensor.get_position())).pane);
 
         // lanes
-        X.add(ComponentFactory.createLabelText("lanes", String.format("%d - %d",sensor.start_lane,sensor.end_lane)).pane);
+        X.add(FactoryComponent.createLabelText("lanes", String.format("%d - %d",sensor.start_lane,sensor.end_lane)).pane);
 
         return form.scrollPane;
     }
@@ -176,13 +176,13 @@ public class FormFactory {
         ObservableList<Node> X = form.vbox.getChildren();
 
         // id .................
-        X.add(ComponentFactory.createLabelText("id", actuator.getId().toString()).pane);
+        X.add(FactoryComponent.createLabelText("id", actuator.getId().toString()).pane);
 
         // type .................
-        X.add(ComponentFactory.createLabelText("type", actuator.getType().toString()).pane);
+        X.add(FactoryComponent.createLabelText("type", actuator.getType().toString()).pane);
 
         // target .................
-        X.add(ComponentFactory.createLabelButton("target",
+        X.add(FactoryComponent.createLabelButton("target",
                 actuator.target.getClass().getSimpleName() + " " + actuator.target.getId(),
                 e-> {
                     AbstractItem item = null;
@@ -196,7 +196,7 @@ public class FormFactory {
 
         // controller .................
         if(actuator.myController!=null){
-            X.add(ComponentFactory.createLabelButton("controller",
+            X.add(FactoryComponent.createLabelButton("controller",
                     actuator.myController.getId().toString(),
                     e->click2(form,data.items.get(ItemType.controller).get(actuator.myController.getId()))
             ).pane);
@@ -212,15 +212,15 @@ public class FormFactory {
         ObservableList<Node> X = form.vbox.getChildren();
 
         // id .................
-        X.add(ComponentFactory.createLabelText("id", controller.getId().toString()).pane);
+        X.add(FactoryComponent.createLabelText("id", controller.getId().toString()).pane);
 
         // algorithm type;
-        X.add(ComponentFactory.createLabelText("algorithm", controller.type.toString()).pane);
+        X.add(FactoryComponent.createLabelText("algorithm", controller.type.toString()).pane);
 
         // Set<AbstractActuator> actuators;
         Set<AbstractItem> items = new HashSet<>();
         items.addAll(uicontroller.actuators);
-        X.add(ComponentFactory.createLabelList("actuators",items).pane);
+        X.add(FactoryComponent.createLabelList("actuators",items).pane);
 
         return form.scrollPane;
     }
@@ -232,10 +232,10 @@ public class FormFactory {
         ObservableList<Node> X = form.vbox.getChildren();
 
         // id .................
-        X.add(ComponentFactory.createLabelText("id", commodity.getId().toString()).pane);
+        X.add(FactoryComponent.createLabelText("id", commodity.getId().toString()).pane);
 
         // String name;
-        X.add(ComponentFactory.createLabelText("name", commodity.get_name()).pane);
+        X.add(FactoryComponent.createLabelText("name", commodity.get_name()).pane);
 
         // subnetwork
 //        List<Long> subnets = commodity.get_subnetwork_ids();
@@ -258,22 +258,24 @@ public class FormFactory {
         ObservableList<Node> X = form.vbox.getChildren();
 
         // id .................
-        X.add(ComponentFactory.createLabelText("id",String.format("%d",uisubnetwork.id)).pane);
+        X.add(FactoryComponent.createLabelText("id",String.format("%d",uisubnetwork.id)).pane);
 
         // name .................
-        X.add(ComponentFactory.createLabelText("name",uisubnetwork.getName()).pane);
+        X.add(FactoryComponent.createLabelText("name",uisubnetwork.getName()).pane);
 
         // is_global .................
-        X.add(ComponentFactory.createLabelCheckbox("is global",uisubnetwork.subnet.isGlobal()).pane);
+        X.add(FactoryComponent.createLabelCheckbox("is global",uisubnetwork.subnet.isGlobal()).pane);
 
-        // Set<Link> links .................
+        // links .................
         Set<AbstractItem> links = new HashSet<>();
-        X.add(ComponentFactory.createLabelList("link",links).pane);
-
-        // Set<Commodity> used_by_comm .................
         links.addAll(uisubnetwork.links);
-        X.add(ComponentFactory.createLabelList("vehicle types", links).pane);
+        X.add(FactoryComponent.createLabelList("link",links).pane);
 
+        //  .................
+        Set<AbstractItem> comms = data.items.get(ItemType.commodity).values().stream()
+                        .filter(x->((Commodity)x).comm.get_subnetwork_ids().contains(uisubnetwork.id))
+                        .collect(toSet());
+        X.add(FactoryComponent.createLabelList("vehicle types", comms).pane);
 
         return form.scrollPane;
     }
@@ -285,7 +287,7 @@ public class FormFactory {
         ObservableList<Node> X = form.vbox.getChildren();
 
         // id .................
-        X.add(ComponentFactory.createLabelButton(
+        X.add(FactoryComponent.createLabelButton(
                 "link id",
                 String.format("%d", link_id),
                 e->click2(form,data.items.get(ItemType.link).get(link_id))
@@ -328,14 +330,14 @@ public class FormFactory {
         ObservableList<Node> X = form.vbox.getChildren();
 
         // id .................
-        X.add(ComponentFactory.createLabelButton(
+        X.add(FactoryComponent.createLabelButton(
                 "node",
                 String.format("%d",node_id),
                 e -> click2(form,data.items.get(ItemType.node).get(node_id))
         ).pane);
 
         // commodity selector
-        PaneCtrl panectrl1 = ComponentFactory.createLabelCombobox(
+        PaneCtrl panectrl1 = FactoryComponent.createLabelCombobox(
                 "commodity",splits.stream()
                         .map(s->String.format("%d",s.commodity_id))
                         .collect(Collectors.toSet()));
@@ -344,7 +346,7 @@ public class FormFactory {
         X.add(panectrl1.pane);
 
         // in link selector
-        PaneCtrl panectrl2 = ComponentFactory.createLabelCombobox(
+        PaneCtrl panectrl2 = FactoryComponent.createLabelCombobox(
                 "link in",
                 splits.stream()
                         .map(s->String.format("%d",s.link_in_id))
@@ -362,7 +364,7 @@ public class FormFactory {
         X.add(lineChart);
 
         // draw button
-        X.add(ComponentFactory.createLabelButton("draw", "", e->drawSplitPlot(splits,commodityCtrl,linkInCtrl,lineChart) ).pane);
+        X.add(FactoryComponent.createLabelButton("draw", "", e->drawSplitPlot(splits,commodityCtrl,linkInCtrl,lineChart) ).pane);
 
         // draw
         drawSplitPlot(splits,commodityCtrl,linkInCtrl,lineChart);

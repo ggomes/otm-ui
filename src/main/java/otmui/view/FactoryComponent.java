@@ -19,13 +19,13 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Set;
 
-public class ComponentFactory {
+public class FactoryComponent {
 
     public static PaneCtrl createLabelText(String label, String text){
         AnchorPane pane = null;
         LabelText ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelText.fxml"));
+            FXMLLoader loader = new FXMLLoader(FactoryComponent.class.getResource("/fxml/primitives/labelText.fxml"));
             pane = loader.load();
             ctrl = loader.getController();
             ctrl.setLabel(label);
@@ -40,7 +40,7 @@ public class ComponentFactory {
         AnchorPane pane = null;
         LabelList ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelList.fxml"));
+            FXMLLoader loader = new FXMLLoader(FactoryComponent.class.getResource("/fxml/primitives/labelList.fxml"));
             pane = loader.load();
 
             ctrl = loader.getController();
@@ -57,7 +57,7 @@ public class ComponentFactory {
         AnchorPane pane = null;
         LabelButton ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelButton.fxml"));
+            FXMLLoader loader = new FXMLLoader(FactoryComponent.class.getResource("/fxml/primitives/labelButton.fxml"));
             pane = loader.load();
             ctrl = loader.getController();
             ctrl.setLabel(label);
@@ -73,7 +73,7 @@ public class ComponentFactory {
         AnchorPane pane = null;
         LabelLabel ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelLabel.fxml"));
+            FXMLLoader loader = new FXMLLoader(FactoryComponent.class.getResource("/fxml/primitives/labelLabel.fxml"));
             pane = loader.load();
             ctrl = loader.getController();
             ctrl.setLabel(label1);
@@ -88,7 +88,7 @@ public class ComponentFactory {
         AnchorPane pane = null;
         LabelCheckbox ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelCheckbox.fxml"));
+            FXMLLoader loader = new FXMLLoader(FactoryComponent.class.getResource("/fxml/primitives/labelCheckbox.fxml"));
             pane = loader.load();
             ctrl = loader.getController();
             ctrl.setLabel(label);
@@ -103,7 +103,7 @@ public class ComponentFactory {
         AnchorPane pane = null;
         LabelCombobox ctrl = null;
         try {
-            FXMLLoader loader = new FXMLLoader(ComponentFactory.class.getResource("/fxml/primitives/labelCombobox.fxml"));
+            FXMLLoader loader = new FXMLLoader(FactoryComponent.class.getResource("/fxml/primitives/labelCombobox.fxml"));
             pane = loader.load();
             ctrl = loader.getController();
             ctrl.setLabel(label);

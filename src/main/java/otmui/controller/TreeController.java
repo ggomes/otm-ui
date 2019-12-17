@@ -37,10 +37,6 @@ public class TreeController {
         Scene scene = myApp.stage.getScene();
         scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.data) );
         scene.addEventFilter(DoHighlightSelection.HIGHLIGHT_ANY, e->highlight(e.selection) );
-
-
-//        scene.addEventFilter(NewElementEvent.NEW_NODE, e->add_node(e.item));
-//        scene.addEventFilter(DeleteElementEvent.REMOVE_LINK, e->remove_link((common.Link)e.item));
     }
 
     /////////////////////////////////////////////////

@@ -12,7 +12,6 @@ public class LabelItem implements Initializable {
     @FXML
     private Label label;
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }

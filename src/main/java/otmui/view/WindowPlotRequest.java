@@ -7,7 +7,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 
-public class PlotRequestWindow extends VBox {
+public class WindowPlotRequest extends VBox {
 
 //    private org.controlsfx.control.PropertySheet propertySheet;
 
@@ -75,7 +75,7 @@ public class PlotRequestWindow extends VBox {
 //        return propertySheet.getItems();
 //    }
 
-    public PlotRequestWindow(GlobalParameters params) {
+    public WindowPlotRequest(GlobalParameters params) {
 
         try {
             FXMLLoader scenarioTreeLoader = new FXMLLoader(getClass().getResource("/fxml/plotrequestDialog.fxml"));

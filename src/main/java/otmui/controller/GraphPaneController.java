@@ -260,6 +260,7 @@ public class GraphPaneController {
     // highlighting
     /////////////////////////////////////////////////
 
+
     public void unhighlightAll(){
         myApp.data.items.get(ItemType.node).values().forEach(x->((AbstractGraphItem)x).unhighlight());
         myApp.data.items.get(ItemType.link).values().forEach(x->((AbstractGraphItem)x).unhighlight());
@@ -274,6 +275,14 @@ public class GraphPaneController {
         items.get(ItemType.actuator).forEach(x->((AbstractGraphItem)x).highlight());
         items.get(ItemType.sensor).forEach(x->((AbstractGraphItem)x).highlight());
         items.get(ItemType.subnetwork).forEach(x->((AbstractGraphItem)x).highlight());
+    }
+
+    public void unhighlight(Map<ItemType,Set<AbstractItem>> items){
+        items.get(ItemType.node).forEach(x->((AbstractGraphItem)x).unhighlight());
+        items.get(ItemType.link).forEach(x->((AbstractGraphItem)x).unhighlight());
+        items.get(ItemType.actuator).forEach(x->((AbstractGraphItem)x).unhighlight());
+        items.get(ItemType.sensor).forEach(x->((AbstractGraphItem)x).unhighlight());
+        items.get(ItemType.subnetwork).forEach(x->((AbstractGraphItem)x).unhighlight());
     }
 
     /////////////////////////////////////////////////

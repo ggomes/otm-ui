@@ -9,9 +9,9 @@ import otmui.MainApp;
 import otmui.event.NewScenarioEvent;
 import otmui.event.ResetScenarioEvent;
 import otmui.simulation.OTMTask;
-import otmui.view.ParametersWindow;
-import otmui.view.PlotRequestWindow;
-import otmui.view.ComponentFactory;
+import otmui.view.WindowParameters;
+import otmui.view.WindowPlotRequest;
+import otmui.view.FactoryComponent;
 import error.OTMException;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -83,7 +83,7 @@ public class MenuController implements Initializable {
         try {
             loadFile(file.getAbsolutePath());
         } catch (OTMException ex) {
-            ComponentFactory.createExceptionDialog(ex).showAndWait();
+            FactoryComponent.createExceptionDialog(ex).showAndWait();
         }
     }
 
@@ -151,7 +151,7 @@ public class MenuController implements Initializable {
     private void menuPlots(ActionEvent event) {
         Stage dialog = new Stage();
         dialog.setTitle("Plot requests");
-        PlotRequestWindow plotWindow = new PlotRequestWindow(myApp.params);
+        WindowPlotRequest plotWindow = new WindowPlotRequest(myApp.params);
         Scene dialogScene = new Scene(plotWindow, 500, 400);
         dialog.setScene(dialogScene);
         dialog.show();
@@ -163,7 +163,7 @@ public class MenuController implements Initializable {
         stage.setTitle("Global Parameters");
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(myApp.stage);
-        ParametersWindow paramWindow = new ParametersWindow(myApp.params);
+        WindowParameters paramWindow = new WindowParameters(myApp.params);
         Scene scene = new Scene(paramWindow, 500, 400);
         stage.setScene(scene);
         stage.show();

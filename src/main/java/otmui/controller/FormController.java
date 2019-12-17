@@ -31,31 +31,31 @@ public class FormController {
     public void openForm(AbstractItem item){
         switch(item.getType()){
             case node:
-                dataPane.setContent(FormFactory.nodeForm((otmui.item.Node)item,myApp.data));
+                dataPane.setContent(FactoryForm.nodeForm((otmui.item.Node)item,myApp.data));
                 break;
 
             case link:
-                dataPane.setContent(FormFactory.linkForm((otmui.item.Link)item,myApp.data));
+                dataPane.setContent(FactoryForm.linkForm((otmui.item.Link)item,myApp.data));
                 break;
 
             case sensor:
-                dataPane.setContent(FormFactory.sensorForm((otmui.item.FixedSensor)item,myApp.data));
+                dataPane.setContent(FactoryForm.sensorForm((otmui.item.FixedSensor)item,myApp.data));
                 break;
 
             case actuator:
-                dataPane.setContent(FormFactory.actuatorForm((otmui.item.Actuator)item,myApp.data));
+                dataPane.setContent(FactoryForm.actuatorForm((otmui.item.Actuator)item,myApp.data));
                 break;
 
             case controller:
-                dataPane.setContent(FormFactory.controllerForm((otmui.item.Controller)item,myApp.data));
+                dataPane.setContent(FactoryForm.controllerForm((otmui.item.Controller)item,myApp.data));
                 break;
 
             case commodity:
-                dataPane.setContent(FormFactory.commodityForm((otmui.item.Commodity)item,myApp.data));
+                dataPane.setContent(FactoryForm.commodityForm((otmui.item.Commodity)item,myApp.data));
                 break;
 
             case subnetwork:
-                dataPane.setContent(FormFactory.subnetworkForm((otmui.item.Subnetwork)item,myApp.data));
+                dataPane.setContent(FactoryForm.subnetworkForm((otmui.item.Subnetwork)item,myApp.data));
                 break;
 
         }

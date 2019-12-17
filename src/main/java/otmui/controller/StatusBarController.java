@@ -73,6 +73,10 @@ public class StatusBarController {
         this.statusBar.setText(str);
     }
 
+    public void setText(String str){
+        this.statusBar.setText(str);
+    }
+
     /////////////////////////////////////////////////
     // progress bar
     /////////////////////////////////////////////////

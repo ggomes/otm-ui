@@ -47,57 +47,11 @@ public class LabelList extends LabelItem {
             return;
 
         AbstractItem item = items.get(name);
-//        Long itemId = Long.parseLong((String)name);
-//        ItemType itemType = null;
-//        EventTarget target = mouseEvent.getTarget();
-//
-//        switch(getLabel()){
-//            case "output links":
-//            case "input links":
-//            case "link":
-//                itemType = ItemType.link;
-//                break;
-//            case "node":
-//            case "nodes":
-//                itemType = ItemType.node;
-//                break;
-//            case "splitsForNode":
-//                System.out.println("WRIUG948t0");
-////                itemType = ItemType.split;
-//                break;
-//            case "vehicle type":
-//            case "vehicle types":
-//                itemType = ItemType.commodity;
-//                break;
-//            case "actuator":
-//            case "actuators":
-//                itemType = ItemType.actuator;
-//                break;
-//            case "controller":
-//                itemType = ItemType.controller;
-//                break;
-//            case "demandsForLink":
-//            case "demands":
-//                System.out.println("609hje05ju");
-////                itemType = ItemType.demand;
-//                break;
-//            case "subnetwork":
-//            case "subnetworks":
-//            case "route":
-//            case "routes":
-//                itemType = ItemType.subnetwork;
-//                break;
-//            default:
-//                System.err.println("Unrecognized label: " + getLabel());
-//                break;
-//        }
 
         if(clickcount==1)
             Event.fireEvent(mouseEvent.getTarget(),new FormSelectEvent(FormSelectEvent.CLICK1,item));
         if(clickcount==2)
             Event.fireEvent(mouseEvent.getTarget(),new FormSelectEvent(FormSelectEvent.CLICK2,item));
-
-
     }
 
 }

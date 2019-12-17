@@ -14,7 +14,7 @@ import org.controlsfx.property.editor.PropertyEditor;
 
 import java.util.*;
 
-public class ParametersWindow extends VBox {
+public class WindowParameters extends VBox {
 
     private org.controlsfx.control.PropertySheet propertySheet;
 
@@ -82,7 +82,7 @@ public class ParametersWindow extends VBox {
         return propertySheet.getItems();
     }
 
-    public ParametersWindow(GlobalParameters params) {
+    public WindowParameters(GlobalParameters params) {
         ObservableList<org.controlsfx.control.PropertySheet.Item> list = FXCollections.observableArrayList();
 
 //        list.add(new CustomPropertyItem("Simulation#Time step [seconds]", params.sim_dt));
