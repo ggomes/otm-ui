@@ -175,6 +175,15 @@ public abstract class Link extends AbstractGraphItem {
         draw_lanegroups.forEach(x -> x.paintColor(color));
     }
 
+    public final void set_max_density(float width){
+        System.out.println("set_max_density");
+    }
+
+    public final void set_link_color(GlobalParameters.RoadColorScheme road_color_scheme){
+        Color color = AbstractColormap.get_color_for_roadtype(road_color_scheme,link.road_type);
+        draw_lanegroups.forEach(x -> x.paintColor(color));
+    }
+
     @Override
     public void highlight() {
         draw_lanegroups.forEach(x -> x.highlight(color2));
@@ -185,4 +194,7 @@ public abstract class Link extends AbstractGraphItem {
         draw_lanegroups.forEach(x -> x.unhighlight());
     }
 
+    @Override
+    public void set_size(float s) {
+    }
 }

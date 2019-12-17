@@ -1,6 +1,8 @@
 package otmui;
 
 import api.OTMdev;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import otmui.controller.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -21,11 +23,9 @@ import java.util.Properties;
 
 public class MainApp extends Application {
 
-    // OTM holds the runnable scenario
     public OTMdev otm;  // runnable OTM scenario.
-
-    // app data
     public Data data;
+    public GlobalParameters params;
 
     public Stage stage;
     public SelectionManager selectionManager;
@@ -36,7 +36,6 @@ public class MainApp extends Application {
     public GraphPaneController graphController;
     public FormController formController;
 
-    public GlobalParameters params;
 
     /////////////////////////////////////////////////
     // launch
@@ -64,9 +63,9 @@ public class MainApp extends Application {
         // Selection manager ............................
         selectionManager = new SelectionManager(this);
 
-        ///////////////////////////////////////////
-//        graphpaneController.merge_nodes();
-        ///////////////////////////////////////////
+
+
+
     }
 
     private void build_ui() throws IOException {
@@ -137,20 +136,6 @@ public class MainApp extends Application {
 
         stage.show();
     }
-
-//    private void reset(){
-//        if(otm.scenario==null)
-//            return;
-////        try {
-////            scenario.reset();
-//            treeController.reset();
-//            graphpaneController.reset();
-//            datapaneController.reset();
-//            statusbarController.reset();
-////        } catch (OTMException e) {
-////            e.printStackTrace();
-////        }
-//    }
 
     public static String getGitHash(){
         InputStream inputStream = MainApp.class.getResourceAsStream("/sim.properties");

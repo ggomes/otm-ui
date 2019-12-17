@@ -23,7 +23,7 @@ public class TreeController {
     @FXML
     private TreeView scenariotree;
 
-    private Map<ItemType,Map<Long,TreeItem<String>>> tree;
+//    private Map<ItemType,Map<Long,TreeItem<String>>> tree;
 
     /////////////////////////////////////////////////
     // construction
@@ -37,6 +37,9 @@ public class TreeController {
         Scene scene = myApp.stage.getScene();
         scene.addEventFilter(NewScenarioEvent.SCENARIO_LOADED, e->loadScenario(e.data) );
         scene.addEventFilter(DoHighlightSelection.HIGHLIGHT_ANY, e->highlight(e.selection) );
+        scene.addEventFilter(DoRemoveItem.REMOVE_ITEM, e->remove_item(e.item));
+        scene.addEventFilter(DoAddItem.ADD_ITEM, e->add_item(e.item));
+
     }
 
     /////////////////////////////////////////////////
@@ -44,7 +47,7 @@ public class TreeController {
     /////////////////////////////////////////////////
 
     private void loadScenario(Data data){
-        tree = new HashMap<>();
+//        tree = new HashMap<>();
 
         // populate the tree
         TreeItem<String> rootItem = new TreeItem<>("scenario");
@@ -60,14 +63,15 @@ public class TreeController {
                 continue;
 
             TreeItem<String> treebranch = new TreeItem<>(type.toString());
-            Map<Long,TreeItem<String>> leaves = new HashMap<>();
-            tree.put(type,leaves);
+//            Map<Long,TreeItem<String>> leaves = new HashMap<>();
+//            tree.put(type,leaves);
             rootItem.getChildren().add(treebranch);
 
-            for (AbstractItem x : data.items.get(type).values()) {
-                TreeItem item = new TreeItem<>(x.getName());
-                leaves.put(x.id, item);
-                treebranch.getChildren().add(item);
+            for (AbstractItem item : data.items.get(type).values()) {
+                TreeItem treeitem = new TreeItem<>(item.getName());
+                item.treeitem = treeitem;
+//                leaves.put(item.id, treeitem);
+                treebranch.getChildren().add(treeitem);
             }
         }
 
@@ -98,14 +102,29 @@ public class TreeController {
         mouseEvent.consume();
     }
 
+    private void remove_item(AbstractItem item){
+        if(item.treeitem!=null)
+            item.treeitem.getParent().getChildren().remove(item.treeitem);
+    }
+
+
+    private void add_item(AbstractItem item){
+        if(item.treeitem==null)
+            item.treeitem = new TreeItem<>(item.getName());
+
+        TreeItem<String> root = scenariotree.getRoot();
+        Optional<TreeItem<String>> parent = root.getChildren().stream()
+                .filter(x->x.getValue().equals(item.getType().toString()))
+                .findFirst();
+        if(parent.isPresent())
+            parent.get().getChildren().add(item.treeitem);
+    }
+
+
     private void reset(){
         clearSelection();
     }
 
-    public void add_node(Object o){
-        System.out.println("HELLO!!!");
-//        links_tree.getChildren().add(new TreeItem<>(Maps.name2linkid.getFromSecond(link.getId())));
-    }
 
 
 //    public void add_link(common.Link link){
@@ -128,9 +147,10 @@ public class TreeController {
     public void highlight(Map<ItemType,Set<AbstractItem>> selection){
         MultipleSelectionModel<TreeItem<String>> model = scenariotree.getSelectionModel();
         for(Map.Entry<ItemType,Set<AbstractItem>> e : selection.entrySet()) {
-            if(!tree.containsKey(e.getKey()))
-                continue;
-            e.getValue().forEach(item -> model.select(tree.get(item.getType()).get(item.id)));
+//            if(!tree.containsKey(e.getKey()))
+//                continue;
+            if(e.getValue()!=null && !e.getValue().isEmpty())
+                e.getValue().forEach(item -> model.select(item.treeitem));
         }
     }
 

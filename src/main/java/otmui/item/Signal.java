@@ -4,10 +4,10 @@ import actuator.AbstractActuator;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
-public class StopSign extends Actuator {
+public class Signal extends Actuator {
 
-    public StopSign(AbstractActuator act, Float xpos, Float ypos, float r, double stroke_width) {
-        super(act, xpos, ypos, Color.SEAGREEN, Color.MAGENTA);
+    public Signal(AbstractActuator act, Float xpos, Float ypos, float r, double stroke_width) {
+        super(act, xpos, ypos, Color.TURQUOISE, Color.ROSYBROWN);
 
         this.xpos -= r;
         this.ypos -= r;
@@ -30,11 +30,9 @@ public class StopSign extends Actuator {
                 rcos22p5, -rsin22p5 });
 
         octagon.setStrokeWidth(stroke_width);
-
         setShape(octagon);
         unhighlight();
     }
-
 
     @Override
     public void set_size(float r) {
@@ -57,5 +55,4 @@ public class StopSign extends Actuator {
                 rcos67p5, -rsin67p5,
                 rcos22p5, -rsin22p5 });
     }
-
 }

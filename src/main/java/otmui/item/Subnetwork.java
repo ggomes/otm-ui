@@ -39,5 +39,7 @@ public class Subnetwork extends AbstractGraphItem {
         links.forEach(link->link.unhighlight());
     }
 
-
+    @Override
+    public void set_size(float s) {
+    }
 }

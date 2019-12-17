@@ -3,12 +3,10 @@ package otmui;
 import api.OTMdev;
 import commodity.Path;
 import error.OTMException;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 import keys.DemandType;
 import keys.KeyCommodityDemandTypeId;
 import otmui.item.*;
-import otmui.utils.BijectiveMap;
 import profiles.AbstractDemandProfile;
 import sensor.AbstractSensor;
 
@@ -18,19 +16,7 @@ import static java.util.stream.Collectors.toSet;
 
 public class Data {
 
-//    public static BijectiveMap<ItemType, String> itemNames = new BijectiveMap();
-//
-//    static {
-//        itemNames.put(ItemType.node, "node");
-//        itemNames.put(ItemType.link, "link");
-//        itemNames.put(ItemType.commodity, "type");
-//        itemNames.put(ItemType.subnetwork, "subnetwork");
-//        itemNames.put(ItemType.demand, "demand");
-//        itemNames.put(ItemType.split, "split");
-//        itemNames.put(ItemType.actuator, "actuator");
-//        itemNames.put(ItemType.controller, "controller");
-//        itemNames.put(ItemType.sensor, "sensor");
-//    }
+    OTMdev otm;
 
     // items contains, for each item type (link, node, etc), a map id->object
     public Map<ItemType, Map<Long,AbstractItem>> items;
@@ -40,37 +26,32 @@ public class Data {
     /////////////////////////////////////////////////
 
     public Data(OTMdev otm, GlobalParameters params) throws OTMException {
-
-        float node_size = params.node_size.floatValue();
-        float lane_width_meters = params.lane_width_meters.getValue();
-        float link_offset = params.link_offset.getValue();
-        GlobalParameters.RoadColorScheme road_color_scheme = (GlobalParameters.RoadColorScheme) params.road_color_scheme.getValue();
-
+        this.otm = otm;
         items = new HashMap<>();
 
         // links
         Map<Long, AbstractItem> links = new HashMap<>();
         items.put(ItemType.link,links);
         for(common.Link link : otm.scenario.network.links.values())
-            links.put(link.getId(), makeDrawLink(link, lane_width_meters, link_offset, road_color_scheme));
+            links.put(link.getId(), FactoryItem.makeLink(link,params));
 
         // nodes
         Map<Long, AbstractItem> nodes = new HashMap<>();
         items.put(ItemType.node,nodes);
         for(common.Node node : otm.scenario.network.nodes.values())
-            nodes.put(node.getId(), makeDrawNode(node,node_size));
+            nodes.put(node.getId(), FactoryItem.makeNode(node,params));
 
         // actuators
         Map<Long, AbstractItem> actuators = new HashMap<>();
         items.put(ItemType.actuator,actuators);
         for (actuator.AbstractActuator actuator : otm.scenario.actuators.values())
-            actuators.put(actuator.getId(),makeDrawActuator(otm,actuator,((float)node_size)*0.7f));
+            actuators.put(actuator.getId(), FactoryItem.makeActuator(otm,actuator,params));
 
         // sensors
         Map<Long, AbstractItem> sensors = new HashMap<>();
         items.put(ItemType.sensor,sensors);
         for (AbstractSensor sensor : otm.scenario.sensors.values())
-            sensors.put(sensor.getId(),makeDrawSensor(sensor, lane_width_meters, link_offset));
+            sensors.put(sensor.getId(), FactoryItem.makeSensor(sensor,params));
 
         // controllers
         Map<Long, AbstractItem> controllers = new HashMap<>();
@@ -143,74 +124,6 @@ public class Data {
         return allshapes;
     }
 
-    /////////////////////////////////////////////////
-    // makers
-    /////////////////////////////////////////////////
-
-    public static Node makeDrawNode(common.Node node, float radius) {
-        return node==null ?
-                new Node(null,0f,0f,radius, Color.BLACK, 0f) :
-                new Node(node,node.xcoord,-node.ycoord,radius, Color.DODGERBLUE, 0f);
-    }
-
-    public static Link makeDrawLink(common.Link link, float lane_width, float link_offset, GlobalParameters.RoadColorScheme road_color_scheme) throws OTMException {
-
-        Link drawLink;
-        switch(link.model.getClass().getSimpleName()){
-
-            case "BaseModel":
-            case "ModelSpatialQ":
-            case "ModelNewell":
-                drawLink = new LinkSpaceQ(link,
-                        lane_width,
-                        link_offset,
-                        road_color_scheme);
-                break;
-
-            case "ModelCTM":
-                drawLink = new LinkCTM(link,
-                        lane_width,
-                        link_offset,
-                        road_color_scheme );
-                break;
-
-            default:
-                throw new OTMException("Link model type not supported.");
-        }
-
-        return drawLink;
-    }
-
-    public static Actuator makeDrawActuator(OTMdev otmdev, actuator.AbstractActuator actuator, float size) {
-
-        if (actuator==null)
-            return new StopSign(null,0f,0f,size, 0f);
-
-        common.Node node = otmdev.scenario.network.nodes.get(actuator.target.getId());
-
-        switch (actuator.getType()) {
-            case signal:
-                return new StopSign(actuator, node.xcoord, -node.ycoord, size, 4f);
-            case stop:
-                return new StopSign(actuator, node.xcoord, -node.ycoord, size, 0f );
-            default:
-                return new StopSign(actuator, node.xcoord, -node.ycoord, size, 1f);
-        }
-    }
-
-    public static FixedSensor makeDrawSensor(AbstractSensor sensor, float lane_width, float link_offset) throws OTMException {
-//        return sensor==null ? new BaseSensor() : new BaseSensor(sensor, lane_width, link_offset);
-        return new FixedSensor(sensor, lane_width, link_offset);
-    }
-
-    ///////////////
-    // get Name
-    ///////////////
-
-    public static String getName(AbstractItem item) {
-        return String.format("%s %d", item.getName(), item.id);
-    }
-
     public TypeId getTypeId(String itemName) {
         return new TypeId(itemName);
 
@@ -219,6 +132,77 @@ public class Data {
 
     public AbstractItem getItem(TypeId typeId) {
         return items.get(typeId.type).get(typeId.id);
+    }
+
+    /////////////////////////////////
+    // delete
+    /////////////////////////////////
+
+    public void delete_item(AbstractItem item){
+        switch(item.getType()){
+            case node:
+                otmui.item.Node node = (otmui.item.Node) item;
+
+                if(node.node.actuator!=null)
+                    delete_item(items.get(ItemType.actuator).get(node.node.actuator.id));
+
+                // remove from scenario
+                for(common.Link link : node.node.out_links.values()){
+                    link.start_node = null;
+                    link.is_source = true;
+                }
+                for(common.Link link : node.node.in_links.values()){
+                    link.end_node = null;
+                    link.is_sink = true;
+                }
+                otm.scenario.network.nodes.remove(node.id);
+
+                // remove from items
+                items.get(ItemType.node).remove(node.id);
+
+                break;
+
+            case link:
+                otmui.item.Link link = (otmui.item.Link) item;
+
+                if(link.link.actuator_fd!=null)
+                    delete_item(items.get(ItemType.actuator).get(link.link.actuator_fd.id));
+                if(link.link.ramp_meter!=null)
+                    delete_item(items.get(ItemType.actuator).get(link.link.ramp_meter.id));
+
+                // remove from scenario
+                link.link.start_node.out_links.remove(link.id);
+                link.link.end_node.in_links.remove(link.id);
+                otm.scenario.network.links.remove(link.id);
+
+                // remove from items
+                items.get(ItemType.link).remove(link.id);
+
+                break;
+
+            case sensor:
+                otmui.item.FixedSensor sensor = (otmui.item.FixedSensor) item;
+
+                // remove from scenario
+                otm.scenario.sensors.remove(sensor.id);
+
+                // remove from items
+                items.get(ItemType.sensor).remove(sensor.id);
+
+                break;
+
+            case actuator:
+                otmui.item.Actuator actuator = (otmui.item.Actuator) item;
+
+                // remove from scenario
+                otm.scenario.actuators.remove(actuator.id);
+
+                // remove from items
+                items.get(ItemType.actuator).remove(actuator.id);
+
+                break;
+        }
+
     }
 
     /////////////////////////////////

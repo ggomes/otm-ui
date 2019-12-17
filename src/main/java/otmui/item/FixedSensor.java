@@ -109,4 +109,9 @@ public class FixedSensor extends AbstractGraphItem {
         return P;
     }
 
+    @Override
+    public void set_size(float s) {
+        System.out.println("FixedSensor set size not implemented!!");
+    }
+
 }

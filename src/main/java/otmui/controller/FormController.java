@@ -3,6 +3,7 @@ package otmui.controller;
 import javafx.scene.Scene;
 import otmui.MainApp;
 import otmui.event.DoOpenFormEvent;
+import otmui.event.DoRemoveItem;
 import otmui.item.AbstractItem;
 import otmui.view.*;
 import javafx.fxml.FXML;
@@ -11,6 +12,7 @@ import javafx.scene.control.ScrollPane;
 public class FormController {
 
     private MainApp myApp;
+    private AbstractItem item;
 
     @FXML
     private ScrollPane dataPane;
@@ -26,9 +28,11 @@ public class FormController {
 
         Scene scene = myApp.stage.getScene();
         scene.addEventFilter(DoOpenFormEvent.OPEN, e->openForm(e.item));
+        scene.addEventFilter(DoRemoveItem.REMOVE_ITEM, e->remove_item(e.item));
     }
 
     public void openForm(AbstractItem item){
+        this.item = item;
         switch(item.getType()){
             case node:
                 dataPane.setContent(FactoryForm.nodeForm((otmui.item.Node)item,myApp.data));
@@ -61,4 +65,9 @@ public class FormController {
         }
     }
 
+    public void remove_item(AbstractItem item){
+        if(this.item==item){
+            dataPane.setContent(new ScrollPane());
+        }
+    }
 }

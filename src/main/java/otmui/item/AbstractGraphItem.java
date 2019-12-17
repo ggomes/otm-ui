@@ -20,7 +20,6 @@ public abstract class AbstractGraphItem extends AbstractItem {
 
     public AbstractGraphItem(long id, float xpos, float ypos, Color color1, Color color2) {
         super(id);
-//        this.shapegroup = new Group();
         this.shapegroup = new HashSet<>();
         this.xpos = xpos;
         this.ypos = ypos;
@@ -28,16 +27,16 @@ public abstract class AbstractGraphItem extends AbstractItem {
         this.color2 = color2;
     }
 
+    abstract public void set_size(float s);
+
     public void highlight() {
         if(shapegroup!=null)
             shapegroup.forEach(x->((Shape)x).setFill(color2));
-//        shapegroup.getChildren().forEach(x->((Shape)x).setFill(color2));
     }
 
     public void unhighlight() {
         if(shapegroup!=null)
             shapegroup.forEach(x->((Shape)x).setFill(color1));
-//        shapegroup.getChildren().forEach(x->((Shape)x).setFill(color1));
     }
 
     public void set_visible(boolean visible){
@@ -52,6 +51,13 @@ public abstract class AbstractGraphItem extends AbstractItem {
 
     public void addShapes(Set<Shape> shapes) {
         shapegroup.addAll(shapes);
+    }
+
+    public void relocate(float xpos,float ypos){
+        this.xpos = xpos;
+        this.ypos = ypos;
+        for(Shape shape : shapegroup)
+            shape.relocate(this.xpos,this.ypos);
     }
 
 }

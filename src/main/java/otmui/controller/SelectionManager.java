@@ -1,16 +1,22 @@
 package otmui.controller;
 
+import error.OTMException;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import otmui.ItemType;
 import otmui.MainApp;
+import otmui.ScenarioModification;
 import otmui.TypeId;
 import otmui.event.*;
 import otmui.item.*;
 
 import java.util.*;
+
+import static java.util.stream.Collectors.toSet;
 
 public class SelectionManager {
 
@@ -39,27 +45,26 @@ public class SelectionManager {
         if(e.item==null)
             return;
 
-        Set<AbstractItem> selectionPool = selection.get(e.item.getType());
-
-        boolean selected = selectionPool.contains(e.item);
+        boolean selected = selection.get(e.item.getType()).contains(e.item);
         boolean shift_pressed = e.event.isShiftDown();
         if(selected)
-            if(shift_pressed)
-                selectionPool.remove(e.item);
-            else
+            if(shift_pressed) {
+                selection.get(e.item.getType()).remove(e.item);
+            }
+            else {
+                clear_highlight();
                 clear_selection();
+            }
         else
-        if(shift_pressed)
-            selectionPool.add(e.item);
-        else
-            clear_selection();
-        selectionPool.add(e.item);
-        selection.put(e.item.getType(),selectionPool);
+            if(shift_pressed)
+                selection.get(e.item.getType()).add(e.item);
+            else{
+                clear_highlight();
+                clear_selection();
+                selection.get(e.item.getType()).add(e.item);
+            }
 
         e.consume();
-
-        System.out.println(selection.get(ItemType.link).size());
-
         Event.fireEvent(myApp.stage.getScene(),new DoHighlightSelection(DoHighlightSelection.HIGHLIGHT_ANY,selection));
     }
 
@@ -146,6 +151,98 @@ public class SelectionManager {
         e.consume();
         Event.fireEvent(myApp.stage.getScene(),new DoHighlightSelection(DoHighlightSelection.HIGHLIGHT_ANY,selection));
         Event.fireEvent(myApp.stage.getScene(),new DoOpenFormEvent(DoOpenFormEvent.OPEN,e.item));
+    }
+
+    /////////////////////////////////////////////////
+    // context menu
+    /////////////////////////////////////////////////
+
+    public void delete_selected_items(){
+        for(Set<AbstractItem> X : selection.values())
+            for (AbstractItem item : X) {
+                myApp.data.delete_item(item);
+                Event.fireEvent(myApp.stage.getScene(), new DoRemoveItem(DoRemoveItem.REMOVE_ITEM, item));
+            }
+    }
+
+    public void merge_selected_nodes() {
+
+        try {
+
+            Set<otmui.item.Node> nodes = selection.get(ItemType.node).stream()
+                    .map(n->(otmui.item.Node)n)
+                    .collect(toSet());
+            Set<Long> node_ids = nodes.stream().map(x->x.id).collect(toSet());
+
+            // Collect actuators
+            Set<otmui.item.Actuator> actuators = nodes.stream()
+                    .filter(n->n.node.actuator!=null)
+                    .map(n->(otmui.item.Actuator)myApp.data.items.get(ItemType.actuator).get(n.node.actuator.id))
+                    .collect(toSet());
+
+            if(actuators.size()>1){
+                Alert alert = new Alert(Alert.AlertType.WARNING,"");
+                Label label = new Label("The nodes have multiple actuators. Please remove some first.");
+                label.setWrapText(true);
+                alert.getDialogPane().setContent(label);
+                alert.show();
+                return;
+            }
+
+            otmui.item.Actuator actuator = actuators.size()==1 ? actuators.iterator().next() : null;
+
+            // Remove the actuator from the node
+            if(actuator!=null){
+                otmui.item.Node node = nodes.stream().filter(n->n.node.getId().equals(actuator.actuator.target.getId())).findFirst().get();
+                node.node.actuator = null;
+                actuator.actuator.target = null;
+            }
+
+            float xcoord = (float) nodes.stream().mapToDouble(n->n.node.xcoord).average().getAsDouble();
+            float ycoord = (float) nodes.stream().mapToDouble(n->n.node.ycoord).average().getAsDouble();
+
+            // create new node
+            otmui.item.Node new_node = ScenarioModification.insert_node(myApp,xcoord,ycoord,actuator);
+
+            // reposition the actuator
+            if(actuator!=null)
+                actuator.relocate(new_node.xpos,new_node.ypos);
+
+            // set of adjacent links
+            Set<Long> link_ids = nodes.stream().flatMap(n->n.node.in_links.keySet().stream()).collect(toSet());
+            link_ids.addAll(nodes.stream().flatMap(n->n.node.out_links.keySet().stream()).collect(toSet()));
+
+            // process internal and external links
+            for(Long link_id : link_ids){
+                otmui.item.Link link = (otmui.item.Link) myApp.data.items.get(ItemType.link).get(link_id);
+                common.Link clink = link.link;
+                boolean starts_at = node_ids.contains(clink.start_node.getId());
+                boolean ends_at = node_ids.contains(clink.end_node.getId());
+                if(starts_at && ends_at)
+                    ScenarioModification.delete_link(myApp,link);
+                else if(starts_at) {
+                    clink.start_node = new_node.node;
+                    new_node.node.out_links.put(link_id,clink);
+                }
+                else if(ends_at) {
+                    clink.end_node = new_node.node;
+                    new_node.node.in_links.put(link_id,clink);
+                }
+            }
+
+            // delete nodes from scenario
+            for(otmui.item.Node node : nodes)
+                ScenarioModification.delete_node(myApp,node);
+
+        } catch (OTMException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void merge_selected_links(){
+//        System.out.println("merge_links");
+//        Set<Long> link_ids = selectedLinks.stream().map(x->x.id).collect(toSet());
+//        System.out.println(link_ids);
     }
 
     /////////////////////////////////////////////////

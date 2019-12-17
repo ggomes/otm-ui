@@ -28,32 +28,18 @@ public class GraphContainer {
     private void build_context_menu(GraphPaneController cntrl){
         ContextMenu contextMenu = new ContextMenu();
 
-//        MenuItem menuItem = new MenuItem("Menu Item");
+        MenuItem delete = new MenuItem("Delete");
+        delete.setOnAction(e->cntrl.myApp.selectionManager.delete_selected_items());
 
-        Menu tools_menu = new Menu("Tools");
         MenuItem merge_nodes = new MenuItem("Merge nodes");
-        merge_nodes.setOnAction(e->cntrl.merge_nodes());
+        merge_nodes.setOnAction(e->cntrl.myApp.selectionManager.merge_selected_nodes());
 
         MenuItem merge_links = new MenuItem("Merge links");
-        merge_links.setOnAction(e->cntrl.merge_links());
-        tools_menu.getItems().addAll(merge_nodes, merge_links);
+        merge_links.setOnAction(e->cntrl.myApp.selectionManager.merge_selected_links());
 
-//        CheckMenuItem checkMenuItem = new CheckMenuItem("Check Menu Item");
-//        checkMenuItem.setSelected(true);
-//
-//        SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
-//
-//        RadioMenuItem radioMenuItem1 = new RadioMenuItem("Radio - Option 1");
-//        RadioMenuItem radioMenuItem2 = new RadioMenuItem("Radio - Option 2");
-//        ToggleGroup group = new ToggleGroup();
-//
-//        radioMenuItem1.setToggleGroup(group);
-//        radioMenuItem2.setToggleGroup(group);
+        contextMenu.getItems().addAll(delete,merge_nodes, merge_links);
 
-        // Add MenuItem to ContextMenu
-        contextMenu.getItems().add(tools_menu);
-
-        // When user right-click on Circle
+        // set right click
         canvas.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
             @Override
             public void handle(ContextMenuEvent event) {

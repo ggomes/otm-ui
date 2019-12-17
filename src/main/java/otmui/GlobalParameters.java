@@ -11,6 +11,14 @@ import javafx.scene.Scene;
 
 public class GlobalParameters {
 
+    private float old_node_size;
+    private boolean old_view_nodes;
+    private float old_link_offset;
+    private float old_lane_width_meters;
+    private RoadColorScheme old_road_color_scheme;
+    private float old_max_density_vpkpl;
+    private boolean old_view_actuators;
+
     public enum RoadColorScheme { Black, Cells, RoadType }
 
     // simulation run parameters
@@ -25,21 +33,72 @@ public class GlobalParameters {
     public SimpleFloatProperty node_size            = new SimpleFloatProperty(null,"node_size",6f);           // [m] painted radius for circular nodes
     public SimpleObjectProperty road_color_scheme = new SimpleObjectProperty(null,"road color scheme", RoadColorScheme.Black);
     public SimpleBooleanProperty view_nodes         = new SimpleBooleanProperty(null,"view_nodes",true);
-    public SimpleBooleanProperty view_actuators     = new SimpleBooleanProperty(null,"view_actuators",false);
+    public SimpleBooleanProperty view_actuators     = new SimpleBooleanProperty(null,"view_actuators",true);
     public SimpleFloatProperty max_density_vpkpl    = new SimpleFloatProperty(null,"max_density_vpkpl",100f);   // [vpkpl] used for displaying MN states
 
     public GlobalParameters(Scene scene){
-//        start_time.addListener(         e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
-//        sim_dt.addListener(             e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
-//        duration.addListener(           e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
-//        sim_delay.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
-//        link_offset.addListener(        e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
-//        lane_width_meters.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
-//        node_size.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODESHAPES)));
-//        road_color_scheme.addListener(e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKCOLORS)));
-//        max_density_vpkpl.addListener(  e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWLINKSHAPES)));
-//        view_nodes.addListener(         e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWNODESHAPES)));
-//        view_actuators.addListener(     e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.DRAWACTUATORS)));
+
+        old_node_size = node_size();
+        old_view_nodes = view_nodes();
+        old_link_offset = link_offset();
+        old_lane_width_meters = lane_width_meters();
+        old_road_color_scheme = road_color_scheme();
+        old_max_density_vpkpl = max_density_vpkpl();
+        old_view_actuators = view_actuators();
+
+        start_time.addListener(         e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
+        sim_dt.addListener(             e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
+        duration.addListener(           e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
+        sim_delay.addListener(          e-> Event.fireEvent(scene,new ParameterChange(ParameterChange.SIMULATION)));
+
+        link_offset.addListener( e-> {
+            if (Math.abs(old_link_offset-link_offset())>0.1f) {
+                Event.fireEvent(scene,new ParameterChange(ParameterChange.SET_LINK_OFFSET));
+                old_link_offset = link_offset();
+            }
+        });
+
+        lane_width_meters.addListener(  e-> {
+            if (Math.abs(old_lane_width_meters-lane_width_meters())>0.1f) {
+                Event.fireEvent(scene,new ParameterChange(ParameterChange.SET_LINK_WIDTH));
+                old_lane_width_meters = lane_width_meters();
+            }
+        });
+
+        node_size.addListener( e-> {
+            if (Math.abs(old_node_size-node_size())>0.1f) {
+                Event.fireEvent(scene, new ParameterChange(ParameterChange.SET_NODE_SIZES));
+                old_node_size = node_size();
+            }
+        });
+
+        road_color_scheme.addListener( e-> {
+            if (!old_road_color_scheme.equals(road_color_scheme())) {
+                Event.fireEvent(scene,new ParameterChange(ParameterChange.SET_LINK_COLOR_SCHEME));
+                old_road_color_scheme = road_color_scheme();
+            }
+        });
+
+        max_density_vpkpl.addListener( e-> {
+            if (Math.abs(old_max_density_vpkpl-max_density_vpkpl())>0.1f) {
+                Event.fireEvent(scene,new ParameterChange(ParameterChange.SET_MAX_DENSITY));
+                old_max_density_vpkpl = max_density_vpkpl();
+            }
+        });
+
+        view_nodes.addListener(e-> {
+            if (old_view_nodes!=view_nodes.get()) {
+                Event.fireEvent(scene,new ParameterChange(ParameterChange.VIEW_NODES));
+                old_view_nodes = view_nodes();
+            }
+        });
+
+        view_actuators.addListener( e-> {
+            if (old_view_actuators!=view_actuators.get()) {
+                Event.fireEvent(scene,new ParameterChange(ParameterChange.VIEW_ACTUATORS));
+                old_view_actuators = view_actuators();
+            }
+        });
     }
 
     public float start_time(){

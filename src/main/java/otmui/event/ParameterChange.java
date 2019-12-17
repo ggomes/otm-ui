@@ -8,32 +8,27 @@ import otmui.Data;
 
 public class ParameterChange extends Event {
 
-    public Data data;
-    public GlobalParameters params;
-
     public static final EventType<ParameterChange> SIMULATION = new EventType<>(Event.ANY, "Simulation");
-    public static final EventType<ParameterChange> UPDATEMODELS = new EventType<>(Event.ANY, "Update model data and graph");
-    public static final EventType<ParameterChange> DRAWLINKSHAPES = new EventType<>(Event.ANY, "Draw link shapes");
-    public static final EventType<ParameterChange> DRAWLINKCOLORS = new EventType<>(Event.ANY, "Draw link colors");
-    public static final EventType<ParameterChange> DRAWNODESHAPES = new EventType<>(Event.ANY, "Draw node shapes");
-    public static final EventType<ParameterChange> DRAWNODECOLORS = new EventType<>(Event.ANY, "Draw node colors");
-    public static final EventType<ParameterChange> DRAWACTUATORS = new EventType<>(Event.ANY, "Draw actuators");
+    public static final EventType<ParameterChange> SET_LINK_WIDTH = new EventType<>(Event.ANY, "Set link width");
+    public static final EventType<ParameterChange> SET_LINK_COLOR_SCHEME = new EventType<>(Event.ANY, "Set link colors");
+    public static final EventType<ParameterChange> SET_MAX_DENSITY = new EventType<>(Event.ANY, "Set max density");
+    public static final EventType<ParameterChange> VIEW_NODES = new EventType<>(Event.ANY, "View nodes");
+    public static final EventType<ParameterChange> VIEW_ACTUATORS = new EventType<>(Event.ANY, "View actuators");
+    public static final EventType<ParameterChange> SET_NODE_SIZES = new EventType<>(Event.ANY, "Node size");
+    public static final EventType<ParameterChange> SET_LINK_OFFSET = new EventType<>(Event.ANY, "Set link offset");
 
-    public ParameterChange(EventType<? extends Event> eventType, Data data, GlobalParameters params) {
+    public ParameterChange(EventType<? extends Event> eventType) {
         super(eventType);
-        this.data = data;
-        this.params = params;
-    }
-
-
-    @Override
-    public NewScenarioEvent copyFor(Object newSource, EventTarget newTarget) {
-        return (NewScenarioEvent) super.copyFor(newSource, newTarget);
     }
 
     @Override
-    public EventType<? extends NewScenarioEvent> getEventType() {
-        return (EventType<? extends NewScenarioEvent>) super.getEventType();
+    public ParameterChange copyFor(Object newSource, EventTarget newTarget) {
+        return (ParameterChange) super.copyFor(newSource, newTarget);
+    }
+
+    @Override
+    public EventType<? extends ParameterChange> getEventType() {
+        return (EventType<? extends ParameterChange>) super.getEventType();
     }
 
 }
