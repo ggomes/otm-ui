@@ -1,7 +1,6 @@
 package otmui.item;
 
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import keys.KeyCommodityLink;
 import otmui.GlobalParameters;
@@ -16,7 +15,7 @@ public class Node extends AbstractGraphItem {
     public Map<KeyCommodityLink, SplitMatrixProfile> splits = null;
 
     public Node(common.Node node, GlobalParameters params) {
-        super(node.getId(), node.xcoord,-node.ycoord, Color.GRAY, Color.GOLD);
+        super(node.getId(), node.xcoord,-node.ycoord, Color.ROYALBLUE, Color.HOTPINK);
 
         float node_size = params.node_size.floatValue();
         this.node = node;
@@ -26,6 +25,8 @@ public class Node extends AbstractGraphItem {
         Circle circle = new Circle(node_size);
         circle.setFill(color1);
         setShape(circle);
+        circle.setCenterX(this.xpos);
+        circle.setCenterY(this.ypos);
     }
 
     @Override
@@ -39,6 +40,15 @@ public class Node extends AbstractGraphItem {
         this.ypos = -node.ycoord - node_size;
         Circle circle = (Circle) this.shapegroup.iterator().next();
         circle.setRadius(node_size);
+    }
+
+    @Override
+    public void relocate(float nxpos, float nypos) {
+        Circle circle = (Circle) shapegroup.iterator().next();
+        circle.setCenterX(nxpos);
+        circle.setCenterY(nypos);
+        this.xpos = nxpos;
+        this.ypos = nypos;
     }
 
 }

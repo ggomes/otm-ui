@@ -47,8 +47,6 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        System.out.println("START");
-
         this.stage = stage;
 
         // Assemble the UI elements
@@ -62,10 +60,6 @@ public class MainApp extends Application {
 
         // Selection manager ............................
         selectionManager = new SelectionManager(this);
-
-
-
-
     }
 
     private void build_ui() throws IOException {
@@ -79,47 +73,51 @@ public class MainApp extends Application {
         stage.setTitle("Open Traffic Modeller");
         stage.setScene(scene);
 
-        SplitPane splitPaneH = new SplitPane();
-        splitPaneH.setOrientation(Orientation.HORIZONTAL);
-        layout.setCenter(splitPaneH);
-
         // Menu ..........................................
         FXMLLoader menuLoader = new FXMLLoader(getClass().getResource("/fxml/menuLayout.fxml"));
         AnchorPane menuPane = menuLoader.load();
         menuController = menuLoader.getController();
-        layout.setTop(menuPane.lookup("#menubar"));
         menuController.attach_event_listeners(this);
 
         // Status bar ....................................
         StatusBar statusBar = new StatusBar();
         statusbarController = new StatusBarController(statusBar);
-        layout.setBottom(statusBar);
         statusbarController.initialize(this);
 
         // Scenario tree ................................
         FXMLLoader scenarioTreeLoader = new FXMLLoader(getClass().getResource("/fxml/treeLayout.fxml"));
         AnchorPane scenarioTreePane = scenarioTreeLoader.load();
-        splitPaneH.getItems().add(scenarioTreePane);
         treeController = scenarioTreeLoader.getController();
         treeController.initialize(this);
 
         // Graph .........................................
-        SplitPane splitPaneV = new SplitPane();
-        splitPaneV.setOrientation(Orientation.VERTICAL);
-        splitPaneH.getItems().add(splitPaneV);
-
         FXMLLoader graphPaneLoader = new FXMLLoader(getClass().getResource("/fxml/graphLayout.fxml"));
         AnchorPane graphPane = graphPaneLoader.load();
-        splitPaneV.getItems().add(graphPane);
         graphController = graphPaneLoader.getController();
         graphController.initialize(this);
 
         // Data ...........................................
         FXMLLoader dataPaneLoader = new FXMLLoader(getClass().getResource("/fxml/dataLayout.fxml"));
         AnchorPane dataPane = dataPaneLoader.load();
-        splitPaneV.getItems().add(dataPane);
         formController = dataPaneLoader.getController();
         formController.initialize(this);
+
+        // Layout ........................................
+        layout.setTop(menuPane.lookup("#menubar"));
+        layout.setBottom(statusBar);
+
+        SplitPane splitPane1 = new SplitPane();
+        splitPane1.setDividerPosition(0,0.15);
+        splitPane1.setOrientation(Orientation.HORIZONTAL);
+        layout.setCenter(splitPane1);
+
+        SplitPane splitPane2 = new SplitPane();
+        splitPane2.setOrientation(Orientation.VERTICAL);
+        splitPane1.getItems().add(splitPane2);
+
+        splitPane2.getItems().add(scenarioTreePane);
+        splitPane2.getItems().add(dataPane);
+        splitPane1.getItems().add(graphPane);
 
         // create parameters
         params = new GlobalParameters(scene);
@@ -132,7 +130,6 @@ public class MainApp extends Application {
         stage.setWidth(0.8*W);
         stage.setX(0.1*W);
         stage.setY(0.1*H);
-//        stage.setMaximized(true);
 
         stage.show();
     }
@@ -157,4 +154,7 @@ public class MainApp extends Application {
         return properties.getProperty("sim.git");
     }
 
+    public static void alert(String msg){
+
+    }
 }

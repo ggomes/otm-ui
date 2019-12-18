@@ -4,15 +4,14 @@ import error.OTMException;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
+import javafx.scene.shape.Shape;
 import otmui.ItemType;
 import otmui.MainApp;
-import otmui.ScenarioModification;
 import otmui.TypeId;
 import otmui.event.*;
 import otmui.item.*;
+import otmui.view.FactoryComponent;
 
 import java.util.*;
 
@@ -28,8 +27,9 @@ public class SelectionManager {
         this.myApp = myApp;
 
         selection = new HashMap<>();
-        for(ItemType type : myApp.data.items.keySet())
+        for(ItemType type : ItemType.values())
             selection.put(type, new HashSet<>());
+
         // event listeners
         Scene scene = myApp.stage.getScene();
         scene.addEventFilter(GraphClickEvent.CLICK1, e-> graphClick1(e));
@@ -157,90 +157,97 @@ public class SelectionManager {
     // context menu
     /////////////////////////////////////////////////
 
-    public void delete_selected_items(){
+    public void delete_selected_items()  {
         for(Set<AbstractItem> X : selection.values())
-            for (AbstractItem item : X) {
+            for (AbstractItem item : X)
                 myApp.data.delete_item(item);
-                Event.fireEvent(myApp.stage.getScene(), new DoRemoveItem(DoRemoveItem.REMOVE_ITEM, item));
-            }
+//                Event.fireEvent(myApp.stage.getScene(), new DoRemoveItem(DoRemoveItem.REMOVE_ITEM, item));
     }
 
     public void merge_selected_nodes() {
 
-        try {
+        Set<Node> nodes = selection.get(ItemType.node).stream()
+                .map(n->(Node)n)
+                .collect(toSet());
+        Set<Long> node_ids = nodes.stream().map(x->x.id).collect(toSet());
 
-            Set<otmui.item.Node> nodes = selection.get(ItemType.node).stream()
-                    .map(n->(otmui.item.Node)n)
-                    .collect(toSet());
-            Set<Long> node_ids = nodes.stream().map(x->x.id).collect(toSet());
+        // Collect actuators
+        Set<Actuator> actuators = nodes.stream()
+                .filter(n->n.node.actuator!=null)
+                .map(n->(Actuator)myApp.data.items.get(ItemType.actuator).get(n.node.actuator.id))
+                .collect(toSet());
 
-            // Collect actuators
-            Set<otmui.item.Actuator> actuators = nodes.stream()
-                    .filter(n->n.node.actuator!=null)
-                    .map(n->(otmui.item.Actuator)myApp.data.items.get(ItemType.actuator).get(n.node.actuator.id))
-                    .collect(toSet());
-
-            if(actuators.size()>1){
-                Alert alert = new Alert(Alert.AlertType.WARNING,"");
-                Label label = new Label("The nodes have multiple actuators. Please remove some first.");
-                label.setWrapText(true);
-                alert.getDialogPane().setContent(label);
-                alert.show();
-                return;
-            }
-
-            otmui.item.Actuator actuator = actuators.size()==1 ? actuators.iterator().next() : null;
-
-            // Remove the actuator from the node
-            if(actuator!=null){
-                otmui.item.Node node = nodes.stream().filter(n->n.node.getId().equals(actuator.actuator.target.getId())).findFirst().get();
-                node.node.actuator = null;
-                actuator.actuator.target = null;
-            }
-
-            float xcoord = (float) nodes.stream().mapToDouble(n->n.node.xcoord).average().getAsDouble();
-            float ycoord = (float) nodes.stream().mapToDouble(n->n.node.ycoord).average().getAsDouble();
-
-            // create new node
-            otmui.item.Node new_node = ScenarioModification.insert_node(myApp,xcoord,ycoord,actuator);
-
-            // reposition the actuator
-            if(actuator!=null)
-                actuator.relocate(new_node.xpos,new_node.ypos);
-
-            // set of adjacent links
-            Set<Long> link_ids = nodes.stream().flatMap(n->n.node.in_links.keySet().stream()).collect(toSet());
-            link_ids.addAll(nodes.stream().flatMap(n->n.node.out_links.keySet().stream()).collect(toSet()));
-
-            // process internal and external links
-            for(Long link_id : link_ids){
-                otmui.item.Link link = (otmui.item.Link) myApp.data.items.get(ItemType.link).get(link_id);
-                common.Link clink = link.link;
-                boolean starts_at = node_ids.contains(clink.start_node.getId());
-                boolean ends_at = node_ids.contains(clink.end_node.getId());
-                if(starts_at && ends_at)
-                    ScenarioModification.delete_link(myApp,link);
-                else if(starts_at) {
-                    clink.start_node = new_node.node;
-                    new_node.node.out_links.put(link_id,clink);
-                }
-                else if(ends_at) {
-                    clink.end_node = new_node.node;
-                    new_node.node.in_links.put(link_id,clink);
-                }
-            }
-
-            // delete nodes from scenario
-            for(otmui.item.Node node : nodes)
-                ScenarioModification.delete_node(myApp,node);
-
-        } catch (OTMException e) {
-            e.printStackTrace();
+        if(actuators.size()>1){
+            FactoryComponent.warning_dialog("The nodes have multiple actuators. Please remove some first.");
+            return;
         }
+
+        Actuator actuator = actuators.size()==1 ? actuators.iterator().next() : null;
+
+        // Remove the actuator from the node
+        if(actuator!=null){
+            Node node = nodes.stream().filter(n->n.node.getId().equals(actuator.actuator.target.getId())).findFirst().get();
+            node.node.actuator = null;
+            actuator.actuator.target = null;
+        }
+
+        float xcoord = (float) nodes.stream().mapToDouble(n->n.node.xcoord).average().getAsDouble();
+        float ycoord = (float) nodes.stream().mapToDouble(n->n.node.ycoord).average().getAsDouble();
+
+        // create new node
+        Node new_node = myApp.data.insert_node(xcoord,ycoord,actuator);
+
+        // steal the old node's shape (this is so that we don't have to re-sort the pane shapes
+        myApp.graphController.graphContainer.pane.getChildren().removeAll(new_node.shapegroup);
+        Node first_node = nodes.iterator().next();
+        Shape shape = first_node.shapegroup.iterator().next();
+        first_node.shapegroup.clear();
+        new_node.shapegroup.clear();
+        new_node.shapegroup.add(shape);
+
+        // reset mouse click handler for the new node
+        GraphPaneController.attach_mouse_click_handler(new_node);
+
+        // new node position is not out of syn with its shape. Fix that.
+        new_node.relocate(new_node.xpos,new_node.ypos);
+
+        // reposition the actuator
+        if(actuator!=null)
+            actuator.relocate(new_node.xpos,new_node.ypos);
+
+        // set of adjacent links
+        Set<Long> link_ids = nodes.stream().flatMap(n->n.node.in_links.keySet().stream()).collect(toSet());
+        link_ids.addAll(nodes.stream().flatMap(n->n.node.out_links.keySet().stream()).collect(toSet()));
+
+        // process internal and external links
+        for(Long link_id : link_ids){
+            Link link = (Link) myApp.data.items.get(ItemType.link).get(link_id);
+            common.Link clink = link.link;
+            boolean starts_at = clink.start_node!=null && node_ids.contains(clink.start_node.getId());
+            boolean ends_at = clink.end_node!=null && node_ids.contains(clink.end_node.getId());
+            if(starts_at && ends_at)
+                myApp.data.delete_item(link);
+            else if(starts_at) {
+                clink.start_node = new_node.node;
+                new_node.node.out_links.put(link_id,clink);
+            }
+            else if(ends_at) {
+                clink.end_node = new_node.node;
+                new_node.node.in_links.put(link_id,clink);
+            }
+        }
+
+        // delete nodes from scenario
+        for(Node node : nodes) {
+            node.node.in_links.clear();
+            node.node.out_links.clear();
+            myApp.data.delete_item(node);
+        }
+
     }
 
     public void merge_selected_links(){
-//        System.out.println("merge_links");
+
 //        Set<Long> link_ids = selectedLinks.stream().map(x->x.id).collect(toSet());
 //        System.out.println(link_ids);
     }

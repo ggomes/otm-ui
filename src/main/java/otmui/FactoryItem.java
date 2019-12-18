@@ -51,7 +51,6 @@ public class FactoryItem {
     public static Actuator makeActuator(OTMdev otmdev, actuator.AbstractActuator cactuator,GlobalParameters params) {
 
         float node_size = params.node_size.floatValue();
-        float size = node_size*0.7f;
 
 //        if (cactuator==null)
 //            return new StopSign(null,0f,0f,size, 0f);
@@ -60,13 +59,13 @@ public class FactoryItem {
         otmui.item.Actuator actuator;
         switch (cactuator.getType()) {
             case signal:
-                actuator = new Signal(cactuator, node.xcoord, -node.ycoord, size, 4f);
+                actuator = new Signal(cactuator, node.xcoord, -node.ycoord, node_size, 4f);
                 break;
             case stop:
-                actuator = new StopSign(cactuator, node.xcoord, -node.ycoord, size, 0f );
+                actuator = new StopSign(cactuator, node.xcoord, -node.ycoord, node_size, 0f );
                 break;
             default:
-                actuator = new StopSign(cactuator, node.xcoord, -node.ycoord, size, 1f);
+                actuator = new StopSign(cactuator, node.xcoord, -node.ycoord, node_size, 1f);
                 break;
         }
 

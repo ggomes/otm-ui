@@ -103,7 +103,7 @@ public class TreeController {
     }
 
     private void remove_item(AbstractItem item){
-        if(item.treeitem!=null)
+        if(item.treeitem!=null && item.treeitem.getParent()!=null)
             item.treeitem.getParent().getChildren().remove(item.treeitem);
     }
 
@@ -139,6 +139,10 @@ public class TreeController {
     /////////////////////////////////////////////////
     // focusing and hihglighting
     /////////////////////////////////////////////////
+
+    public void delete_item(ActionEvent e){
+        myApp.selectionManager.delete_selected_items();
+    }
 
     public void focusGraph(ActionEvent e){
         myApp.graphController.focusGraphOnSelection();

@@ -83,7 +83,7 @@ public class MenuController implements Initializable {
         try {
             loadFile(file.getAbsolutePath());
         } catch (OTMException ex) {
-            FactoryComponent.createExceptionDialog(ex).showAndWait();
+            FactoryComponent.exception_dialog(ex).showAndWait();
         }
     }
 
@@ -217,7 +217,7 @@ public class MenuController implements Initializable {
         if (!myApp.otm.scenario.network.node_positions_in_meters)
             convert_to_meters(myApp.otm);
 
-        myApp.data = new Data(myApp.otm,myApp.params);
+        myApp.data = new Data(myApp,myApp.params);
 
         // enable stuff
         enablePlots();

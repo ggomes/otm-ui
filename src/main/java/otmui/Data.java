@@ -1,12 +1,17 @@
 package otmui;
 
+import actuator.AbstractActuator;
 import api.OTMdev;
 import commodity.Path;
 import error.OTMException;
+import javafx.event.Event;
 import javafx.scene.shape.Shape;
 import keys.DemandType;
 import keys.KeyCommodityDemandTypeId;
+import otmui.event.DoAddItem;
+import otmui.event.DoRemoveItem;
 import otmui.item.*;
+import otmui.view.FactoryComponent;
 import profiles.AbstractDemandProfile;
 import sensor.AbstractSensor;
 
@@ -16,7 +21,7 @@ import static java.util.stream.Collectors.toSet;
 
 public class Data {
 
-    OTMdev otm;
+    MainApp myApp;
 
     // items contains, for each item type (link, node, etc), a map id->object
     public Map<ItemType, Map<Long,AbstractItem>> items;
@@ -25,9 +30,11 @@ public class Data {
     // construction
     /////////////////////////////////////////////////
 
-    public Data(OTMdev otm, GlobalParameters params) throws OTMException {
-        this.otm = otm;
+    public Data(MainApp myApp, GlobalParameters params) throws OTMException {
+        this.myApp = myApp;
         items = new HashMap<>();
+
+        OTMdev otm = myApp.otm;
 
         // links
         Map<Long, AbstractItem> links = new HashMap<>();
@@ -101,15 +108,14 @@ public class Data {
     // get
     /////////////////////////////////////////////////
 
-    public Set<Shape> getShapes(){
-        Set<Shape> allshapes = new HashSet<>();
+    public List<Shape> getShapes(){
+        List<Shape> allshapes = new ArrayList<>();
 
-        allshapes.addAll(items.get(ItemType.node).values().stream()
+        allshapes.addAll(items.get(ItemType.link).values().stream()
                 .flatMap(x->((AbstractGraphItem)x).shapegroup.stream())
                 .collect(toSet()) );
 
-
-        allshapes.addAll(items.get(ItemType.link).values().stream()
+        allshapes.addAll(items.get(ItemType.node).values().stream()
                 .flatMap(x->((AbstractGraphItem)x).shapegroup.stream())
                 .collect(toSet()) );
 
@@ -126,8 +132,6 @@ public class Data {
 
     public TypeId getTypeId(String itemName) {
         return new TypeId(itemName);
-
-        // TODO MAKE THIS WORK FOR DEMANDS AND SPLITS
     }
 
     public AbstractItem getItem(TypeId typeId) {
@@ -135,27 +139,49 @@ public class Data {
     }
 
     /////////////////////////////////
-    // delete
+    // create and delete items
     /////////////////////////////////
 
-    public void delete_item(AbstractItem item){
+    public otmui.item.Node insert_node(float xcoord, float ycoord, otmui.item.Actuator actuator){
+
+        runner.Scenario scenario = myApp.otm.scenario;
+        long id = scenario.network.nodes.keySet().stream().max(Comparator.naturalOrder()).get() + 1;
+        common.Node cnode = new common.Node(scenario.network,id,xcoord,ycoord,false);
+
+        // add to OTM scenario
+        scenario.network.nodes.put(id,cnode);
+
+        // create ui item
+        otmui.item.Node node = FactoryItem.makeNode(cnode,myApp.params);
+        myApp.data.items.get(ItemType.node).put(node.id,node);
+
+        // attach the actuator
+        if(actuator!=null){
+            node.node.actuator = actuator.actuator;
+            actuator.actuator.target = node.node;
+        }
+
+        // fire event
+        Event.fireEvent(myApp.stage.getScene(),new DoAddItem(DoAddItem.ADD_ITEM, node));
+
+        return node;
+    }
+
+    public boolean delete_item(AbstractItem item) {
         switch(item.getType()){
             case node:
                 otmui.item.Node node = (otmui.item.Node) item;
+
+                if(!node.node.in_links.isEmpty() || !node.node.out_links.isEmpty()) {
+                    FactoryComponent.warning_dialog("Non-isolated nodes cannot be deleted.");
+                    return false;
+                }
 
                 if(node.node.actuator!=null)
                     delete_item(items.get(ItemType.actuator).get(node.node.actuator.id));
 
                 // remove from scenario
-                for(common.Link link : node.node.out_links.values()){
-                    link.start_node = null;
-                    link.is_source = true;
-                }
-                for(common.Link link : node.node.in_links.values()){
-                    link.end_node = null;
-                    link.is_sink = true;
-                }
-                otm.scenario.network.nodes.remove(node.id);
+                myApp.otm.scenario.network.nodes.remove(node.id);
 
                 // remove from items
                 items.get(ItemType.node).remove(node.id);
@@ -173,7 +199,7 @@ public class Data {
                 // remove from scenario
                 link.link.start_node.out_links.remove(link.id);
                 link.link.end_node.in_links.remove(link.id);
-                otm.scenario.network.links.remove(link.id);
+                myApp.otm.scenario.network.links.remove(link.id);
 
                 // remove from items
                 items.get(ItemType.link).remove(link.id);
@@ -184,7 +210,7 @@ public class Data {
                 otmui.item.FixedSensor sensor = (otmui.item.FixedSensor) item;
 
                 // remove from scenario
-                otm.scenario.sensors.remove(sensor.id);
+                myApp.otm.scenario.sensors.remove(sensor.id);
 
                 // remove from items
                 items.get(ItemType.sensor).remove(sensor.id);
@@ -193,9 +219,20 @@ public class Data {
 
             case actuator:
                 otmui.item.Actuator actuator = (otmui.item.Actuator) item;
+                AbstractActuator act = actuator.actuator;
+
+                if(act.target instanceof common.Node)
+                    ((common.Node)act.target).actuator = null;
+
+                if(act.target instanceof common.Link) {
+                    if(((common.Link) act.target).ramp_meter==act)
+                        ((common.Link) act.target).ramp_meter=null;
+                    if(((common.Link) act.target).actuator_fd==act)
+                        ((common.Link) act.target).actuator_fd=null;
+                }
 
                 // remove from scenario
-                otm.scenario.actuators.remove(actuator.id);
+                myApp.otm.scenario.actuators.remove(actuator.id);
 
                 // remove from items
                 items.get(ItemType.actuator).remove(actuator.id);
@@ -203,6 +240,9 @@ public class Data {
                 break;
         }
 
+        Event.fireEvent(myApp.stage.getScene(),new DoRemoveItem(DoRemoveItem.REMOVE_ITEM, item));
+
+        return true;
     }
 
     /////////////////////////////////

@@ -12,6 +12,7 @@
       <contextMenu>
         <ContextMenu>
           <items>
+            <MenuItem mnemonicParsing="false" onAction="#delete_item" text="delete" />
             <MenuItem mnemonicParsing="false" onAction="#focusGraph" text="focus graph" />
           </items>
         </ContextMenu>

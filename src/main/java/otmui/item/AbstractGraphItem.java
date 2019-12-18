@@ -1,6 +1,5 @@
 package otmui.item;
 
-import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
 import javafx.scene.shape.Shape;
@@ -11,7 +10,6 @@ import java.util.Set;
 
 public abstract class AbstractGraphItem extends AbstractItem {
 
-//    public Group shapegroup;
     public Set<Shape> shapegroup;
     public Color color1;
     public Color color2;
@@ -39,17 +37,16 @@ public abstract class AbstractGraphItem extends AbstractItem {
             shapegroup.forEach(x->((Shape)x).setFill(color1));
     }
 
-    public void set_visible(boolean visible){
+    public final void set_visible(boolean visible){
         this.shapegroup.forEach(x->x.setVisible(visible));
     }
 
-    public void setShape(Shape shape){
+    public final void setShape(Shape shape){
         shapegroup.clear();
         shapegroup.add(shape);
-        shape.relocate(xpos,ypos);
     }
 
-    public void addShapes(Set<Shape> shapes) {
+    public final void addShapes(Set<Shape> shapes) {
         shapegroup.addAll(shapes);
     }
 

@@ -1,10 +1,6 @@
 package otmui.controller;
 
-import error.OTMException;
-import javafx.event.EventType;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.shape.Shape;
 import otmui.*;
 import otmui.event.*;
@@ -14,10 +10,9 @@ import javafx.fxml.FXML;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import otmui.item.*;
+import otmui.view.FactoryComponent;
 
 import java.util.*;
-
-import static java.util.stream.Collectors.toSet;
 
 public class GraphPaneController {
 
@@ -61,9 +56,6 @@ public class GraphPaneController {
         scene.addEventFilter(ParameterChange.VIEW_ACTUATORS, e->set_actuator_visible());
         scene.addEventFilter(ParameterChange.SET_NODE_SIZES, e->set_node_sizes());
 
-////        scene.addEventFilter(ParameterChange.DRAWNODECOLORS,                e->paintNodeColors(e.itempool.items.get(ItemType.node).values(),e.params));
-//        scene.addEventFilter(ParameterChange.DRAWACTUATORS, e->paintActuators(e.itempool.items.get(ItemType.actuator).values(),e.params));
-
     }
 
     public void loadScenario(Data data) {
@@ -102,26 +94,10 @@ public class GraphPaneController {
         myApp.data.items.get(ItemType.link).values().forEach(x -> ((Link)x).paintColor(new_color_map));
     }
 
-
-//    public void set_link_width() {
-//        float width = myApp.params.lane_width_meters();
-//        myApp.data.items.get(ItemType.link).values().forEach(x -> ((otmui.item.Link)x).set_lane_width(width));
-//    }
-//
-//    public void set_link_offset() {
-//        float offset = myApp.params.link_offset();
-//        myApp.data.items.get(ItemType.link).values().forEach(x -> ((otmui.item.Link)x).set_offset(offset));
-//    }
-
     public void set_max_density() {
         float max_density = myApp.params.max_density_vpkpl();
         myApp.data.items.get(ItemType.link).values().forEach(x -> ((otmui.item.Link)x).set_max_density(max_density));
     }
-//
-//    public void set_link_color() {
-//        GlobalParameters.RoadColorScheme color_scheme = (GlobalParameters.RoadColorScheme) myApp.params.road_color_scheme.getValue();
-//        myApp.data.items.get(ItemType.link).values().forEach(x -> ((otmui.item.Link)x).set_link_color(color_scheme));
-//    }
 
     public void set_node_visible() {
         myApp.data.items.get(ItemType.node).values().forEach(x->((AbstractGraphItem)x).set_visible(myApp.params.view_nodes()));
@@ -145,8 +121,6 @@ public class GraphPaneController {
 
     private void add_item(AbstractItem item){
         this.graphContainer.pane.getChildren().addAll(((AbstractGraphItem)item).shapegroup);
-//        Comparator<javafx.scene.Node> comparator = Comparator.naturalOrder(); // Comparator.comparingInt(javafx.scene.Node::get);
-//        FXCollections.sort(graphContainer.pane.getChildren(), comparator);
     }
 
     /////////////////////////////////////////////////
@@ -182,7 +156,7 @@ public class GraphPaneController {
     /////////////////////////////////////////////////
 
     public void focusGraphOnSelection(){
-        System.out.println("COMMENTED: focusGraphOnSelection");
+        FactoryComponent.warning_dialog("focusGraphOnSelection not implemented");
 
 //
 //        Set<Double> allX = new HashSet<>();

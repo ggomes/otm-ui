@@ -167,7 +167,7 @@ public class FactoryComponent {
 //        return vbox;
 //    }
 
-    public static Alert createExceptionDialog(Exception ex){
+    public static Alert exception_dialog(Exception ex){
 
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Exception Dialog");
@@ -197,5 +197,13 @@ public class FactoryComponent {
         alert.getDialogPane().setExpanded(true);
 
         return alert;
+    }
+
+    public static void warning_dialog(String msg){
+        Alert alert = new Alert(Alert.AlertType.WARNING,"");
+        Label label = new Label(msg);
+        label.setWrapText(true);
+        alert.getDialogPane().setContent(label);
+        alert.show();
     }
 }

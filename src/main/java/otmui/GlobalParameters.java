@@ -28,9 +28,9 @@ public class GlobalParameters {
     public SimpleFloatProperty sim_delay            = new SimpleFloatProperty(null,"sim_delay",15f);             // milliseconds
 
     // display parameters
-    public SimpleFloatProperty link_offset          = new SimpleFloatProperty(null,"link_offset",0f);           // [m] painted width of a lane
+    public SimpleFloatProperty link_offset          = new SimpleFloatProperty(null,"link_offset",3f);           // [m] painted width of a lane
     public SimpleFloatProperty lane_width_meters    = new SimpleFloatProperty(null,"lane_width_meters",5f);            // [m] painted width of a lane
-    public SimpleFloatProperty node_size            = new SimpleFloatProperty(null,"node_size",6f);           // [m] painted radius for circular nodes
+    public SimpleFloatProperty node_size            = new SimpleFloatProperty(null,"node_size",4f);           // [m] painted radius for circular nodes
     public SimpleObjectProperty road_color_scheme = new SimpleObjectProperty(null,"road color scheme", RoadColorScheme.Black);
     public SimpleBooleanProperty view_nodes         = new SimpleBooleanProperty(null,"view_nodes",true);
     public SimpleBooleanProperty view_actuators     = new SimpleBooleanProperty(null,"view_actuators",true);
