@@ -1,9 +1,11 @@
 package otmui.item;
 
+import common.Link;
 import javafx.scene.shape.Shape;
 import models.BaseLaneGroup;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import otmui.GlobalParameters;
 import otmui.graph.color.AbstractColormap;
 import otmui.utils.Arrow;
 import output.animation.AbstractLaneGroupInfo;
@@ -39,8 +41,14 @@ public abstract class LaneGroup {
         draw_cells.forEach(x->x.paintShape(link_offset+lateral_offset,lanes*lane_width,color));
     }
 
-    public void paintColor(Color color){
-        draw_cells.forEach(x->x.paintColor(color));
+    public void paintColor(GlobalParameters.RoadColorScheme road_color_scheme, Link.RoadType road_type){
+        if(road_color_scheme.equals(GlobalParameters.RoadColorScheme.Cells)){
+            for(Cell cell : draw_cells)
+                cell.paintColor(AbstractColormap.get_color_for_roadtype(road_color_scheme,road_type));
+        } else {
+            Color color = AbstractColormap.get_color_for_roadtype(road_color_scheme,road_type);
+            draw_cells.forEach(x->x.paintColor(color));
+        }
     }
 
     public Set<Shape> get_polygons(){

@@ -60,6 +60,7 @@ public class MainApp extends Application {
 
         // Selection manager ............................
         selectionManager = new SelectionManager(this);
+
     }
 
     private void build_ui() throws IOException {

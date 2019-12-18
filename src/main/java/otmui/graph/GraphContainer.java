@@ -34,10 +34,16 @@ public class GraphContainer {
         MenuItem merge_nodes = new MenuItem("Merge nodes");
         merge_nodes.setOnAction(e->cntrl.myApp.selectionManager.merge_selected_nodes());
 
-        MenuItem merge_links = new MenuItem("Merge links");
+        MenuItem merge_links = new MenuItem("Merge links [not implemented]");
         merge_links.setOnAction(e->cntrl.myApp.selectionManager.merge_selected_links());
 
-        contextMenu.getItems().addAll(delete,merge_nodes, merge_links);
+        MenuItem add_stoplight = new MenuItem("Add stop light [not implemented]");
+        add_stoplight.setOnAction(e->cntrl.myApp.selectionManager.add_stoplight());
+
+        MenuItem add_signal = new MenuItem("Add signal [not implemented]");
+        add_signal.setOnAction(e->cntrl.myApp.selectionManager.add_signal());
+
+        contextMenu.getItems().addAll(delete,merge_nodes, merge_links, add_stoplight,add_signal);
 
         // set right click
         canvas.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {

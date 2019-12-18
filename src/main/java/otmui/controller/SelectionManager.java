@@ -6,6 +6,7 @@ import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
 import javafx.scene.shape.Shape;
+import otmui.FactoryItem;
 import otmui.ItemType;
 import otmui.MainApp;
 import otmui.TypeId;
@@ -161,7 +162,6 @@ public class SelectionManager {
         for(Set<AbstractItem> X : selection.values())
             for (AbstractItem item : X)
                 myApp.data.delete_item(item);
-//                Event.fireEvent(myApp.stage.getScene(), new DoRemoveItem(DoRemoveItem.REMOVE_ITEM, item));
     }
 
     public void merge_selected_nodes() {
@@ -246,11 +246,133 @@ public class SelectionManager {
 
     }
 
-    public void merge_selected_links(){
+    public void merge_selected_links() {
 
-//        Set<Long> link_ids = selectedLinks.stream().map(x->x.id).collect(toSet());
-//        System.out.println(link_ids);
+//        selection.get(ItemType.link).add(myApp.data.items.get(ItemType.link).get(742663956L));
+        selection.get(ItemType.link).add(myApp.data.items.get(ItemType.link).get(742663888L));
+        selection.get(ItemType.link).add(myApp.data.items.get(ItemType.link).get(22649938L));
+
+        Set<Link> links = selection.get(ItemType.link).stream()
+                .map(n -> (Link) n)
+                .collect(toSet());
+        Set<Long> link_ids = links.stream().map(x -> x.id).collect(toSet());
+
+        // Collect actuators
+        Set<Actuator> ramp_meters = links.stream()
+                .filter(n -> n.link.ramp_meter != null)
+                .map(n -> (Actuator) myApp.data.items.get(ItemType.actuator).get(n.link.ramp_meter.id))
+                .collect(toSet());
+
+        if (ramp_meters.size() > 1) {
+            FactoryComponent.warning_dialog("The link has multiple ramp meters. Please remove some first.");
+            return;
+        }
+
+        Set<Actuator> actuator_fds = links.stream()
+                .filter(n -> n.link.actuator_fd != null)
+                .map(n -> (Actuator) myApp.data.items.get(ItemType.actuator).get(n.link.actuator_fd.id))
+                .collect(toSet());
+
+        if (actuator_fds.size() > 1) {
+            FactoryComponent.warning_dialog("The link has multiple fd actuators. Please remove some first.");
+            return;
+        }
+
+        Actuator ramp_meter = ramp_meters.size() == 1 ? ramp_meters.iterator().next() : null;
+        Actuator actuator_fd = actuator_fds.size() == 1 ? actuator_fds.iterator().next() : null;
+
+        //////////////////////////
+        if (ramp_meter != null || actuator_fd != null) {
+            FactoryComponent.warning_dialog("Link merging with actuators is not implemented.");
+            return;
+        }
+        //////////////////////////
+
+        // collect internal and boundary nodes
+        Set<Node> incident_nodes = new HashSet<>();
+        incident_nodes.addAll(links.stream()
+                .map(x -> (Node) myApp.data.items.get(ItemType.node).get(x.link.start_node.getId()))
+                .collect(toSet()));
+        incident_nodes.addAll(links.stream()
+                .map(x -> (Node) myApp.data.items.get(ItemType.node).get(x.link.end_node.getId()))
+                .collect(toSet()));
+
+        Set<Node> internal_nodes = incident_nodes.stream()
+                .filter(node -> node.node.out_links.size()==1 && node.node.in_links.size()==1)
+                .filter(node -> link_ids.containsAll(node.node.out_links.keySet()))
+                .filter(node -> link_ids.containsAll(node.node.in_links.keySet()))
+                .collect(toSet());
+
+        Set<Node> boundary_nodes = new HashSet<>();
+        boundary_nodes.addAll(incident_nodes);
+        boundary_nodes.removeAll(internal_nodes);
+
+        // path = all but two nodes are internal, one is a relative source and one is a relative sink
+        if( boundary_nodes.size()!= 2 ){
+            FactoryComponent.warning_dialog("Not a linear path.");
+            return;
+        }
+
+        Iterator<Node> it = boundary_nodes.iterator();
+        Node bnode1 = it.next();
+        Node bnode2 = it.next();
+
+        boolean relsource1 = bnode1.node.in_links.keySet().stream().noneMatch(x->link_ids.contains(x));
+        boolean relsink1 = bnode1.node.out_links.keySet().stream().noneMatch(x->link_ids.contains(x));
+        boolean relsource2 = bnode2.node.in_links.keySet().stream().noneMatch(x->link_ids.contains(x));
+        boolean relsink2 = bnode2.node.out_links.keySet().stream().noneMatch(x->link_ids.contains(x));
+
+        // boundary node should be either relative source or relative sink
+        if( !(relsource1 ^ relsink1) || !(relsource2 ^ relsink2) ){
+            FactoryComponent.warning_dialog("These links cannot be merged.");
+            return;
+        }
+
+        // one should be a relative source, the other a relative sink
+        if( relsource1==relsource2 ){
+            FactoryComponent.warning_dialog("These links cannot be merged.");
+            return;
+        }
+
+        // these are the relative soure and sink nodes
+        Node node_source = relsource1 ? bnode1 : bnode2;
+        Node node_sink = relsink1 ? bnode1 : bnode2;
+
+//        // collect the properties of the links
+//        Set<LinkProperties> link_properties = links.stream().map(x->x.get_properties()).collect(toSet());
+//
+//        // choose which properties to use
+//        LinkProperties link_prop = null
+//        if(link_properties.size()>1){
+//
+//            // TODo ask the user to select which one
+//            link_prop = link_properties.iterator().next();
+//        }
+//
+//        // create a new link
+//        common.Link clink =
+//        Link new_link = myApp.data.insert_link(...)
+
+        // reset the mouse click handlers
+
+        // delete merged links
+        for(Link link : links)
+            myApp.data.delete_item(link);
+
+        // delete internal nodes
+        for(Node node : internal_nodes)
+            myApp.data.delete_item(node);
+
     }
+
+    public void add_stoplight(){
+        System.out.println("WRH=5um33");
+    }
+
+    public void add_signal(){
+        System.out.println("9834gn24v0");
+    }
+
 
     /////////////////////////////////////////////////
     // private
