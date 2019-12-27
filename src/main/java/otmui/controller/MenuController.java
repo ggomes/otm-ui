@@ -22,14 +22,23 @@ import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 public class MenuController implements Initializable {
 
     private MainApp myApp;
+//
+//    private String projectFilePath = null;
+//    private File projectFileDir = null;
+//    private String optProjectFileDir_String = "optProjectFileDir_String";
+//    private Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
     @FXML
     private MenuBar menubar;
@@ -89,7 +98,25 @@ public class MenuController implements Initializable {
 
     @FXML
     private void menuSave(ActionEvent event) {
-        System.out.println("asdgasdfsd");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save the scenario");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("OTM","*.xml"));
+        File file = fileChooser.showSaveDialog(null);
+        if (file==null)
+            return;
+        try {
+            FileInfo file_info = new FileInfo(file.getAbsolutePath());
+            create_marshaller(jaxb.Scenario.class).marshal(myApp.otm.scenario.to_jaxb(), file_info.get_file());
+        } catch (Exception ex) {
+            otmui.utils.Dialogs.ExceptionDialog("Error saving the scenario.", ex);
+        }
+    }
+
+    private static Marshaller create_marshaller(Class clazz) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        return marshaller;
     }
 
     @FXML
@@ -250,5 +277,24 @@ public class MenuController implements Initializable {
         otm.scenario.network.node_positions_in_meters = true;
     }
 
+    public static class FileInfo {
+        String folder;
+        String file_name;
+        public FileInfo(String filePath){
+            File f = new File(filePath);
+            if (f.isDirectory())
+                return;
+            folder = f.getParent();
+            String name = f.getName();
+            final int lastPeriodPos = name.lastIndexOf('.');
+            if (lastPeriodPos <= 0)
+                file_name = name;
+            else
+                file_name = name.substring(0, lastPeriodPos);
+        }
+        public File get_file(){
+            return new File(folder,file_name + ".xml");
+        }
+    }
 
 }
