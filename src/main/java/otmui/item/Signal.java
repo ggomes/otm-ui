@@ -8,7 +8,7 @@ import javafx.scene.shape.Polygon;
 public class Signal extends Actuator {
 
     public Signal(AbstractActuator act, Float xpos, Float ypos, float node_size, double stroke_width) {
-        super(act, xpos, ypos, Color.TURQUOISE, Color.MAGENTA);
+        super(act, xpos, ypos, Color.LIGHTGREEN, Color.LAWNGREEN);
 
         this.xpos -= node_size;
         this.ypos -= node_size;

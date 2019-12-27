@@ -21,9 +21,9 @@ public class LaneGroupCTM extends LaneGroup {
     // construction
     /////////////////////////////////////////////////
 
-    public LaneGroupCTM(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
+    public LaneGroupCTM(otmui.item.Link link,BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
 
-        super(alg,lateral_offset);
+        super(link,alg,lateral_offset);
 
         models.ctm.LaneGroup lg = (models.ctm.LaneGroup) alg;
 
@@ -39,7 +39,7 @@ public class LaneGroupCTM extends LaneGroup {
         // traverse cells
         for (int i = 0; i < lg.cells.size(); i++) {
             Cell draw_cell = new Cell(midline,start_ind,lateral_offset,euclid_cell_length_m,width,color);
-            draw_cells.add(draw_cell);
+            cells.add(draw_cell);
             start_ind += draw_cell.arrows.size()-1;
         }
 
@@ -51,12 +51,12 @@ public class LaneGroupCTM extends LaneGroup {
 
     @Override
     public void unhighlight() {
-        draw_cells.forEach(x->x.unhighlight());
+        cells.forEach(x->x.unhighlight());
     }
 
     @Override
     public void highlight(Color color) {
-        draw_cells.forEach(x->x.highlight(color));
+        cells.forEach(x->x.highlight(color));
     }
 
     /////////////////////////////////////////////////
@@ -65,7 +65,7 @@ public class LaneGroupCTM extends LaneGroup {
 
     @Override
     public void set_temporary_color(Color color) {
-        draw_cells.forEach(x->x.set_temporary_color(color));
+        cells.forEach(x->x.set_temporary_color(color));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class LaneGroupCTM extends LaneGroup {
         output.animation.macro.LaneGroupInfo lg_info = (output.animation.macro.LaneGroupInfo) laneGroupInfo;
         for(int i=0;i<lg_info.cell_info.size();i++){
             CellInfo cellinfo = lg_info.cell_info.get(i);
-            Cell drawCell = draw_cells.get(i);
+            Cell drawCell = cells.get(i);
             double veh = cellinfo.get_total_vehicles();
             RGB rgb = colormap.get_color(veh,max_vehicles);
             Color color = new Color(rgb.red,rgb.green,rgb.blue,1.0);

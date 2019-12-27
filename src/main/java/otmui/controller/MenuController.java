@@ -88,25 +88,13 @@ public class MenuController implements Initializable {
     }
 
     @FXML
-    private void menuOpenTest(ActionEvent event) {
-//        String item = ((MenuItem) event.getSource()).getText();
-//        if(!testFiles.containsKey(item))
-//            return;
-//        try {
-//            loadTest(item);
-//        } catch (OTMException ex) {
-//            UIFactory.createExceptionDialog(ex).showAndWait();
-//        }
+    private void menuSave(ActionEvent event) {
+        System.out.println("asdgasdfsd");
     }
 
     @FXML
     private void menuExit(ActionEvent event) {
         Platform.exit();
-    }
-
-    @FXML
-    private void menuAction(ActionEvent event) {
-
     }
 
     /////////////////////////////////////////////////

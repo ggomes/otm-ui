@@ -11,24 +11,24 @@ import java.util.List;
 
 public class LaneGroupSpaceQ extends LaneGroup {
 
-    public LaneGroupSpaceQ(BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
-        super(alg,lateral_offset);
-        draw_cells.add(new Cell(midline,0,lateral_offset,alg.length * road2euclid,alg.num_lanes *lane_width,color));
+    public LaneGroupSpaceQ(otmui.item.Link link,BaseLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
+        super(link,alg,lateral_offset);
+        cells.add(new Cell(midline,0,lateral_offset,alg.length * road2euclid,alg.num_lanes *lane_width,color));
     }
 
     @Override
     public void unhighlight() {
-        draw_cells.get(0).unhighlight();
+        cells.get(0).unhighlight();
     }
 
     @Override
     public void highlight(Color color) {
-        draw_cells.get(0).highlight(color);
+        cells.get(0).highlight(color);
     }
 
     @Override
     public void set_temporary_color(Color color) {
-        draw_cells.get(0).set_temporary_color(color);
+        cells.get(0).set_temporary_color(color);
     }
 
     @Override

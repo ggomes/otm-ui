@@ -1,7 +1,6 @@
 package otmui.item;
 
 import geometry.Side;
-import javafx.scene.Group;
 import otmui.GlobalParameters;
 import otmui.ItemType;
 import otmui.graph.color.AbstractColormap;
@@ -20,7 +19,7 @@ public abstract class Link extends AbstractGraphItem {
     public common.Link link;
     public Map<Long, AbstractDemandProfile> comm2demand;
 
-    public List<LaneGroup> draw_lanegroups;
+    public List<LaneGroup> lanegroups;
     public double max_vehicles;
 
     abstract List<Double> get_additional_midline_points();
@@ -35,7 +34,7 @@ public abstract class Link extends AbstractGraphItem {
         this.link = link;
         this.comm2demand = new HashMap<>();
         this.max_vehicles = link.get_max_vehicles();
-        this.draw_lanegroups = new ArrayList<>();
+        this.lanegroups = new ArrayList<>();
 
         // case for mn, where get_max_vehicles returns infinity
         if(Double.isInfinite(this.max_vehicles))
@@ -124,15 +123,15 @@ public abstract class Link extends AbstractGraphItem {
         double road2euclid = euclid_segment_length / road_segment_length;
 
         // populate draw_lanegroups
-        Color color = AbstractColormap.get_color_for_roadtype(roadColorScheme,link.road_type);
+        Color color = AbstractColormap.get_color(roadColorScheme,this);
         for (BaseLaneGroup lg : link.lanegroups_flwdn.values()) {
 
             // offsets of the upstream inner corner
             float lateral_offset = lane_width*(lg.start_lane_dn-1);
             float long_offset = lg.side== Side.middle ? 0 : link.length-lg.length;
 
-            LaneGroup draw_lg = create_draw_lanegroup(lg,midline,lateral_offset,long_offset,lane_width, road2euclid,color);
-            draw_lanegroups.add(draw_lg);
+            LaneGroup draw_lg = create_draw_lanegroup(this,lg,midline,lateral_offset,long_offset,lane_width, road2euclid,color);
+            lanegroups.add(draw_lg);
             addShapes(draw_lg.get_polygons());
         }
 
@@ -150,7 +149,7 @@ public abstract class Link extends AbstractGraphItem {
 
     }
 
-    abstract LaneGroup create_draw_lanegroup(BaseLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException ;
+    abstract LaneGroup create_draw_lanegroup(otmui.item.Link link,BaseLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException ;
 
     @Override
     public ItemType getType() {
@@ -166,12 +165,12 @@ public abstract class Link extends AbstractGraphItem {
     /////////////////////////////////////////////////
 
     public final void paintShape(float link_offset, float lane_width, GlobalParameters.RoadColorScheme road_color_scheme){
-        Color color = AbstractColormap.get_color_for_roadtype(road_color_scheme,link.road_type);
-        draw_lanegroups.forEach(x -> x.paintShape(link_offset,lane_width,color));
+        Color color = AbstractColormap.get_color(road_color_scheme,this);
+        lanegroups.forEach(x -> x.paintShape(link_offset,lane_width,color));
     }
 
     public final void paintColor(GlobalParameters.RoadColorScheme road_color_scheme){
-        draw_lanegroups.forEach(x -> x.paintColor(road_color_scheme,link.road_type));
+        lanegroups.forEach(x -> x.paintColor(road_color_scheme));
     }
 
     public final void set_max_density(float width){
@@ -180,12 +179,12 @@ public abstract class Link extends AbstractGraphItem {
 
     @Override
     public void highlight() {
-        draw_lanegroups.forEach(x -> x.highlight(color2));
+        lanegroups.forEach(x -> x.highlight(color2));
     }
 
     @Override
     public void unhighlight() {
-        draw_lanegroups.forEach(x -> x.unhighlight());
+        lanegroups.forEach(x -> x.unhighlight());
     }
 
     @Override

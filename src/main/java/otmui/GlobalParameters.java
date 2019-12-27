@@ -19,7 +19,7 @@ public class GlobalParameters {
     private float old_max_density_vpkpl;
     private boolean old_view_actuators;
 
-    public enum RoadColorScheme { Black, Cells, RoadType }
+    public enum RoadColorScheme { Black, Cells, RoadType, Params }
 
     // simulation run parameters
     public SimpleFloatProperty start_time           = new SimpleFloatProperty(null,"start_time",0f);            // seconds after midnight

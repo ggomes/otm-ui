@@ -8,7 +8,7 @@ import javafx.scene.shape.Polygon;
 public class StopSign extends Actuator {
 
     public StopSign(AbstractActuator act, Float xpos, Float ypos, float node_size, double stroke_width) {
-        super(act, xpos, ypos, Color.SEAGREEN, Color.MAGENTA);
+        super(act, xpos, ypos, Color.CRIMSON, Color.DEEPPINK);
 
         this.xpos -= node_size;
         this.ypos -= node_size;

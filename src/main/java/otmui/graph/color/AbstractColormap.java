@@ -5,7 +5,9 @@ import common.Link;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class  AbstractColormap {
 
@@ -13,6 +15,16 @@ public abstract class  AbstractColormap {
     public double cmin = 0d;
     public float max_density_vphpl;
     public GlobalParameters.RoadColorScheme roadColorScheme;
+    public static Map<String,Color> params2color = new HashMap<>();
+
+
+    static{
+        params2color.put("residential",Color.BLACK);
+        params2color.put("tertiary",Color.VIOLET);
+        params2color.put("tertiary_link",Color.TEAL);
+        params2color.put("unclassified",Color.POWDERBLUE);
+        params2color.put("secondary",Color.ORANGERED);
+    }
 
     public AbstractColormap(double [][] colors, float max_density_vphpl, GlobalParameters.RoadColorScheme roadColorScheme){
         this.max_density_vphpl = max_density_vphpl;
@@ -38,18 +50,28 @@ public abstract class  AbstractColormap {
         return colorlist.get(index);
     }
 
-
-    public static Color get_color_for_roadtype(GlobalParameters.RoadColorScheme roadColorScheme, Link.RoadType road_type){
-        Color color;
+    public static Color get_color(GlobalParameters.RoadColorScheme roadColorScheme,otmui.item.Link link){
+        Color color = null;
         switch(roadColorScheme){
             case Black:
                 color = new Color(0d,0d,0d,0.7);
                 break;
             case Cells:
-                color = new Color(Math.random(),Math.random(),Math.random(),0.7);
                 break;
+
+            case Params:
+                String name = link.link.road_param.getName();
+                if(params2color.containsKey(name))
+                    color = params2color.get(name);
+                else{
+                    System.out.println(name);
+                    color = new Color(Math.random(),Math.random(),Math.random(),0.7);
+                    params2color.put(name,color);
+                }
+                break;
+
             case RoadType:
-                switch(road_type){
+                switch(link.link.road_type){
                     case none:
                         color = Color.BLACK;
                         break;

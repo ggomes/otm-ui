@@ -61,6 +61,11 @@ public class MainApp extends Application {
         // Selection manager ............................
         selectionManager = new SelectionManager(this);
 
+
+        /////////////////////////////////////////////////////////
+//        selectionManager.merge_selected_links();
+        /////////////////////////////////////////////////////////
+
     }
 
     private void build_ui() throws IOException {

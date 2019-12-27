@@ -18,13 +18,16 @@
                 <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
               </accelerator>
             </MenuItem>
-                  <Menu fx:id="openTest" mnemonicParsing="false" text="Open Test" />
+              <MenuItem mnemonicParsing="false" onAction="#menuSave" text="Save">
+                  <accelerator>
+                      <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                  </accelerator>
+              </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#menuExit" text="Exit">
               <accelerator>
                 <KeyCodeCombination alt="UP" code="X" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
               </accelerator>
             </MenuItem>
-            <MenuItem mnemonicParsing="false" onAction="#menuAction" text="Action" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Simulation">
