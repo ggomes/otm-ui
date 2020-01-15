@@ -1,7 +1,7 @@
 package otmui.item;
 
 import otmui.GlobalParameters;
-import models.BaseLaneGroup;
+import models.AbstractLaneGroup;
 import error.OTMException;
 import otmui.utils.Arrow;
 import javafx.scene.paint.Color;
@@ -16,7 +16,7 @@ public class LinkSpaceQ extends Link {
     }
 
     @Override
-    public LaneGroup create_draw_lanegroup(otmui.item.Link link,BaseLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
+    public LaneGroup create_draw_lanegroup(otmui.item.Link link,AbstractLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
         return new LaneGroupSpaceQ(link,lg,midline,lateral_offset,long_offset,lane_width,road2euclid,color);
     }
 

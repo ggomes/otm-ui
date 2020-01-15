@@ -1,10 +1,10 @@
 package otmui.item;
 
 import geometry.Side;
+import models.AbstractLaneGroup;
 import otmui.GlobalParameters;
 import otmui.ItemType;
 import otmui.graph.color.AbstractColormap;
-import models.BaseLaneGroup;
 import error.OTMException;
 import javafx.scene.paint.Color;
 import otmui.utils.Arrow;
@@ -124,7 +124,7 @@ public abstract class Link extends AbstractGraphItem {
 
         // populate draw_lanegroups
         Color color = AbstractColormap.get_color(roadColorScheme,this);
-        for (BaseLaneGroup lg : link.lanegroups_flwdn.values()) {
+        for (AbstractLaneGroup lg : link.lanegroups_flwdn.values()) {
 
             // offsets of the upstream inner corner
             float lateral_offset = lane_width*(lg.start_lane_dn-1);
@@ -149,7 +149,7 @@ public abstract class Link extends AbstractGraphItem {
 
     }
 
-    abstract LaneGroup create_draw_lanegroup(otmui.item.Link link,BaseLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException ;
+    abstract LaneGroup create_draw_lanegroup(otmui.item.Link link,AbstractLaneGroup lg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException ;
 
     @Override
     public ItemType getType() {

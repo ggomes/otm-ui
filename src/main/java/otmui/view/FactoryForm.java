@@ -11,7 +11,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ScrollPane;
-import models.BaseLaneGroup;
+import models.AbstractLaneGroup;
 import otmui.Data;
 import otmui.ItemType;
 import otmui.controller.component.LabelCombobox;
@@ -117,7 +117,7 @@ public class FactoryForm {
         X.add(FactoryComponent.createLabelLabel("link type",link.model.name).pane);
 
         // lanegroups
-        Collection<BaseLaneGroup> lanegroups = link.lanegroups_flwdn.values();
+        Collection<AbstractLaneGroup> lanegroups = link.lanegroups_flwdn.values();
         List<String> lanegroupIds = lanegroups.stream().map(x->String.format("%d",x.id)).collect(Collectors.toList());
         X.add(FactoryComponent.createLabelCombobox("lanegroups",lanegroupIds).pane);
 

@@ -58,9 +58,9 @@ public class OTMTask extends Task {
                 otm.otm.advance(sim_dt);
                 final int ii = i;
 
-                // TODO : PUT THIS BACK
+//                // TODO : PUT THIS BACK
 //                final AnimationInfo info = otm.otm.get_animation_info();
-//
+
 //                Platform.runLater(new Runnable() {
 //                    @Override public void run() {
 //                        graphPaneController.draw_link_state(info,colormap);

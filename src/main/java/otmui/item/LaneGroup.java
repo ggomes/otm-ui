@@ -1,7 +1,7 @@
 package otmui.item;
 
 import javafx.scene.shape.Shape;
-import models.BaseLaneGroup;
+import models.AbstractLaneGroup;
 import javafx.scene.paint.Color;
 import otmui.GlobalParameters;
 import otmui.graph.color.AbstractColormap;
@@ -30,7 +30,7 @@ public abstract class LaneGroup {
     abstract public void set_temporary_color(Color color);
     abstract public void draw_state(AbstractLaneGroupInfo laneGroupInfo, AbstractColormap colormap);
 
-    public LaneGroup(otmui.item.Link link,BaseLaneGroup lg, float lateral_offset) {
+    public LaneGroup(otmui.item.Link link,AbstractLaneGroup lg, float lateral_offset) {
         this.link = link;
         this.lanes = lg.num_lanes;
         this.id = lg.id;
