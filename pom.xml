@@ -10,7 +10,6 @@
     <name>otm-ui</name>
 
     <properties>
-<!--        <mainClass>otm-ui.MainApp</mainClass>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -30,6 +29,17 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <repository>
+            <id>myMavenRepoOTM</id>
+            <url>${myMavenRepoOTMWriteUrl}</url>
+        </repository>
+        <snapshotRepository>
+            <id>myMavenRepoOTM</id>
+            <url>${myMavenRepoOTMWriteUrl}</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
     <build>
 
         <plugins>
