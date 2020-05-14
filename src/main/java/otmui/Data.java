@@ -87,7 +87,7 @@ public class Data {
             Long link_id;
             if(demandType.equals(DemandType.pathfull)){
                 commodity.Subnetwork subnetwork = otm.scenario.subnetworks.get(link_or_subnetwork_id);
-                link_id = subnetwork.is_path ? ((Path)subnetwork).ordered_links.get(0).getId() : null;
+                link_id = subnetwork.isPath() ? ((Path)subnetwork).ordered_links.get(0).getId() : null;
             } else
                 link_id = link_or_subnetwork_id;
 
@@ -144,7 +144,7 @@ public class Data {
 
     public otmui.item.Node insert_node(float xcoord, float ycoord, otmui.item.Actuator actuator){
 
-        runner.Scenario scenario = myApp.otm.scenario;
+        common.Scenario scenario = myApp.otm.scenario;
         long id = scenario.network.nodes.keySet().stream().max(Comparator.naturalOrder()).get() + 1;
         common.Node cnode = new common.Node(scenario.network,id,xcoord,ycoord,false);
 
@@ -191,10 +191,10 @@ public class Data {
             case link:
                 otmui.item.Link link = (otmui.item.Link) item;
 
-                if(link.link.actuator_fd!=null)
-                    delete_item(items.get(ItemType.actuator).get(link.link.actuator_fd.id));
-                if(link.link.ramp_meter!=null)
-                    delete_item(items.get(ItemType.actuator).get(link.link.ramp_meter.id));
+//                if(link.link.actuator_fd!=null)
+//                    delete_item(items.get(ItemType.actuator).get(link.link.actuator_fd.id));
+//                if(link.link.ramp_meter!=null)
+//                    delete_item(items.get(ItemType.actuator).get(link.link.ramp_meter.id));
 
                 // remove from scenario
                 link.link.start_node.out_links.remove(link.id);
@@ -224,12 +224,12 @@ public class Data {
                 if(act.target instanceof common.Node)
                     ((common.Node)act.target).actuator = null;
 
-                if(act.target instanceof common.Link) {
-                    if(((common.Link) act.target).ramp_meter==act)
-                        ((common.Link) act.target).ramp_meter=null;
-                    if(((common.Link) act.target).actuator_fd==act)
-                        ((common.Link) act.target).actuator_fd=null;
-                }
+//                if(act.target instanceof common.Link) {
+//                    if(((common.Link) act.target).ramp_meter==act)
+//                        ((common.Link) act.target).ramp_meter=null;
+//                    if(((common.Link) act.target).actuator_fd==act)
+//                        ((common.Link) act.target).actuator_fd=null;
+//                }
 
                 // remove from scenario
                 myApp.otm.scenario.actuators.remove(actuator.id);

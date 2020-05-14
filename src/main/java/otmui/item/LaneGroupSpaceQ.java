@@ -1,6 +1,6 @@
 package otmui.item;
 
-import models.AbstractLaneGroup;
+import common.AbstractLaneGroup;
 import otmui.graph.color.AbstractColormap;
 import error.OTMException;
 import javafx.scene.paint.Color;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public class LaneGroupSpaceQ extends LaneGroup {
 
-    public LaneGroupSpaceQ(otmui.item.Link link,AbstractLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
+    public LaneGroupSpaceQ(otmui.item.Link link, AbstractLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
         super(link,alg,lateral_offset);
         cells.add(new Cell(midline,0,lateral_offset,alg.length * road2euclid,alg.num_lanes *lane_width,color));
     }

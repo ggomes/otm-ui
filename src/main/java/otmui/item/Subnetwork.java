@@ -19,7 +19,7 @@ public class Subnetwork extends AbstractGraphItem {
         this.subnet = subnet;
 
         this.links = new HashSet<>();
-        this.links.addAll(subnet.links.stream()
+        this.links.addAll(subnet.get_links().stream()
                 .map( x -> (Link) data.items.get(ItemType.link).get(x.getId()) )
                 .collect(toSet()));
     }

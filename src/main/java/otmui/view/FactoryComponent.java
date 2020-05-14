@@ -1,5 +1,6 @@
 package otmui.view;
 
+import common.AbstractLaneGroup;
 import otmui.controller.component.*;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -129,7 +130,7 @@ public class FactoryComponent {
 //        return vbox;
 //    }
 
-    public static VBox createLanegroupPanel(models.AbstractLaneGroup lanegroup){
+    public static VBox createLanegroupPanel(AbstractLaneGroup lanegroup){
         VBox vbox = new VBox();
         vbox.getChildren().add(createLabelLabel("id",String.format("%d",lanegroup.id)).pane);
         return vbox;

@@ -4,6 +4,7 @@ import actuator.AbstractActuator;
 import api.info.DemandInfo;
 import api.info.Profile1DInfo;
 import api.info.SplitInfo;
+import common.AbstractLaneGroup;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.Node;
@@ -11,7 +12,6 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ScrollPane;
-import models.AbstractLaneGroup;
 import otmui.Data;
 import otmui.ItemType;
 import otmui.controller.component.LabelCombobox;
@@ -183,13 +183,13 @@ public class FactoryForm {
 
         // target .................
         X.add(FactoryComponent.createLabelButton("target",
-                actuator.target.getClass().getSimpleName() + " " + actuator.target.getId(),
+                actuator.target.getClass().getSimpleName() + " " + actuator.target.getIdAsTarget(),
                 e-> {
                     AbstractItem item = null;
                     if(actuator.target instanceof common.Node)
-                        item = data.items.get(ItemType.node).get(actuator.target.getId());
+                        item = data.items.get(ItemType.node).get(actuator.target.getIdAsTarget());
                     if(actuator.target instanceof common.Link)
-                        item = data.items.get(ItemType.link).get(actuator.target.getId());
+                        item = data.items.get(ItemType.link).get(actuator.target.getIdAsTarget());
                     doubleClick(form,item);
                 }
         ).pane);
@@ -262,9 +262,6 @@ public class FactoryForm {
 
         // name .................
         X.add(FactoryComponent.createLabelText("name",uisubnetwork.getName()).pane);
-
-        // is_global .................
-        X.add(FactoryComponent.createLabelCheckbox("is global",uisubnetwork.subnet.isGlobal()).pane);
 
         // links .................
         Set<AbstractItem> links = new HashSet<>();

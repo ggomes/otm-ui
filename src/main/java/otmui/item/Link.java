@@ -1,7 +1,7 @@
 package otmui.item;
 
+import common.AbstractLaneGroup;
 import geometry.Side;
-import models.AbstractLaneGroup;
 import otmui.GlobalParameters;
 import otmui.ItemType;
 import otmui.graph.color.AbstractColormap;

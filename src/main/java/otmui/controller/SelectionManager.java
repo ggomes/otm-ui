@@ -1,12 +1,11 @@
 package otmui.controller;
 
-import error.OTMException;
+import actuator.InterfaceActuatorTarget;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
 import javafx.scene.shape.Shape;
-import otmui.FactoryItem;
 import otmui.ItemType;
 import otmui.MainApp;
 import otmui.TypeId;
@@ -186,9 +185,12 @@ public class SelectionManager {
 
         // Remove the actuator from the node
         if(actuator!=null){
-            Node node = nodes.stream().filter(n->n.node.getId().equals(actuator.actuator.target.getId())).findFirst().get();
-            node.node.actuator = null;
-            actuator.actuator.target = null;
+            InterfaceActuatorTarget target = actuator.actuator.target;
+            if(target instanceof common.Node) {
+                common.Node node = (common.Node) target;
+                node.actuator = null;
+                actuator.actuator.target = null;
+            }
         }
 
         float xcoord = (float) nodes.stream().mapToDouble(n->n.node.xcoord).average().getAsDouble();
@@ -258,34 +260,34 @@ public class SelectionManager {
         Set<Long> link_ids = links.stream().map(x -> x.id).collect(toSet());
 
         // Collect actuators
-        Set<Actuator> ramp_meters = links.stream()
-                .filter(n -> n.link.ramp_meter != null)
-                .map(n -> (Actuator) myApp.data.items.get(ItemType.actuator).get(n.link.ramp_meter.id))
-                .collect(toSet());
+//        Set<Actuator> ramp_meters = links.stream()
+//                .filter(n -> n.link.ramp_meter != null)
+//                .map(n -> (Actuator) myApp.data.items.get(ItemType.actuator).get(n.link.ramp_meter.id))
+//                .collect(toSet());
 
-        if (ramp_meters.size() > 1) {
-            FactoryComponent.warning_dialog("The link has multiple ramp meters. Please remove some first.");
-            return;
-        }
+//        if (ramp_meters.size() > 1) {
+//            FactoryComponent.warning_dialog("The link has multiple ramp meters. Please remove some first.");
+//            return;
+//        }
 
-        Set<Actuator> actuator_fds = links.stream()
-                .filter(n -> n.link.actuator_fd != null)
-                .map(n -> (Actuator) myApp.data.items.get(ItemType.actuator).get(n.link.actuator_fd.id))
-                .collect(toSet());
+//        Set<Actuator> actuator_fds = links.stream()
+//                .filter(n -> n.link.actuator_fd != null)
+//                .map(n -> (Actuator) myApp.data.items.get(ItemType.actuator).get(n.link.actuator_fd.id))
+//                .collect(toSet());
+//
+//        if (actuator_fds.size() > 1) {
+//            FactoryComponent.warning_dialog("The link has multiple fd actuators. Please remove some first.");
+//            return;
+//        }
 
-        if (actuator_fds.size() > 1) {
-            FactoryComponent.warning_dialog("The link has multiple fd actuators. Please remove some first.");
-            return;
-        }
-
-        Actuator ramp_meter = ramp_meters.size() == 1 ? ramp_meters.iterator().next() : null;
-        Actuator actuator_fd = actuator_fds.size() == 1 ? actuator_fds.iterator().next() : null;
+//        Actuator ramp_meter = ramp_meters.size() == 1 ? ramp_meters.iterator().next() : null;
+//        Actuator actuator_fd = actuator_fds.size() == 1 ? actuator_fds.iterator().next() : null;
 
         //////////////////////////
-        if (ramp_meter != null || actuator_fd != null) {
-            FactoryComponent.warning_dialog("Link merging with actuators is not implemented.");
-            return;
-        }
+//        if (ramp_meter != null) {
+//            FactoryComponent.warning_dialog("Link merging with actuators is not implemented.");
+//            return;
+//        }
         //////////////////////////
 
         // collect internal and boundary nodes

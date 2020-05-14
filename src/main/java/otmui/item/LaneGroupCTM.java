@@ -1,8 +1,9 @@
 package otmui.item;
 
+import common.AbstractLaneGroup;
 import error.OTMException;
 import javafx.scene.paint.Color;
-import models.AbstractLaneGroup;
+import models.fluid.FluidLaneGroup;
 import otmui.graph.color.AbstractColormap;
 import otmui.graph.color.RGB;
 import otmui.utils.Arrow;
@@ -21,13 +22,13 @@ public class LaneGroupCTM extends LaneGroup {
     // construction
     /////////////////////////////////////////////////
 
-    public LaneGroupCTM(otmui.item.Link link,AbstractLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
+    public LaneGroupCTM(otmui.item.Link link, AbstractLaneGroup alg, List<Arrow> midline, float lateral_offset, float long_offset, double lane_width, double road2euclid, Color color) throws OTMException {
 
         super(link,alg,lateral_offset);
 
-        models.fluid.LaneGroup lg = (models.fluid.LaneGroup) alg;
+        FluidLaneGroup lg = (FluidLaneGroup) alg;
 
-        this.max_vehicles_per_cell = lg.max_vehicles / lg.cells.size();
+        this.max_vehicles_per_cell = lg.get_max_vehicles() / lg.cells.size();
 
         // length of a cell
         road_cell_length_km = lg.length / lg.cells.size() / 1000f;
