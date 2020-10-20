@@ -29,15 +29,15 @@ public class TestConfigs {
         return x;
     }
 
-    @Test
-    public void test_load_testconfig() {
-        try {
-            jaxb.Scenario scenario = JaxbLoader.load_test_scenario(JaxbLoader.get_test_filename(testname), true);
-            assertNotNull(scenario);
-        } catch (OTMException e) {
-            e.printStackTrace();
-            fail();
-        }
-    }
+//    @Test
+//    public void test_load_testconfig() {
+//        try {
+//            jaxb.Scenario scenario = JaxbLoader.load_test_scenario(JaxbLoader.get_test_filename(testname), true);
+//            assertNotNull(scenario);
+//        } catch (OTMException e) {
+//            e.printStackTrace();
+//            fail();
+//        }
+//    }
 
 }

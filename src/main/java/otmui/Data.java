@@ -98,9 +98,11 @@ public class Data {
         }
 
         // splits
-        for (common.Node cnode : otm.scenario.network.nodes.values())
-            if(cnode.splits!=null)
-                ((otmui.item.Node) items.get(ItemType.node).get(cnode.getId())).splits = cnode.splits;
+
+        // TODO FIX THIS
+//        for (common.Node cnode : otm.scenario.network.nodes.values())
+//            if(cnode.splits!=null)
+//                ((otmui.item.Node) items.get(ItemType.node).get(cnode.getId())).splits = cnode.splits;
 
     }
 

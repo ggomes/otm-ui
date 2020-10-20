@@ -219,7 +219,10 @@ public class SelectionManager {
 
         // set of adjacent links
         Set<Long> link_ids = nodes.stream().flatMap(n->n.node.in_links.keySet().stream()).collect(toSet());
-        link_ids.addAll(nodes.stream().flatMap(n->n.node.out_links.keySet().stream()).collect(toSet()));
+        link_ids.addAll( nodes.stream()
+                .flatMap(n->n.node.out_links.stream().map(l->l.getId()) )
+                .collect(toSet())
+        );
 
         // process internal and external links
         for(Long link_id : link_ids){
@@ -231,7 +234,7 @@ public class SelectionManager {
                 myApp.data.delete_item(link);
             else if(starts_at) {
                 clink.start_node = new_node.node;
-                new_node.node.out_links.put(link_id,clink);
+                new_node.node.out_links.add(clink);
             }
             else if(ends_at) {
                 clink.end_node = new_node.node;
@@ -301,7 +304,7 @@ public class SelectionManager {
 
         Set<Node> internal_nodes = incident_nodes.stream()
                 .filter(node -> node.node.out_links.size()==1 && node.node.in_links.size()==1)
-                .filter(node -> link_ids.containsAll(node.node.out_links.keySet()))
+                .filter(node -> link_ids.containsAll(node.node.out_links.stream().map(x->x.getId()).collect(toSet())))
                 .filter(node -> link_ids.containsAll(node.node.in_links.keySet()))
                 .collect(toSet());
 
@@ -320,9 +323,9 @@ public class SelectionManager {
         Node bnode2 = it.next();
 
         boolean relsource1 = bnode1.node.in_links.keySet().stream().noneMatch(x->link_ids.contains(x));
-        boolean relsink1 = bnode1.node.out_links.keySet().stream().noneMatch(x->link_ids.contains(x));
+        boolean relsink1 = bnode1.node.out_links.stream().noneMatch(x->link_ids.contains(x.getId()));
         boolean relsource2 = bnode2.node.in_links.keySet().stream().noneMatch(x->link_ids.contains(x));
-        boolean relsink2 = bnode2.node.out_links.keySet().stream().noneMatch(x->link_ids.contains(x));
+        boolean relsink2 = bnode2.node.out_links.stream().noneMatch(x->link_ids.contains(x.getId()));
 
         // boundary node should be either relative source or relative sink
         if( !(relsource1 ^ relsink1) || !(relsource2 ^ relsink2) ){

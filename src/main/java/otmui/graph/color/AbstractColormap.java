@@ -60,7 +60,7 @@ public abstract class  AbstractColormap {
                 break;
 
             case Params:
-                String name = link.link.road_param.getName();
+                String name = link.link.road_param_full.getName();
                 if(params2color.containsKey(name))
                     color = params2color.get(name);
                 else{

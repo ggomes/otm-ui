@@ -44,7 +44,7 @@ public class FactoryForm {
         X.add(FactoryComponent.createLabelList("input links", in_links).pane);
 
         // output links ................
-        Set<AbstractItem> out_links = node.out_links.values().stream()
+        Set<AbstractItem> out_links = node.out_links.stream()
                 .map(x->data.items.get(ItemType.link).get(x.getId()))
                 .collect(toSet());
         X.add(FactoryComponent.createLabelList("output links",out_links).pane);
