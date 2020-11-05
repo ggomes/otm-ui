@@ -2,6 +2,7 @@ package otmui;
 
 import api.OTMdev;
 import error.OTMException;
+import models.AbstractModel;
 import otmui.controller.GraphPaneController;
 import otmui.item.*;
 import sensor.AbstractSensor;
@@ -21,18 +22,17 @@ public class FactoryItem {
         GlobalParameters.RoadColorScheme road_color_scheme = (GlobalParameters.RoadColorScheme) params.road_color_scheme.getValue();
 
         otmui.item.Link link;
-        switch(clink.model.getClass().getSimpleName()){
+        switch(clink.model.type){
 
-            case "BaseModel":
-            case "ModelSpatialQ":
-            case "ModelNewell":
+            case None:
+            case Vehicle:
                 link = new LinkSpaceQ(clink,
                         lane_width_meters,
                         link_offset,
                         road_color_scheme);
                 break;
 
-            case "ModelCTM":
+            case Fluid:
                 link = new LinkCTM(clink,
                         lane_width_meters,
                         link_offset,

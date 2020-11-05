@@ -259,28 +259,28 @@ public class SelectionManager {
         Set<Long> link_ids = links.stream().map(x -> x.id).collect(toSet());
 
         // Collect actuators
-        Set<Actuator> ramp_meters = links.stream()
-                .filter(n -> n.link.ramp_meter != null)
-                .map(n -> (Actuator) myApp.data.items.get(ItemType.actuator).get(n.link.ramp_meter.id))
-                .collect(toSet());
+//        Set<Actuator> ramp_meters = links.stream()
+//                .filter(n -> n.link.ramp_meter != null)
+//                .map(n -> (Actuator) myApp.data.items.get(ItemType.actuator).get(n.link.ramp_meter.id))
+//                .collect(toSet());
+//
+//        if (ramp_meters.size() > 1) {
+//            FactoryComponent.warning_dialog("The link has multiple ramp meters. Please remove some first.");
+//            return;
+//        }
 
-        if (ramp_meters.size() > 1) {
-            FactoryComponent.warning_dialog("The link has multiple ramp meters. Please remove some first.");
-            return;
-        }
+//        Set<Actuator> actuator_fds = links.stream()
+//                .filter(n -> n.link.actuator_fd != null)
+//                .map(n -> (Actuator) myApp.data.items.get(ItemType.actuator).get(n.link.actuator_fd.id))
+//                .collect(toSet());
+//
+//        if (actuator_fds.size() > 1) {
+//            FactoryComponent.warning_dialog("The link has multiple fd actuators. Please remove some first.");
+//            return;
+//        }
 
-        Set<Actuator> actuator_fds = links.stream()
-                .filter(n -> n.link.actuator_fd != null)
-                .map(n -> (Actuator) myApp.data.items.get(ItemType.actuator).get(n.link.actuator_fd.id))
-                .collect(toSet());
-
-        if (actuator_fds.size() > 1) {
-            FactoryComponent.warning_dialog("The link has multiple fd actuators. Please remove some first.");
-            return;
-        }
-
-        Actuator ramp_meter = ramp_meters.size() == 1 ? ramp_meters.iterator().next() : null;
-        Actuator actuator_fd = actuator_fds.size() == 1 ? actuator_fds.iterator().next() : null;
+//        Actuator ramp_meter = ramp_meters.size() == 1 ? ramp_meters.iterator().next() : null;
+//        Actuator actuator_fd = actuator_fds.size() == 1 ? actuator_fds.iterator().next() : null;
 
         //////////////////////////
 //        if (ramp_meter != null) {
