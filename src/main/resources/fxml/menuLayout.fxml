@@ -42,8 +42,16 @@
               <MenuItem fx:id="menuParameters" mnemonicParsing="false" onAction="#menuParameters" text="Parameters" />
               <MenuItem mnemonicParsing="false" onAction="#menuVersion" text="Version" />
               <MenuItem fx:id="menuPlots" mnemonicParsing="false" onAction="#menuPlots" text="Plots" />
-              <MenuItem fx:id="menuZoomIn" mnemonicParsing="false" onAction="#menuZoomIn" text="Zoom In" />
-              <MenuItem fx:id="menuZoomOut" mnemonicParsing="false" onAction="#menuZoomOut" text="Zoom Out" />
+              <MenuItem fx:id="menuZoomIn" mnemonicParsing="false" onAction="#menuZoomIn" text="Zoom In" >
+               <accelerator>
+                   <KeyCodeCombination alt="UP" code="EQUALS" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+               </accelerator>
+              </MenuItem>
+              <MenuItem fx:id="menuZoomOut" mnemonicParsing="false" onAction="#menuZoomOut" text="Zoom Out" >
+                  <accelerator>
+                      <KeyCodeCombination alt="UP" code="MINUS" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                  </accelerator>
+              </MenuItem>
            </items>
         </Menu>
       </menus>

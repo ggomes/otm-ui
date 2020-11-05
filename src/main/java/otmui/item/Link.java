@@ -9,7 +9,6 @@ import error.OTMException;
 import javafx.scene.paint.Color;
 import otmui.utils.Arrow;
 import otmui.utils.Vector;
-import profiles.AbstractDemandProfile;
 
 import java.util.*;
 
@@ -17,7 +16,7 @@ public abstract class Link extends AbstractGraphItem {
 
     public static float epsilon = 0.5f; // meters
     public common.Link link;
-    public Map<Long, AbstractDemandProfile> comm2demand;
+//    public Map<Long, AbstractDemandProfile> comm2demand;
 
     public List<LaneGroup> lanegroups;
     public double max_vehicles;
@@ -32,7 +31,7 @@ public abstract class Link extends AbstractGraphItem {
         super(link.getId(), Float.NaN, Float.NaN, Color.DODGERBLUE, Color.RED);
 
         this.link = link;
-        this.comm2demand = new HashMap<>();
+//        this.comm2demand = new HashMap<>();
         this.max_vehicles = link.get_max_vehicles();
         this.lanegroups = new ArrayList<>();
 
@@ -124,7 +123,7 @@ public abstract class Link extends AbstractGraphItem {
 
         // populate draw_lanegroups
         Color color = AbstractColormap.get_color(roadColorScheme,this);
-        for (AbstractLaneGroup lg : link.lanegroups_flwdn.values()) {
+        for (AbstractLaneGroup lg : link.lanegroups_flwdn) {
 
             // offsets of the upstream inner corner
             float lateral_offset = lane_width*(lg.start_lane_dn-1);
@@ -156,9 +155,10 @@ public abstract class Link extends AbstractGraphItem {
         return ItemType.link;
     }
 
-    public void add_demand(long commodity_id,AbstractDemandProfile profile){
-        comm2demand.put(commodity_id,profile);
-    }
+    // TODO DO THIS
+//    public void add_demand(long commodity_id,AbstractDemandProfile profile){
+//        comm2demand.put(commodity_id,profile);
+//    }
 
     /////////////////////////////////////////////////
     // paint

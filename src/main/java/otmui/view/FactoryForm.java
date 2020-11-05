@@ -1,7 +1,6 @@
 package otmui.view;
 
 import actuator.AbstractActuator;
-import api.info.DemandInfo;
 import api.info.Profile1DInfo;
 import api.info.SplitInfo;
 import common.AbstractLaneGroup;
@@ -117,7 +116,7 @@ public class FactoryForm {
         X.add(FactoryComponent.createLabelLabel("link type",link.model.name).pane);
 
         // lanegroups
-        Collection<AbstractLaneGroup> lanegroups = link.lanegroups_flwdn.values();
+        List<AbstractLaneGroup> lanegroups = link.lanegroups_flwdn;
         List<String> lanegroupIds = lanegroups.stream().map(x->String.format("%d",x.id)).collect(Collectors.toList());
         X.add(FactoryComponent.createLabelCombobox("lanegroups",lanegroupIds).pane);
 
@@ -277,48 +276,49 @@ public class FactoryForm {
         return form.scrollPane;
     }
 
-    public static ScrollPane demandForm(long link_id, Set<DemandInfo> demands, Data data) {
-
-        BaseForm form = new BaseForm();
-
-        ObservableList<Node> X = form.vbox.getChildren();
-
-        // id .................
-        X.add(FactoryComponent.createLabelButton(
-                "link id",
-                String.format("%d", link_id),
-                e->click2(form,data.items.get(ItemType.link).get(link_id))
-        ).pane);
-
-        // data
-        NumberAxis xAxis = new NumberAxis();
-        NumberAxis yAxis = new NumberAxis();
-        LineChart<Number,Number> lineChart = new LineChart<>(xAxis,yAxis);
-        lineChart.setMaxHeight(400);
-
-        X.add(lineChart);
-
-        xAxis.setLabel("time [hr]");
-        yAxis.setLabel("flow [vph]");
-        for(DemandInfo demand : demands){
-            Long comm_id = demand.commodity_id;
-            otmui.item.Commodity comm = (otmui.item.Commodity) data.items.get(ItemType.commodity).get(comm_id);
-            XYChart.Series series = new XYChart.Series();
-            series.setName(comm.comm.get_name());
-            Profile1DInfo profile = demand.profile;
-            double t = profile.getStart_time();
-            double dt = profile.getDt()==0 ? 3600 : profile.getDt();
-            for(Double val : profile.getValues()) {
-                series.getData().add(new XYChart.Data(t/3600, val*3600));
-                t += dt;
-                if(profile.getValues().size()<40)
-                    series.getData().add(new XYChart.Data(t/3600, val*3600));
-            }
-            lineChart.getData().add(series);
-        }
-
-        return form.scrollPane;
-    }
+    // TODO IMPLEMENT DEMAND FORMS
+//    public static ScrollPane demandForm(long link_id, Set<DemandInfo> demands, Data data) {
+//
+//        BaseForm form = new BaseForm();
+//
+//        ObservableList<Node> X = form.vbox.getChildren();
+//
+//        // id .................
+//        X.add(FactoryComponent.createLabelButton(
+//                "link id",
+//                String.format("%d", link_id),
+//                e->click2(form,data.items.get(ItemType.link).get(link_id))
+//        ).pane);
+//
+//        // data
+//        NumberAxis xAxis = new NumberAxis();
+//        NumberAxis yAxis = new NumberAxis();
+//        LineChart<Number,Number> lineChart = new LineChart<>(xAxis,yAxis);
+//        lineChart.setMaxHeight(400);
+//
+//        X.add(lineChart);
+//
+//        xAxis.setLabel("time [hr]");
+//        yAxis.setLabel("flow [vph]");
+//        for(DemandInfo demand : demands){
+//            Long comm_id = demand.commodity_id;
+//            otmui.item.Commodity comm = (otmui.item.Commodity) data.items.get(ItemType.commodity).get(comm_id);
+//            XYChart.Series series = new XYChart.Series();
+//            series.setName(comm.comm.get_name());
+//            Profile1DInfo profile = demand.profile;
+//            double t = profile.getStart_time();
+//            double dt = profile.getDt()==0 ? 3600 : profile.getDt();
+//            for(Double val : profile.getValues()) {
+//                series.getData().add(new XYChart.Data(t/3600, val*3600));
+//                t += dt;
+//                if(profile.getValues().size()<40)
+//                    series.getData().add(new XYChart.Data(t/3600, val*3600));
+//            }
+//            lineChart.getData().add(series);
+//        }
+//
+//        return form.scrollPane;
+//    }
 
     public static ScrollPane splitForm(long node_id, Set<SplitInfo> splits, Data data) {
 

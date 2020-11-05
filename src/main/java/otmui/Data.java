@@ -7,12 +7,10 @@ import error.OTMException;
 import javafx.event.Event;
 import javafx.scene.shape.Shape;
 import keys.DemandType;
-import keys.KeyCommodityDemandTypeId;
 import otmui.event.DoAddItem;
 import otmui.event.DoRemoveItem;
 import otmui.item.*;
 import otmui.view.FactoryComponent;
-import profiles.AbstractDemandProfile;
 import sensor.AbstractSensor;
 
 import java.util.*;
@@ -79,23 +77,26 @@ public class Data {
             subnetworks.put(subnet.getId(),new otmui.item.Subnetwork(subnet,this));
 
         // demands
-        for (Map.Entry<KeyCommodityDemandTypeId, AbstractDemandProfile> e : otm.scenario.data_demands.entrySet()){
-
-            long link_or_subnetwork_id = e.getKey().link_or_subnetwork_id;
-            DemandType demandType = e.getKey().demandType;
-
-            Long link_id;
-            if(demandType.equals(DemandType.pathfull)){
-                commodity.Subnetwork subnetwork = otm.scenario.subnetworks.get(link_or_subnetwork_id);
-                link_id = subnetwork.isPath() ? ((Path)subnetwork).ordered_links.get(0).getId() : null;
-            } else
-                link_id = link_or_subnetwork_id;
-
-            if(link_id==null)
+        for(common.Link link : otm.scenario.network.links.values() ){
+            if(link.demandGenerators==null || link.demandGenerators.isEmpty())
                 continue;
 
-            ((Link)items.get(ItemType.link).get(link_id)).add_demand(e.getKey().commodity_id,e.getValue());
+//            long link_or_subnetwork_id = e.getKey().link_or_subnetwork_id;
+//            DemandType demandType = e.getKey().demandType;
+//
+//            Long link_id;
+//            if(demandType.equals(DemandType.pathfull)){
+//                commodity.Subnetwork subnetwork = otm.scenario.subnetworks.get(link_or_subnetwork_id);
+//                link_id = subnetwork.isPath() ? ((Path)subnetwork).ordered_links.get(0).getId() : null;
+//            } else
+//                link_id = link_or_subnetwork_id;
+//
+//            if(link_id==null)
+//                continue;
+//
+//            ((Link)items.get(ItemType.link).get(link_id)).add_demand(e.getKey().commodity_id,e.getValue());
         }
+
 
         // splits
 

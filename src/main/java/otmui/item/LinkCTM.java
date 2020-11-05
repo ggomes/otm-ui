@@ -35,7 +35,7 @@ public class LinkCTM extends Link {
         double road2euclid = shape_length/link.length;
 
         // get a full lanegroup
-        FluidLaneGroup lg = (FluidLaneGroup) this.link.lanegroups_flwdn.values()
+        FluidLaneGroup lg = (FluidLaneGroup) this.link.lanegroups_flwdn
                 .stream()
                 .filter(x->x.side== Side.middle)
                 .findFirst().get();
